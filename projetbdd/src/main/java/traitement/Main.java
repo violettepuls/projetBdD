@@ -2,6 +2,7 @@ package traitement;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -48,6 +49,7 @@ public class Main {
         }
         catch (SQLException e){
         }
+        gestionnaire.afficherTable();
     }
 
     public void creerSchema() throws SQLException{
@@ -65,6 +67,34 @@ public class Main {
         }
     }
 
+    public void afficherTable(){
+         if (this.con != null) {
+            try (Statement statement = this.con.createStatement()){
+                String sqlQuery = "SELECT * FROM Machine";
+                ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+                while (resultSet.next()) {
+                    // Traitez les données récupérées ici
+                    int id = resultSet.getInt("id");
+                    String nom = resultSet.getString("ref");
+                    // ...
+
+                    System.out.println("ID : " + id + ", Nom : " + nom);
+                }
+
+                resultSet.close();
+                statement.close();
+                this.con.close();
+            } catch (SQLException e) {
+                System.err.println("Erreur lors de l'exécution de la requête : " + e.getMessage());
+            }
+        }
+    }
+//Assurez-vous de remplacer nom_de_la_table par le nom de la table que vous souhaitez afficher.
+
+//Exécuter l'application :
+//Exécutez votre application Java. Elle se connectera à la base de données, exécutera la requête SQL et affichera les données de la table.
+//N'oubliez pas de gérer les exceptions et les erreurs appropriées dans votre code pour garantir une manipulation sécurisée de la base de données.
 
 
     public static void main(String[] args) {
