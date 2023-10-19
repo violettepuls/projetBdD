@@ -5,15 +5,26 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import classe_tables.machine;
 
 public class Main {
 
     private Connection con;
+    private ArrayList<machine> listeMachine;
 
     public Main(){
     }
     public Main(Connection con){
         this.con=con;
+    }
+
+    public ArrayList<machine> getListeMachine(){
+        return this.listeMachine;
+    }
+
+    public void setListMachine(ArrayList<machine> l){
+        this.listeMachine=l;
     }
 
     public Connection getConnection(){
@@ -45,18 +56,31 @@ public class Main {
         catch (Exception e){
         }
         try{
-            gestionnaire.creerSchema();
+            //gestionnaire.supprimerSchema();
+            //gestionnaire.creerSchema();
+            gestionnaire.nouvelleEntree();
         }
         catch (SQLException e){
         }
-        gestionnaire.afficherTable();
+        gestionnaire.afficherTableEntiere();
     }
 
     public void creerSchema() throws SQLException{
         this.con.setAutoCommit(false);
         try(Statement st = this.con.createStatement()){
-            //st.executeUpdate();
-            //st.executeUpdate();
+            st.executeUpdate(
+                "create table machine_bis (\n"
+                +" id integer not null primary key AUTO_INCREMENT,\n"
+                +" ref varchar(30) not null unique,\n"
+                +" etat varchar(30) not null, \n"
+                +" puissance double not null\n"
+                +")\n");
+            st.executeUpdate(
+                "create table utilisateur (\n"
+                +" id integer not null primary key AUTO_INCREMENT,\n"
+                +" prenom varchar(30) not null unique,\n"
+                +" nom varchar(30) not null\n"
+                +")\n");
         }
         catch (SQLException ex){
             this.con.rollback();
@@ -67,18 +91,31 @@ public class Main {
         }
     }
 
-    public void afficherTable(){
+    public void supprimerSchema() throws SQLException{
+        try (Statement st = this.con.createStatement()){
+            //try {
+            //    st.executeUpdate("alter table machine_bis drop constraint fk_li_likes_u1");
+            //}
+            //catch (SQLException ex) {
+            //}
+            st.executeUpdate("drop table machine_bis");
+        }
+        catch(SQLException sqle){
+        }
+    }
+
+    public void afficherTableEntiere(){
          if (this.con != null) {
             try (Statement statement = this.con.createStatement()){
-                String sqlQuery = "SELECT * FROM Machine";
+                String sqlQuery = "SELECT * FROM machine_bis";
                 ResultSet resultSet = statement.executeQuery(sqlQuery);
 
                 while (resultSet.next()) {
-                    // Traitez les données récupérées ici
                     int id = resultSet.getInt("id");
                     String nom = resultSet.getString("ref");
-                    // ...
-
+                    String e= resultSet.getString("etat");
+                    double p=resultSet.getDouble("puissance");
+                    listeMachine.add(new machine(id, nom, e,p));
                     System.out.println("ID : " + id + ", Nom : " + nom);
                 }
 
@@ -89,6 +126,24 @@ public class Main {
                 System.err.println("Erreur lors de l'exécution de la requête : " + e.getMessage());
             }
         }
+    }
+
+    public void nouvelleEntree() throws SQLException{
+        this.con.setAutoCommit(false);
+        try (Statement st = this.con.createStatement()){
+            st.executeUpdate(
+                "insert into Machine (ref,id,puissance,etat) values (3TT_elo_IV,null,120,hs)");
+        }
+        catch(SQLException sqle){
+            System.out.println(sqle);
+        }
+        finally{
+            this.con.setAutoCommit(true);
+        }
+    }
+
+    public void supprimerEntree(){
+
     }
 
     public static void main(String[] args) {
