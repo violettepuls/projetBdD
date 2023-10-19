@@ -90,12 +90,6 @@ public class Main {
             }
         }
     }
-//Assurez-vous de remplacer nom_de_la_table par le nom de la table que vous souhaitez afficher.
-
-//Exécuter l'application :
-//Exécutez votre application Java. Elle se connectera à la base de données, exécutera la requête SQL et affichera les données de la table.
-//N'oubliez pas de gérer les exceptions et les erreurs appropriées dans votre code pour garantir une manipulation sécurisée de la base de données.
-
 
     public static void main(String[] args) {
         debut();
