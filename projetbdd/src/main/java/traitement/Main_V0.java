@@ -7,19 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import classe_tables.Atelier;
 import classe_tables.Machine;
 
-public class Main {
+public class Main_V0 {
 
     private Connection con;
     private ArrayList<Machine> listeMachine;
-    private ArrayList<Atelier> listeAtelier;
 
-    public Main(){
+    public Main_V0(){
     }
-    public Main(Connection con){
+    public Main_V0(Connection con){
         this.con=con;
     }
 
@@ -38,12 +35,12 @@ public class Main {
     public void connect(Connection c){
         this.con=c;
     }
-
-    public void setupCon(Atelier a){
+    
+    public void setupCon(String url, String username, String mdp){
         try {
             Connection c;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            c = DriverManager.getConnection("jdbc:mysql:"+a.getBdd(),a.getNom_utilisateur(),a.getMdp());
+            c = DriverManager.getConnection(url,username,mdp);
             connect(c);
             System.out.println("Connexion établie");
         }
@@ -52,53 +49,60 @@ public class Main {
         }
     }
 
-    public void creerAtelier(String n, String b, String n_u, String m){
-        if(uniciteAtelier(n, b, n_u)&&atelierPossible(b, n_u, m)){
-            Atelier at=new Atelier(n, b, n_u, m);
-            listeAtelier.add(at);
-        }
-        else{
-            System.out.println("Cet atelier ne peut pas être crée");
-        }
-    }
-
-    public boolean uniciteAtelier(String n, String b, String n_u){ //regarde si existe déjà dans la bdd
-        for (int i=0;i<this.listeAtelier.size();i++){
-            if ((listeAtelier.get(i).getNom()==n)||(listeAtelier.get(i).getBdd()==b)||(listeAtelier.get(i).getNom_utilisateur()==n_u)){
-                System.out.println("Cet atelier existe déjà sous le nom ["+listeAtelier.get(i).getNom()+"], la base de données ["+listeAtelier.get(i).getBdd()+"] et le nom d'utilisateur ["+listeAtelier.get(i).getNom_utilisateur()+"]");
-                return false;
-            }
-        }
-        return true;
-    }
-    public boolean atelierPossible(String b, String n_u, String m){ //regarde si la bdd existe
-        try {
-            Connection c;
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            c = DriverManager.getConnection("jdbc:mysql:"+b,n_u,m);
-            connect(c);
-            System.out.println("Création atelier possible");
-            c.close();
-            return true;
-        }
-        catch (Exception e){
-            System.out.println("Une ou plusieurs informations de la base de données sont fausses :"+e);
-            return false;
-        }
-    }
-
-    public void demarrage(Atelier atelier, String utilisateur, String motDePasse){
+    public static void debut(){
+        Main gestionnaire = new Main();
         try{
-            this.setupCon(atelier);
+            gestionnaire.setupCon("jdbc:mysql://92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01","976e74f9");
         }
         catch (Exception e){
         }
         try{
-            this.nouvelleEntree();
+            //gestionnaire.supprimerSchema();
+            //gestionnaire.creerSchema();
+            gestionnaire.nouvelleEntree();
         }
         catch (SQLException e){
         }
-        this.afficherTableEntiere();
+        gestionnaire.afficherTableEntiere();
+    }
+
+    public void creerSchema() throws SQLException{
+        this.con.setAutoCommit(false);
+        try(Statement st = this.con.createStatement()){
+            st.executeUpdate(
+                "create table machine_bis (\n"
+                +" id integer not null primary key AUTO_INCREMENT,\n"
+                +" ref varchar(30) not null unique,\n"
+                +" etat varchar(30) not null, \n"
+                +" puissance double not null\n"
+                +")\n");
+            st.executeUpdate(
+                "create table utilisateur (\n"
+                +" id integer not null primary key AUTO_INCREMENT,\n"
+                +" prenom varchar(30) not null unique,\n"
+                +" nom varchar(30) not null\n"
+                +")\n");
+        }
+        catch (SQLException ex){
+            this.con.rollback();
+            throw ex;
+        }
+        finally{
+            this.con.setAutoCommit(true);
+        }
+    }
+
+    public void supprimerSchema() throws SQLException{
+        try (Statement st = this.con.createStatement()){
+            //try {
+            //    st.executeUpdate("alter table machine_bis drop constraint fk_li_likes_u1");
+            //}
+            //catch (SQLException ex) {
+            //}
+            st.executeUpdate("drop table machine_bis");
+        }
+        catch(SQLException sqle){
+        }
     }
 
     public void afficherTableEntiere(){
@@ -147,11 +151,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Main gestionnaire=new Main();
-        gestionnaire.debut();
+        debut();
     }
 
-    public static void interfaceTextuelle(String[] args){
+    public static void interfaceTextuelle(){
 
     }
 }
