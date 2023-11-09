@@ -1,13 +1,14 @@
 package classe_tables;
 
-public class machine {
+public class Machine {
 
     private int id;
     private String ref;
     private String etat;
     private double puissance;
+    private ArrayList<float> dimension; //format [x,y,z]
 
-    public machine(int id,String ref,String etat,double puissance){
+    public Machine(int id,String ref,String etat,double puissance){
         this.id=id;
         this.ref=ref;
         this.etat=etat;
