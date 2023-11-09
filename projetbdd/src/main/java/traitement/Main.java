@@ -2,16 +2,17 @@ package traitement;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import classe_tables.machine;
+import classe_tables.Machine;
 
 public class Main {
 
     private Connection con;
-    private ArrayList<machine> listeMachine;
+    private ArrayList<Machine> listeMachine;
 
     public Main(){
     }
@@ -19,11 +20,11 @@ public class Main {
         this.con=con;
     }
 
-    public ArrayList<machine> getListeMachine(){
+    public ArrayList<Machine> getListeMachine(){
         return this.listeMachine;
     }
 
-    public void setListMachine(ArrayList<machine> l){
+    public void setListMachine(ArrayList<Machine> l){
         this.listeMachine=l;
     }
 
@@ -115,7 +116,7 @@ public class Main {
                     String nom = resultSet.getString("ref");
                     String e= resultSet.getString("etat");
                     double p=resultSet.getDouble("puissance");
-                    listeMachine.add(new machine(id, nom, e,p));
+                    listeMachine.add(new Machine(id, nom, e,p));
                     System.out.println("ID : " + id + ", Nom : " + nom);
                 }
 
@@ -130,12 +131,15 @@ public class Main {
 
     public void nouvelleEntree() throws SQLException{
         this.con.setAutoCommit(false);
-        try (Statement st = this.con.createStatement()){
-            st.executeUpdate(
-                "insert into Machine (ref,id,puissance,etat) values (3TT_elo_IV,null,120,hs)");
+        try (PreparedStatement st = this.con.prepareStatement("insert into machine_bis (ref,etat,puissance) values (?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
+            st.setString(1,"3TT_evo_IV");
+            st.setString(2,"HS");
+            st.setInt(3,120);
+            st.executeUpdate();
+            System.out.println("Donnée envoyée");
         }
         catch(SQLException sqle){
-            System.out.println(sqle);
+            System.out.println("Echec d'envoie : " + sqle);
         }
         finally{
             this.con.setAutoCommit(true);
