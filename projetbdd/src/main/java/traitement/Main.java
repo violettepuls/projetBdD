@@ -16,8 +16,10 @@ public class Main {
     private Connection con;
     private ArrayList<Machine> listeMachine;
     private ArrayList<Atelier> listeAtelier;
+    private String current_user;
 
     public Main(){
+        this.listeAtelier=new ArrayList<Atelier>();
     }
     public Main(Connection con){
         this.con=con;
@@ -86,34 +88,46 @@ public class Main {
             return false;
         }
     }
+    //Possibilité : créer une fonction creerSchema qui, lorsqu'on crée un atelier sur une nouvelle base de données, créé son schéma
 
+    //Vérifie la correspondance des données utilisateurs avec la base de données de l'atelier. Renvoie un String de la catégorie d'utilisateur (Admin, Utilisateur ou Aucun)
     public void demarrage(Atelier atelier, String utilisateur, String motDePasse){
         try{
             this.setupCon(atelier);
         }
         catch (Exception e){
         }
-        try{
-            this.nouvelleEntree();
+        try(PreparedStatement st = this.con.prepareStatement("SELECT role FROM utilisateur WHERE username EQUALS ? AND password EQUALS ?")){
+            st.setString(1,utilisateur);
+            st.setString(2,motDePasse);
+            ResultSet resultat = st.executeQuery();
+            if (resultat.next()){
+                this.current_user=resultat.getString("username");
+            }
+            else{
+                this.current_user="Aucun";
+            }
         }
         catch (SQLException e){
+            this.current_user="Aucun";
         }
-        this.afficherTableEntiere();
+        System.out.println(this.current_user);
     }
 
     public void afficherTableEntiere(){
          if (this.con != null) {
             try (Statement statement = this.con.createStatement()){
-                String sqlQuery = "SELECT * FROM machine_bis";
+                String sqlQuery = "SELECT role FROM utilisateur";
                 ResultSet resultSet = statement.executeQuery(sqlQuery);
 
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String nom = resultSet.getString("ref");
-                    String e= resultSet.getString("etat");
-                    double p=resultSet.getDouble("puissance");
-                    listeMachine.add(new Machine(id, nom, e,p));
-                    System.out.println("ID : " + id + ", Nom : " + nom);
+                    //int id = resultSet.getInt("id");
+                    String role = resultSet.getString("role");
+                    //String e= resultSet.getString("etat");
+                    //double p=resultSet.getDouble("puissance");
+                    //listeMachine.add(new Machine(id, nom, e,p));
+                    //System.out.println("ID : " + id + ", Nom : " + nom);
+                    System.out.println(role);
                 }
 
                 resultSet.close();
@@ -148,7 +162,9 @@ public class Main {
 
     public static void main(String[] args) {
         Main gestionnaire=new Main();
-        gestionnaire.debut();
+        gestionnaire.creerAtelier("INSA", "//92.222.25.165:3306/m3_rmbola_tembo01", "m3_rmbola_tembo01", "976e74f9");
+        gestionnaire.demarrage(gestionnaire.listeAtelier.get(0),"Régis","regis03");
+        gestionnaire.afficherTableEntiere();
     }
 
     public static void interfaceTextuelle(String[] args){
