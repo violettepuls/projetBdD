@@ -50,7 +50,7 @@ public class Main_V0 {
     }
 
     public static void debut(){
-        Main gestionnaire = new Main();
+        Gestionnaire gestionnaire = new Gestionnaire();
         try{
             gestionnaire.setupCon("jdbc:mysql://92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01","976e74f9");
         }
