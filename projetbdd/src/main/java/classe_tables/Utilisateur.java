@@ -2,17 +2,12 @@ package classe_tables;
 
 public class Utilisateur {
     private int id;
-    private String nom;
     private String prenom;
+    private String nom;
     private String nom_utilisateur;
     private String role;
-
-    public Utilisateur(String nom, String prenom, String usr, String role){
-        this.nom=nom;
-        this.prenom=prenom;
-        this.nom_utilisateur=usr;
-        this.role=role;
-    }
+    private String mdp;
+    private boolean operateur;
 
     public int getId(){
         return this.id;
@@ -52,5 +47,32 @@ public class Utilisateur {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isOperateur() {
+        return operateur;
+    }
+
+    public void setOperateur(boolean operateur) {
+        this.operateur = operateur;
+    }
+    
+    public String getMdp() {
+        return mdp;
+    }
+
+    public void setMdp(String mdp) {
+        this.mdp = mdp;
+    }
+
+    public Utilisateur(String nom, String prenom, String usr, String role){
+        this.nom=nom;
+        this.prenom=prenom;
+        this.nom_utilisateur=usr;
+        this.role=role;
+    }
+    
+    public void refresh(){
+
     }
 }

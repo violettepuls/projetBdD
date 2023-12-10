@@ -15,7 +15,6 @@ import classe_tables.Utilisateur;
 public class Gestionnaire {
 
     private Connection con;
-    private ArrayList<Machine> listeMachine;
     private ArrayList<Atelier> listeAtelier;
     private String current_user;
     private Utilisateur cur_user;
@@ -26,14 +25,6 @@ public class Gestionnaire {
     }
     public Gestionnaire(Connection con){
         this.con=con;
-    }
-
-    public ArrayList<Machine> getListeMachine(){
-        return this.listeMachine;
-    }
-
-    public void setListMachine(ArrayList<Machine> l){
-        this.listeMachine=l;
     }
 
     public ArrayList<Atelier> getListeAtelier(){
@@ -71,6 +62,7 @@ public class Gestionnaire {
         if(uniciteAtelier(n, b, n_u)&&atelierPossible(b, n_u, m)){
             Atelier at=new Atelier(n, b, n_u, m);
             listeAtelier.add(at);
+            System.out.println("Atelier créé avec succès");
         }
         else{
             System.out.println("Cet atelier ne peut pas être crée");
@@ -188,7 +180,7 @@ public class Gestionnaire {
 
     public static void interfaceTextuelle(String[] args){
         Gestionnaire gestionnaire = new Gestionnaire();
-        gestionnaire.creerAtelier("INSA", "//92.222.25.165:3306/m3_rmbola_tembo01", "m3_rmbola_tembo01", "976e74f9");
+        gestionnaire.creerAtelier("INSA", "//92.222.25.165:3306/m3_rmbola_tembo01", "m3_rmbola_tembo01", "976e74f9"); //modifier cette fonction pour que l'atelier soit ajouté à la bdd
         String username = "";
         String mdp = "";
         String reponse = "";
@@ -199,7 +191,7 @@ public class Gestionnaire {
             System.out.println("Entrez votre mot de passe : ");
             mdp = Lire.S();
         }
-        etapeAtelier(gestionnaire);
+        gestionnaire.etapeAtelier();
         while (reponse!="0"){
             System.out.println("---------- Choix de l'espace ----------");
             System.out.println("0) Fermer");
@@ -209,51 +201,179 @@ public class Gestionnaire {
             System.out.println("4) Opérateur");
             System.out.println("5) Gestion Atelier");
             reponse=Lire.S();
-            switch (reponse)
+            while (reponse!="0"){
+                switch (reponse){
+                    case "0":
+                    break;
+                    case "1":
+                    gestionnaire.etapeProduction();
+                    break;
+                    case "2":
+                    gestionnaire.etapeMachine();
+                    break;
+                    case "3":
+                    gestionnaire.etapeProduit();
+                    break;
+                    case "4":
+                    gestionnaire.etapeOperateur();
+                    break;
+                    case "5":
+                    gestionnaire.etapeGestionAtelier();
+                    break;
+                    default:
+                    System.out.println("Réponse invalide !");
+                    System.out.println("0) Fermer");
+                    System.out.println("1) Production");
+                    System.out.println("2) Machine");
+                    System.out.println("3) Produit");
+                    System.out.println("4) Opérateur");
+                    System.out.println("5) Gestion Atelier");
+                    reponse=Lire.S();
+                }
+            }
         }
     }
-    public static void etapeAtelier(Gestionnaire g){
-        System.out.println("---------- Etape l'atelier ----------");
+    public void etapeAtelier(){
+        System.out.println("---------- Etape Atelier ----------");
         System.out.println("1) Se connecter à un atelier");
         System.out.println("2) Créer un atelier");
         System.out.println("3) Fermer");
         String reponse = Lire.S();
         String reponse_2 = "";
-        while (reponse =="2"){
-            System.out.println("Nom de l'atelier : ");
-            String r1=Lire.S();
-            System.out.println("Mot de passe : ");
-            String r2 = Lire.S();
-            g.creerAtelier(r1,"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01",r2);
-            System.out.println("---------- Etape atelier ----------");
-            System.out.println("1) Se connecter à un atelier");
-            System.out.println("2) Créer un atelier");
-            System.out.println("3) Fermer");
-            reponse = Lire.S();
-        }
-        if (reponse=="1"){
-            System.out.println("A quel atelier se connecter ?");
-            for (int i=0;i<g.getListeAtelier().size();i++){
-                System.out.println(i+") "+g.getListeAtelier().get(i).getNom());
+        while (reponse!="3"){
+            switch (reponse){
+                case "1":
+                System.out.println("A quel atelier se connecter ?");
+                for (int i=0;i<this.getListeAtelier().size();i++){
+                    System.out.println(i+") "+this.getListeAtelier().get(i).getNom());
+                }
+                System.out.println("Numéro d'atelier : ");
+                reponse_2 = Lire.S();
+                g.setCurAtelier(Integer.parseInt(reponse_2));
+                break;
+                case "2":
+                System.out.println("Nom de l'atelier : ");
+                String r1=Lire.S();
+                System.out.println("Mot de passe : ");
+                String r2 = Lire.S();
+                this.creerAtelier(r1,"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01",r2);
+                System.out.println("1) Se connecter à un atelier");
+                System.out.println("2) Créer un atelier");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
+                break;
+                case "3":
+                break;
+                default :
+                System.out.println("Réponse invalide !");
+                System.out.println("1) Se connecter à un atelier");
+                System.out.println("2) Créer un atelier");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
             }
-            System.out.println("Numéro d'atelier : ");
-            reponse_2 = Lire.S();
-            g.setCurAtelier(Integer.parseInt(reponse_2));
         }
     }
-    public void etapeProduction(Gestionnaire g){
-
+    public void etapeProduction(){
+        System.out.println("---------- Etape Production ----------");
+        System.out.println("1) Liste des produits");
+        System.out.println("2) Panier");
+        System.out.println("3) Fermer");
+        String reponse = Lire.S();
+        while (reponse != "3"){
+            switch(reponse){
+                case "1":
+                break;
+                case "2":
+                break;
+                case "3":
+                break;
+                default:
+                System.out.println("Réponse invalide !");
+                System.out.println("---------- Etape Production ----------");
+                System.out.println("1) Liste des produits");
+                System.out.println("2) Panier");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
+            }
+        }
     }
-    public void etapeMachine(Gestionnaire g){
-        
+    public void etapeMachine(){
+        System.out.println("---------- Etape Machine ----------");
+        System.out.println("1) Liste des machines");
+        System.out.println("2) Ajouter une machine");
+        System.out.println("3) Fermer");
+        String reponse = Lire.S();
+        while (reponse != "3"){
+            switch(reponse){
+                case "1":
+                break;
+                case "2":
+                break;
+                case "3":
+                break;
+                default:
+                System.out.println("Réponse invalide !");
+                System.out.println("---------- Etape Machine ----------");
+                System.out.println("1) Liste des machines");
+                System.out.println("2) Ajouter une machine");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
+            }
+        }
     }
-    public void etapeProduit(Gestionnaire g){
-        
+    public void etapeProduit(){
+        System.out.println("---------- Etape Produit ----------");
+        System.out.println("1) Liste des produits");
+        System.out.println("2) Ajouter un produit");
+        System.out.println("3) Fermer");
+        String reponse = Lire.S();
+        while (reponse != "3"){
+            switch(reponse){
+                case "1":
+                break;
+                case "2":
+                break;
+                case "3":
+                break;
+                default:
+                System.out.println("Réponse invalide !");
+                System.out.println("---------- Etape Produit ----------");
+                System.out.println("1) Liste des produits");
+                System.out.println("2) Ajouter un produit");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
+            }
+        }
     }
-    public void etapeOperateur(Gestionnaire g){
-        
+    public void etapeOperateur(){
+        System.out.println("---------- Etape Opérateur ----------");
+        System.out.println("1) Liste des opérateurs");
+        System.out.println("2) Ajouter un opérateur");
+        System.out.println("3) Fermer");
+        String reponse = Lire.S();
+        while (reponse != "3"){
+            switch(reponse){
+                case "1":
+                break;
+                case "2":
+                break;
+                case "3":
+                break;
+                default:
+                System.out.println("Réponse invalide !");
+                System.out.println("---------- Etape Opérateur ----------");
+                System.out.println("1) Liste des opérateur");
+                System.out.println("2) Ajouter un opérateur");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
+            }
+        }
     }
-    public void etapeGestionAtelier(Gestionnaire g){
+    public void etapeGestionAtelier(){
         
     }
 }
+
+//idée 1 utilisation BDD : dans les classes-tables, faire des methodes statiques qui renvoient un objet de la classe en question et qui applique la commande sql souhaitée
+//idée 2 utilisation BDD : assimiler chaque table à une classe et recreer la structure en java. L'interet de la bdd ici serait de récuperer une liste complète de données à chaque rafraichissement, il faudra donc penser à réinitialiser les listes a chaque rafraichissement.
+// ==> on gardera l'idée 2. De plus, on utilisera les classes-tables (autre que Atelier) pour gérer les modifications des objets dans les tables.
