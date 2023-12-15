@@ -24,19 +24,15 @@ public class Gestionnaire {
 
     public Gestionnaire(){
         this.listeAtelier=new ArrayList<Atelier>();
-    }
-    public Gestionnaire(Connection con){
-        this.con=con;
-    }
-
-    public ArrayList<Atelier> getListeAtelier(){
-        ArrayList<Atelier> liste= new ArrayList<Atelier>();
-        //recuperer les ateliers de la base de données, créer pour chaque ligne un atelier (renseigné completement), l'ajouter à la liste
-        return liste;
+        initialiserConnection();
     }
 
     public void setCurAtelier(int id){
-        this.cur_atelier=this.listeAtelier.get(id);
+        this.cur_atelier=Atelier.getAtelier(id, this.con);
+    }
+
+    public void setCurUser(int id){
+        this.cur_user=Utilisateur.getUtilisateur(id, this.con);
     }
 
     public Connection getConnection(){
@@ -47,11 +43,11 @@ public class Gestionnaire {
         this.con=c;
     }
 
-    public void setupCon(Atelier a){
+    public void initialiserConnection(){
         try {
             Connection c;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            c = DriverManager.getConnection("jdbc:mysql:"+a.getBdd(),a.getNom_utilisateur(),a.getMdp());
+            c = DriverManager.getConnection("jdbc:mysql:"+"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01","976e74f9");
             connect(c);
             System.out.println("Connexion établie");
         }
@@ -60,34 +56,36 @@ public class Gestionnaire {
         }
     }
 
-    public void creerAtelier(String n, String b, String n_u, String m){
-        if(uniciteAtelier(n, b, n_u)&&atelierPossible(b, n_u, m)){
-            Atelier at=new Atelier(n, b, n_u, m);
-            listeAtelier.add(at);
-            System.out.println("Atelier créé avec succès");
+    public void creerAtelier(String nom, String bdd, String nom_utilisateur, String mdp){
+        if(uniciteAtelier(nom, mdp, nom_utilisateur)&&atelierPossible(mdp, nom_utilisateur, mdp)){
+            Atelier at=new Atelier(nom, mdp, nom_utilisateur, mdp);
+            at.enregistrer(this.con);
         }
         else{
             System.out.println("Cet atelier ne peut pas être crée");
         }
     }
 
-    public boolean uniciteAtelier(String n, String b, String n_u){ //regarde si existe déjà dans la bdd
+    public boolean uniciteAtelier(String nom, String bdd, String nom_utilisateur){ //regarde si l'atelier existe déjà dans la bdd
+        this.listeAtelier=Atelier.listerAtelier(this.con);
         for (int i=0;i<this.listeAtelier.size();i++){
-            if ((listeAtelier.get(i).getNom()==n)||(listeAtelier.get(i).getBdd()==b)||(listeAtelier.get(i).getNom_utilisateur()==n_u)){
+            if ((listeAtelier.get(i).getNom()==nom)||(listeAtelier.get(i).getBdd()==bdd)||(listeAtelier.get(i).getNom_utilisateur()==nom_utilisateur)){
                 System.out.println("Cet atelier existe déjà sous le nom ["+listeAtelier.get(i).getNom()+"], la base de données ["+listeAtelier.get(i).getBdd()+"] et le nom d'utilisateur ["+listeAtelier.get(i).getNom_utilisateur()+"]");
                 return false;
             }
         }
         return true;
     }
-    public boolean atelierPossible(String b, String n_u, String m){ //regarde si la bdd existe
+    public boolean atelierPossible(String bdd, String nom_utilisateur, String mdp){ //regarde si la bdd existe, i.e. si on peut s'y connecter
         try {
+            Connection ancienneConnection = this.con;
             Connection c;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            c = DriverManager.getConnection("jdbc:mysql:"+b,n_u,m);
+            c = DriverManager.getConnection("jdbc:mysql:"+bdd,nom_utilisateur,mdp);
             connect(c);
             System.out.println("Création atelier possible");
             c.close();
+            connect(ancienneConnection);
             return true;
         }
         catch (Exception e){
@@ -95,61 +93,28 @@ public class Gestionnaire {
             return false;
         }
     }
-    //Possibilité : créer une fonction creerSchema qui, lorsqu'on crée un atelier sur une nouvelle base de données, créé son schéma
 
-    //Vérifie la correspondance des données utilisateurs avec la base de données de l'atelier. Renvoie un String de la catégorie d'utilisateur (Admin, Utilisateur ou Aucun)
-    public void demarrage(Atelier atelier, String utilisateur, String motDePasse){
-        try{
-            this.setupCon(atelier);
+    public void connectionAtelier(int idAtelier){
+        this.cur_atelier=Atelier.getAtelier(idAtelier, this.con);
+        try {
+            Connection c;
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            c = DriverManager.getConnection("jdbc:mysql:"+this.cur_atelier.getBdd(),this.cur_atelier.getNom_utilisateur(),this.cur_atelier.getMdp());
+            connect(c);
+            System.out.println("Connexion à l'atelier établie");
         }
         catch (Exception e){
+            System.out.println("Echec de connexion :"+e);
         }
-        try(PreparedStatement st = this.con.prepareStatement("SELECT role FROM utilisateur WHERE username EQUALS ? AND password EQUALS ?")){
-            st.setString(1,utilisateur);
-            st.setString(2,motDePasse);
-            ResultSet resultat = st.executeQuery();
-            if (resultat.next()){
-                this.current_user=resultat.getString("username");
-            }
-            else{
-                this.current_user="Aucun";
-            }
-        }
-        catch (SQLException e){
-            this.current_user="Aucun";
-        }
-        System.out.println(this.current_user);
     }
 
-    /*public void afficherTableEntiere(){
-         if (this.con != null) {
-            try (Statement statement = this.con.createStatement()){
-                String sqlQuery = "SELECT role FROM utilisateur";
-                ResultSet resultSet = statement.executeQuery(sqlQuery);
-
-                while (resultSet.next()) {
-                    //int id = resultSet.getInt("id");
-                    String role = resultSet.getString("role");
-                    //String e= resultSet.getString("etat");
-                    //double p=resultSet.getDouble("puissance");
-                    //listeMachine.add(new Machine(id, nom, e,p));
-                    //System.out.println("ID : " + id + ", Nom : " + nom);
-                    System.out.println(role);
-                }
-
-                resultSet.close();
-                statement.close();
-                this.con.close();
-            } catch (SQLException e) {
-                System.err.println("Erreur lors de l'exécution de la requête : " + e.getMessage());
-            }
-        }
-    }*/
+    //Possibilité : créer une fonction creerSchema qui, lorsqu'on crée un atelier sur une nouvelle base de données, créé son schéma
 
     public boolean authentification(String usr, String mdp){
-        try(PreparedStatement ps = this.con.prepareStatement("SELECT * FROM Utilisateur WHERE Nom_Utilisateur EQUALS ? AND MDP EQUALS ?")){
+        try(PreparedStatement ps = this.con.prepareStatement("SELECT * FROM Utilisateur WHERE Nom_Utilisateur = ? AND MDP = ?")){
             ps.setString(1,usr);
             ps.setString(2,mdp);
+            //System.out.println("Info : "+usr+" , "+mdp);
             ResultSet resultat = ps.executeQuery();
             if(resultat.next()){
                 int id=resultat.getInt("ID");
@@ -161,35 +126,31 @@ public class Gestionnaire {
                 return true;
             }
             else{
+                System.out.println("Erreur d'authentification : vérifiez votre nom d'utilisateur ou votre mot de passe");
                 return false;
             }
         }
         catch (SQLException e){
-            System.out.println("Erreur d'authentification : vérifiez votre nom d'utilisateur ou votre mot de passe");
+            System.out.println("Erreur : "+e);
             return false;
         }
     }
 
     public static void main(String[] args) {
-        Gestionnaire gestionnaire=new Gestionnaire();
-        gestionnaire.creerAtelier("INSA", "//92.222.25.165:3306/m3_rmbola_tembo01", "m3_rmbola_tembo01", "976e74f9");
-        gestionnaire.demarrage(gestionnaire.listeAtelier.get(0),"Régis","regis03");
-        //gestionnaire.afficherTableEntiere();
+        interfaceTextuelle();
     }
 
-    public static void interfaceTextuelle(String[] args){
+    public static void interfaceTextuelle(){
         Gestionnaire gestionnaire = new Gestionnaire();
-        gestionnaire.creerAtelier("INSA", "//92.222.25.165:3306/m3_rmbola_tembo01", "m3_rmbola_tembo01", "976e74f9"); //modifier cette fonction pour que l'atelier soit ajouté à la bdd
         String username = "";
         String mdp = "";
         String reponse = "";
-        while (!gestionnaire.authentification(username,mdp)){
             System.out.println("---------- Authentification ----------");
             System.out.println("Entrez votre nom d'utilisateur : ");
             username = Lire.S();
             System.out.println("Entrez votre mot de passe : ");
             mdp = Lire.S();
-        }
+            gestionnaire.authentification(username,mdp);
         gestionnaire.etapeAtelier();
         while (reponse!="0"){
             System.out.println("---------- Choix de l'espace ----------");
@@ -234,17 +195,23 @@ public class Gestionnaire {
     }
     public void etapeAtelier(){
         System.out.println("---------- Etape Atelier ----------");
-        System.out.println("1) Se connecter à un atelier");
+        if (!Atelier.listerAtelier(this.con).isEmpty()){
+            System.out.println("1) Se connecter à un atelier");
+        }
         System.out.println("2) Créer un atelier");
-        System.out.println("3) Fermer");
+        System.out.println("3) Supprimer un atelier");
+        System.out.println("0) Fermer");
         String reponse = Lire.S();
         String reponse_2 = "";
-        while (reponse!="3"){
+        while (reponse!="0"){
             switch (reponse){
+                case "0":
+                break;
                 case "1":
+                this.listeAtelier=Atelier.listerAtelier(this.con);
                 System.out.println("A quel atelier se connecter ?");
-                for (int i=0;i<Atelier.listerAtelier(this.con).size();i++){
-                    System.out.println(Atelier.listerAtelier(this.con).get(i).toString());
+                for (int i=0;i<this.listeAtelier.size();i++){
+                    System.out.println(this.listeAtelier.get(i).toString());
                 }
                 System.out.println("Numéro d'atelier : ");
                 reponse_2 = Lire.S();
@@ -258,16 +225,26 @@ public class Gestionnaire {
                 this.creerAtelier(r1,"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01",r2);
                 System.out.println("1) Se connecter à un atelier");
                 System.out.println("2) Créer un atelier");
-                System.out.println("3) Fermer");
+                System.out.println("3) Suprimer un atelier");
+                System.out.println("0) Fermer");
                 reponse = Lire.S();
                 break;
                 case "3":
+                this.listeAtelier=Atelier.listerAtelier(this.con);
+                System.out.println("Quel atelier supprimer ?");
+                for (int i=0;i<this.listeAtelier.size();i++){
+                    System.out.println(this.listeAtelier.get(i).toString());
+                }
+                System.out.println("Numéro d'atelier : ");
+                reponse_2 = Lire.S();
+                Atelier.supprimer(Integer.parseInt(reponse_2), this.con);
                 break;
                 default :
                 System.out.println("Réponse invalide !");
                 System.out.println("1) Se connecter à un atelier");
                 System.out.println("2) Créer un atelier");
-                System.out.println("3) Fermer");
+                System.out.println("3) Supprimer un atelier");
+                System.out.println("0) Fermer");
                 reponse = Lire.S();
             }
         }

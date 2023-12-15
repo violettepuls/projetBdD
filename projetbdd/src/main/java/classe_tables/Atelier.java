@@ -150,6 +150,67 @@ public class Atelier {
         }
     }
 
+    public static Atelier getAtelier(int id, Connection con){
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Atelier WHERE ID = ?")){
+            ps.setInt(1,id);
+            ResultSet resultat = ps.executeQuery();
+            if(resultat.next()){
+                return new Atelier(resultat.getInt("ID"),resultat.getString("Nom"),resultat.getString("BDD"),resultat.getString("Nom_Utilisateur"),resultat.getString("MDP_BDD"));
+            }
+            else{
+                System.out.println("Aucun atelier de trouvé");
+                return null;
+            }
+        }
+        catch (SQLException e){
+            System.out.println("Erreur : "+e);
+            return null;
+        }
+    }
+
+    public void enregistrer(Connection con){
+        try{
+            con.setAutoCommit(false);
+            try (PreparedStatement st = con.prepareStatement("insert into Atelier (Nom,BDD,Nom_Utilisateur,MDP_BDD) values (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
+                st.setString(1,this.nom);
+                st.setString(2,this.bdd);
+                st.setString(3,this.nom_utilisateur);
+                st.setString(4,this.mdp);
+                st.executeUpdate();
+                System.out.println("Atelier créé !");
+            }
+            catch(SQLException sqle){
+                System.out.println("Echec de création : " + sqle);
+            }
+            finally{
+                con.setAutoCommit(true);
+            }
+        }
+        catch(SQLException f){
+            System.out.println("Erreur autoCommit : "+f);
+        }
+    }
+
+    public static void supprimer(int id, Connection con){
+        try{
+            con.setAutoCommit(false);
+            try (PreparedStatement ps = con.prepareStatement("DELETE FROM Atelier WHERE ID = ?")){
+                ps.setInt(1,id);
+                ps.executeUpdate();
+                System.out.println("Atelier supprimé !");
+            }
+            catch (SQLException e){
+                System.out.println("Erreur de suppression : " + e);
+            }
+            finally {
+                con.setAutoCommit(true);
+            }
+        }
+        catch (SQLException f){
+            System.out.println("Erreur setAutoCommit : " + f);
+        }
+    }
+
     @Override
     public String toString(){
         String s = this.nom + ", ID : " + this.id;

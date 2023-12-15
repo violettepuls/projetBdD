@@ -80,21 +80,23 @@ public class Utilisateur {
         this.operateur=op;
     }
     
-    public static ArrayList<Utilisateur> rechercheUtilisateur(int id, Connection con){
-        ArrayList<Utilisateur> listeUtilisateur = new ArrayList<Utilisateur>();
-        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE id EQUALS ?")){
+    public static Utilisateur getUtilisateur(int id, Connection con){
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE id = ?")){
             ps.setInt(1,id);
             ResultSet resultat = ps.executeQuery();
-            while(resultat.next()){
+            if(resultat.next()){
                 int ide=resultat.getInt("ID");
                 String nom = resultat.getString("Nom");
                 String prenom = resultat.getString("Prenom");
                 String role = resultat.getString("Role");
                 boolean op=resultat.getBoolean("Operateur");
                 String usr=resultat.getString("Nom_Utilisateur");
-                listeUtilisateur.add(new Utilisateur(ide,nom, prenom, usr, role,op));
+                return new Utilisateur(ide,nom, prenom, usr, role,op);
             }
-            return listeUtilisateur;
+            else{
+                System.out.println("Utilisateur inexistant");
+                return null;
+            }
         }
         catch (SQLException e){
             System.out.println("Erreur : "+e);
@@ -103,7 +105,7 @@ public class Utilisateur {
     }
     public static ArrayList<Utilisateur> rechercheUtilisateur(boolean op, Connection con){
         ArrayList<Utilisateur> listeUtilisateur = new ArrayList<Utilisateur>();
-        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE Operateur EQUALS ?")){
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE Operateur = ?")){
             ps.setBoolean(1,op);
             ResultSet resultat = ps.executeQuery();
             while(resultat.next()){
@@ -124,7 +126,7 @@ public class Utilisateur {
     }
     public static ArrayList<Utilisateur> rechercheUtilisateur(String role, Connection con){
         ArrayList<Utilisateur> listeUtilisateur = new ArrayList<Utilisateur>();
-        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE Role EQUALS ?")){
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE Role = ?")){
             ps.setString(1,role);
             ResultSet resultat = ps.executeQuery();
             if(resultat.next()){
@@ -145,7 +147,7 @@ public class Utilisateur {
     }
     public static ArrayList<Utilisateur> rechercheUtilisateur(String p, String n, Connection con){
         ArrayList<Utilisateur> listeUtilisateur = new ArrayList<Utilisateur>();
-        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE Prenom EQUALS ? AND Nom EQUALS ?")){
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur WHERE Prenom = ? AND Nom = ?")){
             ps.setString(1,p);
             ps.setString(2,n);
             ResultSet resultat = ps.executeQuery();
@@ -166,29 +168,34 @@ public class Utilisateur {
         }
     }
 
-    public void enregistrer(Connection con)throws SQLException{
-        con.setAutoCommit(false);
-        try (PreparedStatement st = con.prepareStatement("insert into Utilisateur (Prenom,Nom,Nom_Utilisateur,Role,MDP,Operateur) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
-            st.setString(1,this.prenom);
-            st.setString(2,this.nom);
-            st.setString(3,this.nom_utilisateur);
-            st.setString(4,this.role);
-            st.setString(5,this.mdp);
-            st.setBoolean(6, this.operateur);
-            st.executeUpdate();
-            System.out.println("Utilisateur créé !");
+    public void enregistrer(Connection con){
+        try{
+            con.setAutoCommit(false);
+            try (PreparedStatement st = con.prepareStatement("insert into Utilisateur (Prenom,Nom,Nom_Utilisateur,Role,MDP,Operateur) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
+                st.setString(1,this.prenom);
+                st.setString(2,this.nom);
+                st.setString(3,this.nom_utilisateur);
+                st.setString(4,this.role);
+                st.setString(5,this.mdp);
+                st.setBoolean(6, this.operateur);
+                st.executeUpdate();
+                System.out.println("Utilisateur créé !");
+            }
+            catch(SQLException sqle){
+                System.out.println("Echec de création : " + sqle);
+            }
+            finally{
+                con.setAutoCommit(true);
+            }
         }
-        catch(SQLException sqle){
-            System.out.println("Echec de création : " + sqle);
-        }
-        finally{
-            con.setAutoCommit(true);
+        catch(SQLException f){
+            System.out.println("Erreur autoCommit : "+f);
         }
     }
 
     public void supprimer(Connection con)throws SQLException{
         con.setAutoCommit(false);
-        try (PreparedStatement st = con.prepareStatement("DELETE FROM Utilisateur WHERE (Prenom,Nom,Nom_Utilisateur,Role,MDP,Operateur) EQUALS (?,?,?,?,?,?)")){
+        try (PreparedStatement st = con.prepareStatement("DELETE FROM Utilisateur WHERE (Prenom,Nom,Nom_Utilisateur,Role,MDP,Operateur) = (?,?,?,?,?,?)")){
             st.setString(1,this.prenom);
             st.setString(2,this.nom);
             st.setString(3,this.nom_utilisateur);
