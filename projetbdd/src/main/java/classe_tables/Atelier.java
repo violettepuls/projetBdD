@@ -1,5 +1,10 @@
 package classe_tables;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Atelier {
@@ -112,7 +117,42 @@ public class Atelier {
         this.nom_utilisateur=n_u;
         this.mdp=m;
     }
+
+    public Atelier(int id, String nom, String bdd, String nom_utilisateur, String mdp){
+        this.id=id;
+        this.nom=nom;
+        this.bdd=bdd;
+        this.nom_utilisateur=nom_utilisateur;
+        this.mdp=mdp;
+    }
+
     public Atelier(String nomAtelier){
 
+    }
+
+    public static ArrayList<Atelier> listerAtelier(Connection con){
+        ArrayList<Atelier> listeAtelier = new ArrayList<Atelier>();
+        try(Statement ps = con.createStatement()){
+            ResultSet resultat = ps.executeQuery("SELECT * FROM Atelier");
+            while(resultat.next()){
+                int id=resultat.getInt("ID");
+                String nom = resultat.getString("Nom");
+                String bdd = resultat.getString("BDD");
+                String usr=resultat.getString("Nom_Utilisateur");
+                String mdp=resultat.getString("MDP_BDD");
+                listeAtelier.add(new Atelier(id,nom, bdd, usr, mdp));
+            }
+            return listeAtelier;
+        }
+        catch (SQLException e){
+            System.out.println("Erreur : "+e);
+            return null;
+        }
+    }
+
+    @Override
+    public String toString(){
+        String s = this.nom + ", ID : " + this.id;
+        return s;
     }
 }

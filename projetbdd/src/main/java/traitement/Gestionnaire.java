@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.apache.tomcat.websocket.Util;
+
 import classe_tables.Atelier;
 import classe_tables.Machine;
 import classe_tables.Utilisateur;
@@ -119,7 +121,7 @@ public class Gestionnaire {
         System.out.println(this.current_user);
     }
 
-    public void afficherTableEntiere(){
+    /*public void afficherTableEntiere(){
          if (this.con != null) {
             try (Statement statement = this.con.createStatement()){
                 String sqlQuery = "SELECT role FROM utilisateur";
@@ -142,32 +144,29 @@ public class Gestionnaire {
                 System.err.println("Erreur lors de l'exécution de la requête : " + e.getMessage());
             }
         }
-    }
-
-    public void nouvelleEntree() throws SQLException{
-        this.con.setAutoCommit(false);
-        try (PreparedStatement st = this.con.prepareStatement("insert into machine_bis (ref,etat,puissance) values (?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
-            st.setString(1,"3TT_evo_IV");
-            st.setString(2,"HS");
-            st.setInt(3,120);
-            st.executeUpdate();
-            System.out.println("Donnée envoyée");
-        }
-        catch(SQLException sqle){
-            System.out.println("Echec d'envoie : " + sqle);
-        }
-        finally{
-            this.con.setAutoCommit(true);
-        }
-    }
-
-    public void supprimerEntree(){
-
-    }
+    }*/
 
     public boolean authentification(String usr, String mdp){
-        try(PreparedStatement ps = this.con.prepareStatement("SELECT * FROM utilisateur WHERE username EQUALS ? AND password EQUALS ?")){
-
+        try(PreparedStatement ps = this.con.prepareStatement("SELECT * FROM Utilisateur WHERE Nom_Utilisateur EQUALS ? AND MDP EQUALS ?")){
+            ps.setString(1,usr);
+            ps.setString(2,mdp);
+            ResultSet resultat = ps.executeQuery();
+            if(resultat.next()){
+                int id=resultat.getInt("ID");
+                String nom = resultat.getString("Nom");
+                String prenom = resultat.getString("Prenom");
+                String role = resultat.getString("Role");
+                boolean op=resultat.getBoolean("Operateur");
+                this.cur_user=new Utilisateur(id,nom, prenom, usr, role,op);
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        catch (SQLException e){
+            System.out.println("Erreur d'authentification : vérifiez votre nom d'utilisateur ou votre mot de passe");
+            return false;
         }
     }
 
@@ -175,7 +174,7 @@ public class Gestionnaire {
         Gestionnaire gestionnaire=new Gestionnaire();
         gestionnaire.creerAtelier("INSA", "//92.222.25.165:3306/m3_rmbola_tembo01", "m3_rmbola_tembo01", "976e74f9");
         gestionnaire.demarrage(gestionnaire.listeAtelier.get(0),"Régis","regis03");
-        gestionnaire.afficherTableEntiere();
+        //gestionnaire.afficherTableEntiere();
     }
 
     public static void interfaceTextuelle(String[] args){
@@ -184,7 +183,7 @@ public class Gestionnaire {
         String username = "";
         String mdp = "";
         String reponse = "";
-        while (!authentification(username,mdp)){
+        while (!gestionnaire.authentification(username,mdp)){
             System.out.println("---------- Authentification ----------");
             System.out.println("Entrez votre nom d'utilisateur : ");
             username = Lire.S();
@@ -244,12 +243,12 @@ public class Gestionnaire {
             switch (reponse){
                 case "1":
                 System.out.println("A quel atelier se connecter ?");
-                for (int i=0;i<this.getListeAtelier().size();i++){
-                    System.out.println(i+") "+this.getListeAtelier().get(i).getNom());
+                for (int i=0;i<Atelier.listerAtelier(this.con).size();i++){
+                    System.out.println(Atelier.listerAtelier(this.con).get(i).toString());
                 }
                 System.out.println("Numéro d'atelier : ");
                 reponse_2 = Lire.S();
-                g.setCurAtelier(Integer.parseInt(reponse_2));
+                this.setCurAtelier(Integer.parseInt(reponse_2));
                 break;
                 case "2":
                 System.out.println("Nom de l'atelier : ");
@@ -370,7 +369,28 @@ public class Gestionnaire {
         }
     }
     public void etapeGestionAtelier(){
-        
+        System.out.println("---------- Etape Gestion atelier ----------");
+        System.out.println("1) Paramètres d'atelier");
+        System.out.println("2) Liste des utilisateurs");
+        System.out.println("3) Fermer");
+        String reponse = Lire.S();
+        while (reponse != "3"){
+            switch(reponse){
+                case "1":
+                break;
+                case "2":
+                break;
+                case "3":
+                break;
+                default:
+                System.out.println("Réponse invalide !");
+                System.out.println("---------- Etape Opérateur ----------");
+                System.out.println("1) Paramètre d'atelier");
+                System.out.println("2) Liste des utilisateurs");
+                System.out.println("3) Fermer");
+                reponse = Lire.S();
+            }
+        }
     }
 }
 

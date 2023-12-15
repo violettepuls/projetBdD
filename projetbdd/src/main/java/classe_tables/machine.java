@@ -74,4 +74,8 @@ public class Machine {
         this.etat=etat;
         this.puissance=puissance;
     }
+
+    public static Machine rechercheMachine(){
+
+    }
 }
