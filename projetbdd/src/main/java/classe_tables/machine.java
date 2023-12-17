@@ -2,7 +2,7 @@ package classe_tables;
 
 import java.util.ArrayList;
 
-public class Machine {
+public class machine {
 
     private int id;
     private String nom;
@@ -11,6 +11,7 @@ public class Machine {
     private double puissance;
     private ArrayList<Double> dimension; //format [x,y,z]
     private ArrayList<OperationElementaire> listeOperation;
+    private int Atelier;
 
     public int getId(){
         return this.id;
@@ -68,14 +69,20 @@ public class Machine {
         this.listeOperation = listeOperation;
     }
     
-    public Machine(int id,String ref,String etat,double puissance){
+    public machine(int id, String nom, String ref,String etat,double puissance, int Atelier){
         this.id=id;
         this.ref=ref;
         this.etat=etat;
         this.puissance=puissance;
+        this.nom=nom;
+        this.Atelier=Atelier;
     }
 
-    public static Machine rechercheMachine(){
+    public void printf(){
+        System.out.println(this.);
+    }
 
+    public static machine rechercheMachine(){
+        return null; 
     }
 }

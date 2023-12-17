@@ -7,11 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tomcat.websocket.Util;
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
+
 import classe_tables.Atelier;
-import classe_tables.Machine;
+import classe_tables.machine;
 import classe_tables.Utilisateur;
 
 public class Gestionnaire {
@@ -22,7 +25,7 @@ public class Gestionnaire {
     private Utilisateur cur_user;
     private Atelier cur_atelier;
 
-    public Gestionnaire(){
+    public Gestionnaire() throws SQLException, ClassNotFoundException{
         this.listeAtelier=new ArrayList<Atelier>();
         initialiserConnection();
     }
@@ -43,13 +46,14 @@ public class Gestionnaire {
         this.con=c;
     }
 
-    public void initialiserConnection(){
+    public void initialiserConnection() throws SQLException, ClassNotFoundException{
         try {
             Connection c;
             Class.forName("com.mysql.cj.jdbc.Driver");
             c = DriverManager.getConnection("jdbc:mysql:"+"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01","976e74f9");
-            connect(c);
+            c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             System.out.println("Connexion établie");
+            connect(c);
         }
         catch (Exception e){
             System.out.println("echec de connexion :"+e);
@@ -136,22 +140,24 @@ public class Gestionnaire {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException,ClassNotFoundException{
         interfaceTextuelle();
     }
 
-    public static void interfaceTextuelle(){
+    public static void interfaceTextuelle() throws SQLException,ClassNotFoundException{
         Gestionnaire gestionnaire = new Gestionnaire();
         String username = "";
         String mdp = "";
         String reponse = "";
+        
             System.out.println("---------- Authentification ----------");
             System.out.println("Entrez votre nom d'utilisateur : ");
             username = Lire.S();
             System.out.println("Entrez votre mot de passe : ");
             mdp = Lire.S();
             gestionnaire.authentification(username,mdp);
-        gestionnaire.etapeAtelier();
+        //gestionnaire.etapeAtelier();
+        
         while (reponse!="0"){
             System.out.println("---------- Choix de l'espace ----------");
             System.out.println("0) Fermer");
@@ -273,7 +279,7 @@ public class Gestionnaire {
             }
         }
     }
-    public void etapeMachine(){
+    public void etapeMachine() throws SQLException{
         System.out.println("---------- Etape Machine ----------");
         System.out.println("1) Liste des machines");
         System.out.println("2) Ajouter une machine");
@@ -282,9 +288,14 @@ public class Gestionnaire {
         while (reponse != "3"){
             switch(reponse){
                 case "1":
-                break;
+                List<machine> Machine = getListMachineAtelier(cur_atelier);  // c ok 
+                for(int i=0; i<Machine.size();i++){
+                    Machine.get(i).printf();
+                }
+                reponse = "4";
                 case "2":
-                break;
+                creerMachine(20, "Machine2","Fraiseuse", "oui", 50000000, 2); //c ok 
+                reponse="4";
                 case "3":
                 break;
                 default:
@@ -294,9 +305,44 @@ public class Gestionnaire {
                 System.out.println("2) Ajouter une machine");
                 System.out.println("3) Fermer");
                 reponse = Lire.S();
+                case "4": 
+                break;
             }
         }
     }
+    public void creerMachine( int ID, 
+        String nom, String ref, String Etat, double P, int Atelier) throws SQLException {
+            try(PreparedStatement pst = this.con.prepareStatement(
+                """
+                insert into Machine (ID,Nom,Reference,Etat,Puissance,Atelier)
+                values (?,?,?,?,?,?)
+                """)) {
+                pst.setInt(1, ID);
+                pst.setString(2, nom);
+                pst.setString(3, ref);
+                pst.setString(4, Etat);
+                pst.setDouble(5, P);
+                pst.setInt(6, Atelier);
+                pst.executeUpdate();
+            }
+        }
+
+    public List<machine> getListMachineAtelier(Atelier AtelierActuel) throws SQLException{
+        List<machine> Machine = new ArrayList<>();
+
+        try ( PreparedStatement st = this.con.prepareStatement(
+                "select * from Machine ")) {
+            ResultSet res = st.executeQuery();
+            while (res.next()) {
+                Machine.add(new machine(res.getInt("ID"), res.getString("Nom"), res.getString("Reference"), res.getString("Etat"), res.getDouble("Puissance"), res.getInt("Atelier")));
+            }
+        }
+
+        return Machine;
+
+    }
+
+    
     public void etapeProduit(){
         System.out.println("---------- Etape Produit ----------");
         System.out.println("1) Liste des produits");
