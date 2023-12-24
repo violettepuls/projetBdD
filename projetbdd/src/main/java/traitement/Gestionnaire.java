@@ -14,6 +14,9 @@ import org.apache.tomcat.websocket.Util;
 import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 import classe_tables.Atelier;
+import classe_tables.Gamme;
+import classe_tables.OperationElementaire;
+import classe_tables.Produit;
 import classe_tables.machine;
 import classe_tables.Utilisateur;
 
@@ -21,9 +24,9 @@ public class Gestionnaire {
 
     private Connection con;
     private ArrayList<Atelier> listeAtelier;
-    private String current_user;
     private Utilisateur cur_user;
     private Atelier cur_atelier;
+    private ArrayList<Produit> cur_panier;
 
     public Gestionnaire() throws SQLException, ClassNotFoundException{
         this.listeAtelier=new ArrayList<Atelier>();
@@ -46,7 +49,7 @@ public class Gestionnaire {
         this.con=c;
     }
 
-    public void initialiserConnection() throws SQLException, ClassNotFoundException{
+    public void initialiserConnection() throws SQLException, ClassNotFoundException{ // Initialisation de la connexion à notre base de données principale. C'est celle-ci qui contiendra la liste de tous les ateliers existants, dont chacun d'entre eux pourraient avoir ses données ailleurs.
         try {
             Connection c;
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -61,8 +64,8 @@ public class Gestionnaire {
     }
 
     public void creerAtelier(String nom, String bdd, String nom_utilisateur, String mdp){
-        if(uniciteAtelier(nom, mdp, nom_utilisateur)&&atelierPossible(mdp, nom_utilisateur, mdp)){
-            Atelier at=new Atelier(nom, mdp, nom_utilisateur, mdp);
+        if(uniciteAtelier(nom, mdp, nom_utilisateur)&&atelierPossible(bdd, nom_utilisateur, mdp)){
+            Atelier at=new Atelier(nom, bdd, nom_utilisateur, mdp);
             at.enregistrer(this.con);
         }
         else{
@@ -112,7 +115,29 @@ public class Gestionnaire {
         }
     }
 
-    //Possibilité : créer une fonction creerSchema qui, lorsqu'on crée un atelier sur une nouvelle base de données, créé son schéma
+    public void refreshListeAtelier() throws SQLException{
+        this.listeAtelier = Atelier.listerAtelier(this.con);
+    }
+
+    public void refreshListeMachine() throws SQLException{
+        this.cur_atelier.setListeMachine(machine.listerMachine(cur_atelier, con));
+    }
+
+    public void refreshListeProduit() throws SQLException{
+        this.cur_atelier.setListeProduit(Produit.listerProduit(cur_atelier, con));
+    }
+
+    public void refreshListeUtilisateur() throws SQLException{
+        this.cur_atelier.setListeUtilisateur(Utilisateur.listerUtilisateur(cur_atelier, con));
+    }
+
+    //Possibilité : créer une fonction creerSchema qui, lorsqu'on crée un atelier sur une nouvelle base de données, créé son schéma et dupplique les informations de l'atelier relatif à cette bdd dans la table Atelier du schéma créé.
+
+    //Possibilité : créer la fonction supprimerSchema relative à creerSchema.
+
+    //Possibilité : créer une fonction verifierSchema qui vérifie si la base de donnée renseignée comporte déja une structure de bdd adéquate.
+
+    //Possibilité : créer une fonction initialiserSchema, qui verifie l'existence d'un schema adéquat, et en crée un si ce n'est pas le cas.
 
     public boolean authentification(String usr, String mdp){
         try(PreparedStatement ps = this.con.prepareStatement("SELECT * FROM Utilisateur WHERE Nom_Utilisateur = ? AND MDP = ?")){
@@ -140,6 +165,24 @@ public class Gestionnaire {
         }
     }
 
+    /*
+    public repartitionMachine(){ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/s] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
+
+    }
+     */
+
+    /*
+    public calculDesTemps(){ // récupère la liste issue de repartition machine et calcule le temps écoulé entre le temps début minimum et le temps fin maximum
+
+    }
+     */
+
+    /*
+    public calculEnergie(){ // récupère la liste issue de repartition machine et calcule l'energie nécessaire à chaque étape pour finalement additionner le tout
+
+    }
+     */
+
     public static void main(String[] args) throws SQLException,ClassNotFoundException{
         interfaceTextuelle();
     }
@@ -148,28 +191,29 @@ public class Gestionnaire {
         Gestionnaire gestionnaire = new Gestionnaire();
         String username = "";
         String mdp = "";
-        String reponse = "";
+        String reponse = "-1";
         
-            System.out.println("---------- Authentification ----------");
-            System.out.println("Entrez votre nom d'utilisateur : ");
-            username = Lire.S();
-            System.out.println("Entrez votre mot de passe : ");
-            mdp = Lire.S();
-            gestionnaire.authentification(username,mdp);
-        //gestionnaire.etapeAtelier();
+        System.out.println("---------- Authentification ----------");
+        System.out.println("Entrez votre nom d'utilisateur : ");
+        username = Lire.S();
+        System.out.println("Entrez votre mot de passe : ");
+        mdp = Lire.S();
+        gestionnaire.authentification(username,mdp);
+
+        if(gestionnaire.etapeAtelier()){
         
-        while (reponse!="0"){
             System.out.println("---------- Choix de l'espace ----------");
-            System.out.println("0) Fermer");
-            System.out.println("1) Production");
-            System.out.println("2) Machine");
-            System.out.println("3) Produit");
-            System.out.println("4) Opérateur");
-            System.out.println("5) Gestion Atelier");
-            reponse=Lire.S();
             while (reponse!="0"){
+                System.out.println("0) Fermer");
+                System.out.println("1) Production");
+                System.out.println("2) Machine");
+                System.out.println("3) Produit");
+                System.out.println("4) Opérateur");
+                System.out.println("5) Gestion Atelier");
+                reponse=Lire.S();
                 switch (reponse){
                     case "0":
+                    reponse = "0";
                     break;
                     case "1":
                     gestionnaire.etapeProduction();
@@ -188,40 +232,45 @@ public class Gestionnaire {
                     break;
                     default:
                     System.out.println("Réponse invalide !");
-                    System.out.println("0) Fermer");
-                    System.out.println("1) Production");
-                    System.out.println("2) Machine");
-                    System.out.println("3) Produit");
-                    System.out.println("4) Opérateur");
-                    System.out.println("5) Gestion Atelier");
-                    reponse=Lire.S();
                 }
             }
         }
     }
-    public void etapeAtelier(){
+    public boolean etapeAtelier(){
+        boolean poursuiteDemarche = true;
         System.out.println("---------- Etape Atelier ----------");
-        if (!Atelier.listerAtelier(this.con).isEmpty()){
-            System.out.println("1) Se connecter à un atelier");
-        }
-        System.out.println("2) Créer un atelier");
-        System.out.println("3) Supprimer un atelier");
-        System.out.println("0) Fermer");
-        String reponse = Lire.S();
-        String reponse_2 = "";
+        String reponse = "-1";
         while (reponse!="0"){
+            System.out.println("0) Fermer");
+            if (!Atelier.listerAtelier(this.con).isEmpty()){
+                System.out.println("1) Se connecter à un atelier");
+            }
+            System.out.println("2) Créer un atelier");
+            System.out.println("3) Supprimer un atelier");
+            reponse = Lire.S();
+            String reponse_2 = "";
             switch (reponse){
                 case "0":
+                reponse = "0";
+                poursuiteDemarche = false;
                 break;
                 case "1":
-                this.listeAtelier=Atelier.listerAtelier(this.con);
-                System.out.println("A quel atelier se connecter ?");
-                for (int i=0;i<this.listeAtelier.size();i++){
-                    System.out.println(this.listeAtelier.get(i).toString());
+                if (!Atelier.listerAtelier(this.con).isEmpty()){
+                    this.listeAtelier=Atelier.listerAtelier(this.con);
+                    System.out.println("A quel atelier se connecter ?");
+                    for (int i=0;i<this.listeAtelier.size();i++){
+                        System.out.println(this.listeAtelier.get(i).toString());
+                    }
+                    System.out.println("Numéro d'atelier : ");
+                    reponse_2 = Lire.S();
+                    this.setCurAtelier(Integer.parseInt(reponse_2));
+                    // Ici, on devrait ajouter une ligne qui change la connexion de la base de données actuelle à celle de l'atelier. On ne le fait pas car il faudrait être en mesure de créer procéduralement le schéma sur une toute nouvelle base de donnée.
+                    reponse = "0";
+                    poursuiteDemarche = true;
                 }
-                System.out.println("Numéro d'atelier : ");
-                reponse_2 = Lire.S();
-                this.setCurAtelier(Integer.parseInt(reponse_2));
+                else{
+                    System.out.println("Il n'existe pas d'atelier. Créez un atelier pour commencer.");
+                }
                 break;
                 case "2":
                 System.out.println("Nom de l'atelier : ");
@@ -229,189 +278,189 @@ public class Gestionnaire {
                 System.out.println("Mot de passe : ");
                 String r2 = Lire.S();
                 this.creerAtelier(r1,"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01",r2);
-                System.out.println("1) Se connecter à un atelier");
-                System.out.println("2) Créer un atelier");
-                System.out.println("3) Suprimer un atelier");
-                System.out.println("0) Fermer");
-                reponse = Lire.S();
                 break;
                 case "3":
-                this.listeAtelier=Atelier.listerAtelier(this.con);
-                System.out.println("Quel atelier supprimer ?");
-                for (int i=0;i<this.listeAtelier.size();i++){
-                    System.out.println(this.listeAtelier.get(i).toString());
+                if (!Atelier.listerAtelier(this.con).isEmpty()){
+                    this.listeAtelier=Atelier.listerAtelier(this.con);
+                    System.out.println("Quel atelier supprimer ?");
+                    for (int i=0;i<this.listeAtelier.size();i++){
+                        System.out.println(this.listeAtelier.get(i).toString());
+                    }
+                    System.out.println("Numéro d'atelier : ");
+                    reponse_2 = Lire.S();
+                    Atelier.supprimer(Integer.parseInt(reponse_2), this.con);
                 }
-                System.out.println("Numéro d'atelier : ");
-                reponse_2 = Lire.S();
-                Atelier.supprimer(Integer.parseInt(reponse_2), this.con);
+                else {
+                    System.out.println("Il n'existe pas d'atelier.");
+                }
                 break;
                 default :
                 System.out.println("Réponse invalide !");
-                System.out.println("1) Se connecter à un atelier");
-                System.out.println("2) Créer un atelier");
-                System.out.println("3) Supprimer un atelier");
-                System.out.println("0) Fermer");
-                reponse = Lire.S();
             }
         }
+        return poursuiteDemarche;
     }
-    public void etapeProduction(){
+    public void etapeProduction() throws SQLException{
         System.out.println("---------- Etape Production ----------");
-        System.out.println("1) Liste des produits");
-        System.out.println("2) Panier");
-        System.out.println("3) Fermer");
-        String reponse = Lire.S();
-        while (reponse != "3"){
+        String reponse = "-1";
+        while (reponse != "0"){
+            System.out.println("0) Fermer");
+            System.out.println("1) Liste des produits");
+            System.out.println("2) Afficher le panier");
+            System.out.println("3) Ajouter un produit au panier");
+            System.out.println("4) Supprimer du panier");
+            System.out.println("5) Lancer la production");
+            reponse = Lire.S();
             switch(reponse){
                 case "1":
+                refreshListeProduit();
+                for (int i=0;i<this.cur_atelier.getListeProduit().size();i++){
+                    System.out.println(this.cur_atelier.getListeProduit().get(i).toString());
+                }
                 break;
                 case "2":
+                for (int i=0;i<this.cur_panier.size();i++){
+                    System.out.println(this.cur_panier.get(i).toString());
+                }
                 break;
                 case "3":
+                refreshListeProduit();
+                for (int i=0;i<this.cur_atelier.getListeProduit().size();i++){
+                    System.out.println(this.cur_atelier.getListeProduit().get(i).toString());
+                }
+                System.out.println("Entrez l'ID du produit à ajouter : ");
+                String r1 = Lire.S();
+                this.cur_panier.add(Produit.getProduit(Integer.parseInt(r1), this.con));
+                break;
+                case "4":
+                for (int i=0;i<this.cur_panier.size();i++){
+                    System.out.println(this.cur_panier.get(i).toString());
+                }
+                System.out.println("Entrez l'ID du produit à enlever : ");
+                String r2 = Lire.S();
+                try{
+                    this.cur_panier.remove(Produit.getProduit(Integer.parseInt(r2), this.con));
+                }
+                catch (Exception e){
+                    System.out.println("Cet objet n'est pas dans le panier.");
+                }
+                break;
+                case "5":
+                System.out.println("Produit en cours de production : ");
+                for (int i=0;i<this.cur_panier.size();i++){
+                    System.out.println(this.cur_panier.get(i).toString());
+                }
+                // repartition machine
+                // calcul des temps de production
+                // calcul de l'énergie de production
+                reponse = "0";
+                break;
+                case "0":
+                reponse = "0";
                 break;
                 default:
                 System.out.println("Réponse invalide !");
-                System.out.println("---------- Etape Production ----------");
-                System.out.println("1) Liste des produits");
-                System.out.println("2) Panier");
-                System.out.println("3) Fermer");
-                reponse = Lire.S();
             }
         }
     }
     public void etapeMachine() throws SQLException{
         System.out.println("---------- Etape Machine ----------");
-        System.out.println("1) Liste des machines");
-        System.out.println("2) Ajouter une machine");
-        System.out.println("3) Fermer");
-        String reponse = Lire.S();
-        while (reponse != "3"){
+        String reponse = "-1";
+        while (reponse != "0"){
+            System.out.println("0) Fermer");
+            System.out.println("1) Liste des machines");
+            System.out.println("2) Ajouter une machine");
+            System.out.println("3) Supprimer une machine");
+            reponse = Lire.S();
             switch(reponse){
                 case "1":
-                List<machine> Machine = getListMachineAtelier(cur_atelier);  // c ok 
-                for(int i=0; i<Machine.size();i++){
-                    Machine.get(i).printf();
+                this.cur_atelier.setListeMachine(machine.listerMachine(cur_atelier,this.con));
+                for(int i=0; i<this.cur_atelier.getListeMachine().size();i++){
+                    System.out.println(this.cur_atelier.getListeMachine().get(i).toString());
                 }
-                reponse = "4";
+                break;
                 case "2":
-                creerMachine(20, "Machine2","Fraiseuse", "oui", 50000000, 2); //c ok 
-                reponse="4";
-                case "3":
+                System.out.println("Nom : ");
+                String r1 = Lire.S();
+                System.out.println("Reference : ");
+                String r2 = Lire.S();
+                System.out.println("Etat : ");
+                String r3 = Lire.S();
+                System.out.println("Puissance : ");
+                double r4 = Lire.d();
+                machine.creerMachine(r1, r2,r3, r4, this.cur_atelier, this.con);
+                break;
+                case "0":
+                reponse = "0";
                 break;
                 default:
                 System.out.println("Réponse invalide !");
-                System.out.println("---------- Etape Machine ----------");
-                System.out.println("1) Liste des machines");
-                System.out.println("2) Ajouter une machine");
-                System.out.println("3) Fermer");
-                reponse = Lire.S();
-                case "4": 
-                break;
             }
         }
     }
-    public void creerMachine( int ID, 
-        String nom, String ref, String Etat, double P, int Atelier) throws SQLException {
-            try(PreparedStatement pst = this.con.prepareStatement(
-                """
-                insert into Machine (ID,Nom,Reference,Etat,Puissance,Atelier)
-                values (?,?,?,?,?,?)
-                """)) {
-                pst.setInt(1, ID);
-                pst.setString(2, nom);
-                pst.setString(3, ref);
-                pst.setString(4, Etat);
-                pst.setDouble(5, P);
-                pst.setInt(6, Atelier);
-                pst.executeUpdate();
-            }
-        }
-
-    public List<machine> getListMachineAtelier(Atelier AtelierActuel) throws SQLException{
-        List<machine> Machine = new ArrayList<>();
-
-        try ( PreparedStatement st = this.con.prepareStatement(
-                "select * from Machine ")) {
-            ResultSet res = st.executeQuery();
-            while (res.next()) {
-                Machine.add(new machine(res.getInt("ID"), res.getString("Nom"), res.getString("Reference"), res.getString("Etat"), res.getDouble("Puissance"), res.getInt("Atelier")));
-            }
-        }
-
-        return Machine;
-
-    }
-
     
     public void etapeProduit(){
         System.out.println("---------- Etape Produit ----------");
-        System.out.println("1) Liste des produits");
-        System.out.println("2) Ajouter un produit");
-        System.out.println("3) Fermer");
-        String reponse = Lire.S();
-        while (reponse != "3"){
+        String reponse = "-1";
+        while (reponse != "0"){
+            System.out.println("0) Fermer");
+            System.out.println("1) Liste des produits");
+            System.out.println("2) Ajouter un produit");
+            System.out.println("3) Supprimer un produit");
+            reponse = Lire.S();
             switch(reponse){
                 case "1":
                 break;
                 case "2":
                 break;
-                case "3":
+                case "0":
+                reponse = "0";
                 break;
                 default:
                 System.out.println("Réponse invalide !");
-                System.out.println("---------- Etape Produit ----------");
-                System.out.println("1) Liste des produits");
-                System.out.println("2) Ajouter un produit");
-                System.out.println("3) Fermer");
-                reponse = Lire.S();
             }
         }
     }
     public void etapeOperateur(){
         System.out.println("---------- Etape Opérateur ----------");
-        System.out.println("1) Liste des opérateurs");
-        System.out.println("2) Ajouter un opérateur");
-        System.out.println("3) Fermer");
-        String reponse = Lire.S();
-        while (reponse != "3"){
+        String reponse = "-1";
+        while (reponse != "0"){
+            System.out.println("0) Fermer");
+            System.out.println("1) Liste des opérateurs");
+            System.out.println("2) Ajouter un opérateur");
+            System.out.println("3) Supprimer un opérateur");
+            reponse = Lire.S();
             switch(reponse){
                 case "1":
                 break;
                 case "2":
                 break;
-                case "3":
+                case "0":
+                reponse = "0";
                 break;
                 default:
                 System.out.println("Réponse invalide !");
-                System.out.println("---------- Etape Opérateur ----------");
-                System.out.println("1) Liste des opérateur");
-                System.out.println("2) Ajouter un opérateur");
-                System.out.println("3) Fermer");
-                reponse = Lire.S();
             }
         }
     }
     public void etapeGestionAtelier(){
         System.out.println("---------- Etape Gestion atelier ----------");
-        System.out.println("1) Paramètres d'atelier");
-        System.out.println("2) Liste des utilisateurs");
-        System.out.println("3) Fermer");
-        String reponse = Lire.S();
-        while (reponse != "3"){
+        String reponse = "-1";
+        while (reponse != "0"){
+            System.out.println("0) Fermer");
+            System.out.println("1) Paramètres d'atelier");
+            System.out.println("2) Paramètres des utilisateurs");
+            reponse = Lire.S();
             switch(reponse){
                 case "1":
                 break;
                 case "2":
                 break;
-                case "3":
+                case "0":
+                reponse = "0";
                 break;
                 default:
                 System.out.println("Réponse invalide !");
-                System.out.println("---------- Etape Opérateur ----------");
-                System.out.println("1) Paramètre d'atelier");
-                System.out.println("2) Liste des utilisateurs");
-                System.out.println("3) Fermer");
-                reponse = Lire.S();
             }
         }
     }

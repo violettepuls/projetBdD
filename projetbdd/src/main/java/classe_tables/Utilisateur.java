@@ -218,4 +218,16 @@ public class Utilisateur {
         String s = this.prenom + " " + this.nom + ", ID : " + this.id;
         return s;
     }
+
+    public static ArrayList<Utilisateur> listerUtilisateur(Atelier atelier, Connection con) throws SQLException{
+        ArrayList<Utilisateur> liste = new ArrayList<Utilisateur>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur JOIN AtelierUtilisateur ON AtlierUtilisateur.IDUtilisateur = Utilisateur.ID WHERE IDAtelier = ?")){
+            ps.setInt(1,atelier.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                liste.add(new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getBoolean("Operateur")));
+            }
+        }
+        return liste;
+    }
 }
