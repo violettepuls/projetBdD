@@ -57,6 +57,17 @@ public class Produit {
         return liste;
     }
 
+    public static ArrayList<Produit> listerProduitGlobal(Connection con) throws SQLException{
+        ArrayList<Produit> liste = new ArrayList<Produit>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Produit")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                liste.add(new Produit(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Reference"), rs.getInt("IDGamme")));
+            }
+        }
+        return liste;
+    }
+
     @Override
     public String toString(){
         String s = this.nom + ", ID : " + this.id;
@@ -73,6 +84,48 @@ public class Produit {
             else{
                 return null;
             }
+        }
+    }
+
+    public static void associerAtelierProduit(int idatelier, int idproduit, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierProduit (IDAtelier,IDProduit) values (?,?)")){
+            ps.setInt(1,idatelier);
+            ps.setInt(2,idproduit);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void dissocierAtelierProduit(int idproduit, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM AtelierProduit WHERE IDProduit = ?")){
+            ps.setInt(1,idproduit);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void creerProduit(String nom, String ref, Gamme gamme, Atelier atelier, Connection con) throws SQLException {
+        int id=-1;
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO Produit (Nom,Reference,IDGamme) values (?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
+            ps.setString(1,nom);
+            ps.setString(2,ref);
+            ps.setInt(3,gamme.getId());
+            ps.executeUpdate();
+            try (ResultSet resultat = ps.getGeneratedKeys()){
+                resultat.next();
+                id = resultat.getInt(1);
+            }
+        }
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierProduit (IDAtelier,IDProduit) values (?,?)")){
+            ps.setInt(1,atelier.getId());
+            ps.setInt(2,id);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void supprimerProduit(int id, Connection con) throws SQLException{
+        dissocierAtelierProduit(id, con);
+        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM Produit WHERE ID = ?")){
+            ps.setInt(1,id);
+            ps.executeUpdate();
         }
     }
 }

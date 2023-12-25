@@ -50,13 +50,63 @@ public class Gamme {
 
     public static ArrayList<Gamme> listerGamme(Atelier atelier, Connection con) throws SQLException{
         ArrayList<Gamme> liste = new ArrayList<Gamme>();
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Gamme JOIN GammeProduit on GammeProduit.IDGamme = Gamme.ID JOIN AtelierProduit on AtelierProduit.IDProduit on Produit.ID WHERE IDAtelier = ?")){
+        try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT Gamme.ID,Gamme.Reference FROM Gamme JOIN Produit on Produit.IDGamme = Gamme.ID JOIN AtelierProduit on AtelierProduit.IDProduit = Produit.ID WHERE AtelierProduit.IDAtelier = ?")){
             ps.setInt(1, atelier.getId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
-                liste.add(new Gamme(rs.getInt("ID"), rs.getString("Reference")));
+                liste.add(new Gamme(rs.getInt("Gamme.ID"), rs.getString("Gamme.Reference")));
             }
         }
         return liste;
+    }
+
+    @Override
+    public String toString(){
+        String s = this.ref + ", ID : " + this.id;
+        return s;
+    }
+
+    public static Gamme getGamme(int id, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Gamme WHERE ID = ?")){
+            ps.setInt(1,id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return new Gamme(id, rs.getString("Reference"));
+            }
+            return null;
+        }
+    }
+
+    public static int getIdGamme(String ref,Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("SELECT ID FROM Gamme WHERE Reference = ?")){
+            ps.setString(1,ref);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return rs.getInt("ID");
+            }
+            else {
+                return -1;
+            }
+        }
+    }
+
+    public static void creerGamme(String reference, ArrayList<OperationElementaire> operation, Connection con) throws SQLException{
+        int id = -1;
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO Gamme (Reference) values (?)", PreparedStatement.RETURN_GENERATED_KEYS)){
+            ps.setString(1,reference);
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()){
+                rs.next();
+                id=rs.getInt(1);
+            }
+        }
+        for(int i = 0;i<operation.size();i++){
+            try(PreparedStatement ps = con.prepareStatement("INSERT INTO OperationGamme (IDOperation,IDGamme,Ordre) values (?,?,?)")){
+                ps.setInt(1,operation.get(i).getId());
+                ps.setInt(2,id);
+                ps.setInt(3,i);
+                ps.executeUpdate();
+            }
+        }
     }
 }

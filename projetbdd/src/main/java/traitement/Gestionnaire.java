@@ -166,7 +166,7 @@ public class Gestionnaire {
     }
 
     /*
-    public repartitionMachine(){ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/s] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
+    public repartitionMachine(){ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/h] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
 
     }
      */
@@ -246,7 +246,7 @@ public class Gestionnaire {
                 System.out.println("1) Se connecter à un atelier");
             }
             System.out.println("2) Créer un atelier");
-            System.out.println("3) Supprimer un atelier");
+            //System.out.println("3) Supprimer un atelier"); // On l'enlève car ne doit pas être faisable depuis l'authentification
             reponse = Lire.S();
             String reponse_2 = "";
             switch (reponse){
@@ -279,7 +279,7 @@ public class Gestionnaire {
                 String r2 = Lire.S();
                 this.creerAtelier(r1,"//92.222.25.165:3306/m3_rmbola_tembo01","m3_rmbola_tembo01",r2);
                 break;
-                case "3":
+                /*case "3":
                 if (!Atelier.listerAtelier(this.con).isEmpty()){
                     this.listeAtelier=Atelier.listerAtelier(this.con);
                     System.out.println("Quel atelier supprimer ?");
@@ -293,7 +293,7 @@ public class Gestionnaire {
                 else {
                     System.out.println("Il n'existe pas d'atelier.");
                 }
-                break;
+                break;*/
                 default :
                 System.out.println("Réponse invalide !");
             }
@@ -388,7 +388,37 @@ public class Gestionnaire {
                 String r3 = Lire.S();
                 System.out.println("Puissance : ");
                 double r4 = Lire.d();
-                machine.creerMachine(r1, r2,r3, r4, this.cur_atelier, this.con);
+                System.out.println("Vitesse : ");
+                double r9 = Lire.d();
+                machine.creerMachine(r1,r2,r3, r4,r9, this.cur_atelier, this.con);
+                int r5 = -1;
+                ArrayList<OperationElementaire> listeOperation = OperationElementaire.listerOperationElementaire(this.con);
+                while (r5!=0){
+                    System.out.println("Quelles opérations cette machine peut réaliser ? Indiquez l'ID, 0 pour fermer ou -1 pour en créer une nouvelle : ");
+                    listeOperation = OperationElementaire.listerOperationElementaire(this.con);
+                    for (int i=0;i< listeOperation.size();i++){
+                        System.out.println(listeOperation.get(i).toString());
+                    }
+                    r5 = Lire.i();
+                    if (r5==-1){
+                        System.out.println("Quel est le type d'opération ? ");
+                        String r6 = Lire.S();
+                        OperationElementaire.creerOperationElementaire(r6,this.con);
+                    }
+                    else if (r5!=0){
+                        listeOperation.add(OperationElementaire.getOperation(r5, this.con));
+                    }
+                }
+                OperationElementaire.associerMachineOperation(listeOperation, machine.getIdMachine(r1,r2,r3, r4,r9, this.cur_atelier, this.con), con);
+                break;
+                case "3":
+                System.out.println("Quelle machine supprimer ? ");
+                refreshListeMachine();
+                for(int i=0; i<this.cur_atelier.getListeMachine().size();i++){
+                    System.out.println(this.cur_atelier.getListeMachine().get(i).toString());
+                }
+                int r8 = Lire.i();
+                machine.supprimerMachine(r8, this.con);
                 break;
                 case "0":
                 reponse = "0";
@@ -399,19 +429,88 @@ public class Gestionnaire {
         }
     }
     
-    public void etapeProduit(){
+    public void etapeProduit() throws SQLException{
         System.out.println("---------- Etape Produit ----------");
         String reponse = "-1";
         while (reponse != "0"){
             System.out.println("0) Fermer");
             System.out.println("1) Liste des produits");
-            System.out.println("2) Ajouter un produit");
+            System.out.println("2) Créer un produit");
             System.out.println("3) Supprimer un produit");
+            System.out.println("4) Ajouter un produit existant");
             reponse = Lire.S();
             switch(reponse){
                 case "1":
+                refreshListeProduit();
+                for (int i=0;i<this.cur_atelier.getListeProduit().size();i++){
+                    System.out.println(this.cur_atelier.getListeProduit().get(i).toString());
+                }
                 break;
                 case "2":
+                System.out.println("Nom : ");
+                String r1 = Lire.S();
+                System.out.println("Reference : ");
+                String r2 = Lire.S();
+                ArrayList<Gamme> listeGamme = Gamme.listerGamme(cur_atelier, con);
+                for (int i=0;i<listeGamme.size();i++){
+                    System.out.println(listeGamme.get(i).toString());
+                }
+                System.out.println("Quelle gamme utiliser ? (-1 pour créer une gamme)");
+                int r3 = Lire.i();
+                while (r3==-1){
+                    ArrayList<OperationElementaire> gamme = new ArrayList<OperationElementaire>();
+                    System.out.println("Entrez la nouvelle référence : ");
+                    String r6=Lire.S();
+                    String r7 = "o";
+                    while (r7.equals("o")){
+                        System.out.println("Créer une opération ou utiliser une existante ? (c/e)");
+                        String r10 = Lire.S();
+                        if (r10.equals("c")){
+                            System.out.println("Type d'opération : ");
+                            String r8 = Lire.S();
+                            System.out.println("Unite d'opération : ");
+                            double r9 = Lire.d();
+                            OperationElementaire.creerOperation(r8, r9, con);
+                            gamme.add(OperationElementaire.getOperation(OperationElementaire.getIdOperation(r8,r9,con), con));
+                        }
+                        else if(r10.equals("e")){
+                            ArrayList<OperationElementaire> listeOperation = OperationElementaire.listerOperation(con);
+                            for (int i=0;i<listeOperation.size();i++){
+                                System.out.println(listeOperation.get(i).toString());
+                            }
+                            System.out.println("Quelle opération utiliser ? ");
+                            int r11 = Lire.i();
+                            gamme.add(OperationElementaire.getOperation(r11, con));
+                        }
+                        else {
+                            System.out.println("Réponse invalide, opération non ajoutée.");
+                        }
+                        System.out.println("Ajouter une opération ? (o/n)");
+                        r7 = Lire.S();
+                    }
+                    Gamme.creerGamme(r6,gamme,con);
+                    listeGamme = Gamme.listerGamme(cur_atelier, con); // ne marche pas, mais ce qui est avant si
+                    for (int i=0;i<listeGamme.size();i++){
+                        System.out.println(listeGamme.get(i).toString());
+                    }
+                    System.out.println("Quelle gamme utiliser ? (-1 pour créer une gamme)");
+                    r3 = Lire.i();
+                }
+                Produit.creerProduit(r1,r2,Gamme.getGamme(r3, this.con), this.cur_atelier,this.con);
+                break;
+                case "3":
+                System.out.println("Quel produit supprimer ? ");
+                int r4=Lire.i();
+                Produit.supprimerProduit(r4,this.con);
+                break;
+                case "4":
+                ArrayList<Produit> listeProduit = Produit.listerProduitGlobal(con);
+                for (int i=0;i<listeProduit.size();i++){
+                    System.out.println(listeProduit.get(i).toString());
+                }
+                System.out.println("Quel produit ajouter ? ");
+                int r5 = Lire.i();
+                Produit.associerAtelierProduit(this.cur_atelier.getId(), r5, con);
                 break;
                 case "0":
                 reponse = "0";
@@ -463,6 +562,12 @@ public class Gestionnaire {
                 System.out.println("Réponse invalide !");
             }
         }
+    }
+    public void parametreAtelier(){
+
+    }
+    public void parametreUtilisateur(){
+
     }
 }
 
