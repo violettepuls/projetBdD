@@ -95,7 +95,15 @@ public class Produit {
         }
     }
 
-    public static void dissocierAtelierProduit(int idproduit, Connection con) throws SQLException{
+    public static void dissocierAtelierProduit(int idproduit, int idatelier, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM AtelierProduit WHERE (IDProduit,IDAtelier) = (?,?)")){
+            ps.setInt(1,idproduit);
+            ps.setInt(2,idatelier);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void dissocierAtelierProduitGlobal(int idproduit, Connection con) throws SQLException{
         try(PreparedStatement ps = con.prepareStatement("REMOVE FROM AtelierProduit WHERE IDProduit = ?")){
             ps.setInt(1,idproduit);
             ps.executeUpdate();
@@ -121,9 +129,17 @@ public class Produit {
         }
     }
 
-    public static void supprimerProduit(int id, Connection con) throws SQLException{
-        dissocierAtelierProduit(id, con);
+    public static void supprimerProduit(int id, int idatelier, Connection con) throws SQLException{
         try(PreparedStatement ps = con.prepareStatement("REMOVE FROM Produit WHERE ID = ?")){
+            dissocierAtelierProduit(id, idatelier, con);
+            ps.setInt(1,id);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void supprimerProduitGlobal(int id, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM Produit WHERE ID = ?")){
+            dissocierAtelierProduitGlobal(id, con);
             ps.setInt(1,id);
             ps.executeUpdate();
         }

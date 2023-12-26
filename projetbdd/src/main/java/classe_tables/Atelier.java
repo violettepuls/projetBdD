@@ -186,4 +186,20 @@ public class Atelier {
         String s = this.nom + ", ID : " + this.id;
         return s;
     }
+
+    public static int getIdAtelier(String nom, String bdd, String nom_utilisateur, String mdp, Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("SELECT ID FROM Atelier WHERE (Nom,BDD,Nom_Utilisateur_BDD,MDP_BDD)=(?,?,?,?)")){
+            ps.setString(1,nom);
+            ps.setString(2,bdd);
+            ps.setString(3,nom_utilisateur);
+            ps.setString(4,mdp);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getInt("ID");
+            }
+            else{
+                return -1;
+            }
+        }
+    }
 }

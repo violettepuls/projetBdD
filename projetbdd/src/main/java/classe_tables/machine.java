@@ -115,8 +115,8 @@ public class machine {
         }
 
     public static void supprimerMachine(int id, Connection con) throws SQLException{
-        OperationElementaire.dissocierMachineOperation(id, con);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Machine WHERE ID = ?")){
+            OperationElementaire.dissocierMachineOperation(id, con);
             ps.setInt(1,id);
             ps.executeUpdate();
         }
