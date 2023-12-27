@@ -133,6 +133,33 @@ public class Gestionnaire {
     }
 
     //Possibilité : créer une fonction creerSchema qui, lorsqu'on crée un atelier sur une nouvelle base de données, créé son schéma et dupplique les informations de l'atelier relatif à cette bdd dans la table Atelier du schéma créé.
+    /*
+    public void creerSchema() throws SQLException{
+        this.con.setAutoCommit(false);
+        try(Statement st = this.con.createStatement()){
+            st.executeUpdate(
+                "create table machine_bis (\n"
+                +" id integer not null primary key AUTO_INCREMENT,\n"
+                +" ref varchar(30) not null unique,\n"
+                +" etat varchar(30) not null, \n"
+                +" puissance double not null\n"
+                +")\n");
+            st.executeUpdate(
+                "create table utilisateur (\n"
+                +" id integer not null primary key AUTO_INCREMENT,\n"
+                +" prenom varchar(30) not null unique,\n"
+                +" nom varchar(30) not null\n"
+                +")\n");
+        }
+        catch (SQLException ex){
+            this.con.rollback();
+            throw ex;
+        }
+        finally{
+            this.con.setAutoCommit(true);
+        }
+    }
+    */
 
     //Possibilité : créer la fonction supprimerSchema relative à creerSchema.
 
