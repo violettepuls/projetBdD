@@ -23,7 +23,8 @@ public class VueAuthentification extends VerticalLayout{
     private Button creerAtelier;
     private Notification messageErreur;
     
-    public VueAuthentification(){
+    public VueAuthentification(Gestionnaire g){
+        this.gestionnaire=g;
         this.messageErreur = new Notification();
         this.listeAtelier = new ComboBox<String>("Se connecter à l'atelier");
         remplirListeAtelier();
@@ -34,7 +35,7 @@ public class VueAuthentification extends VerticalLayout{
             try{
                 if(gestionnaire.authentification(this.username.getValue(), this.mdp.getValue())){
                     if(gestionnaire.autorisationAtelier(Atelier.getIdAtelier(listeAtelier.getValue(),gestionnaire.getConnection()))){
-
+                        System.out.println("Authentification réussie !");
                     }
                     else{
                         messageErreur.show("Vous n'avez pas accès à cet atelier.");
@@ -54,7 +55,7 @@ public class VueAuthentification extends VerticalLayout{
         });
         HorizontalLayout boxAtelier = new HorizontalLayout();
         boxAtelier.add(this.listeAtelier,this.creerAtelier);
-        this.add(this.username,this.mdp,boxAtelier);
+        this.add(this.username,this.mdp,boxAtelier,this.validerAuthentification);
     }
 
     public void remplirListeAtelier(){
