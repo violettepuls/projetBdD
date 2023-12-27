@@ -21,6 +21,10 @@ public class Atelier {
         return nom;
     }
 
+    public static String getNom(Atelier atelier){
+        return atelier.getNom();
+    }
+
     public void setNom(String nom) {
         this.nom = nom;
     }
@@ -193,6 +197,19 @@ public class Atelier {
             ps.setString(2,bdd);
             ps.setString(3,nom_utilisateur);
             ps.setString(4,mdp);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getInt("ID");
+            }
+            else{
+                return -1;
+            }
+        }
+    }
+
+    public static int getIdAtelier(String nom,Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("SELECT ID FROM Atelier WHERE (Nom)=(?)")){
+            ps.setString(1,nom);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 return rs.getInt("ID");

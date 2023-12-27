@@ -33,6 +33,14 @@ public class Gestionnaire {
         initialiserConnection();
     }
 
+    public void setListeAtelier(ArrayList<Atelier> listeAtelier){
+        this.listeAtelier = listeAtelier;
+    }
+
+    public ArrayList<Atelier> getListeAtelier(){
+        return this.listeAtelier;
+    }
+
     public void setCurAtelier(int id){
         this.cur_atelier=Atelier.getAtelier(id, this.con);
     }
@@ -179,6 +187,7 @@ public class Gestionnaire {
 
     public boolean autorisationAtelier(int idAtelier)throws SQLException{
         if (Utilisateur.listerAtelierUtilisateur(this.cur_user.getId(), con).contains(idAtelier)){
+            this.setCurAtelier(idAtelier);
             return true;
         }
         else{
