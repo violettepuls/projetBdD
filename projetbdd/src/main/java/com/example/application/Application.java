@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 
-// Lien pour trouver tous les composants Vaadin
+// Lien pour trouver tous les composants Vaadin https://vaadin.com/docs/latest/components
 
 @SpringBootApplication
 @Theme(value = "mytodo")
