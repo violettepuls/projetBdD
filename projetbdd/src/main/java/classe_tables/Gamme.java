@@ -50,7 +50,7 @@ public class Gamme {
 
     public static ArrayList<Gamme> listerGamme(Atelier atelier, Connection con) throws SQLException{
         ArrayList<Gamme> liste = new ArrayList<Gamme>();
-        try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT Gamme.ID,Gamme.Reference FROM Gamme JOIN Produit on Produit.IDGamme = Gamme.ID JOIN AtelierProduit on AtelierProduit.IDProduit = Produit.ID WHERE AtelierProduit.IDAtelier = ?")){
+        try (PreparedStatement ps = con.prepareStatement("SELECT Gamme.ID,Gamme.Reference FROM Gamme JOIN Produit on Produit.IDGamme = Gamme.ID JOIN AtelierProduit on AtelierProduit.IDProduit = Produit.ID WHERE AtelierProduit.IDAtelier = ?")){
             ps.setInt(1, atelier.getId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
