@@ -12,6 +12,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
+import traitement.Gestionnaire;
+
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -23,30 +26,32 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 
 @PageTitle("Main")
-@Route(value = "")
+@Route(value = "accueil")
 public class MainView extends VerticalLayout {
 
-    private TextField name;
-    private Button sayHello;
-   private final Tab production;
+    //private TextField name;
+    //private Button sayHello;
+    private final Tab production;
 	private final Tab edt;
 	private final Tab produits;
     private final Tab operateurs;
     private final Tab machines;
     private final Tab atelier;
 	private final VerticalLayout content;
+    private Gestionnaire gestionnaire;
     
 
-    public MainView() {
-        name = new TextField("Your name");
-        sayHello = new Button("Say hello");
-        sayHello.addClickListener(e -> {
-            Notification.show("Hello " + name.getValue());
-        });
-        sayHello.addClickShortcut(Key.ENTER);
+    public MainView(Gestionnaire g) {
+        this.gestionnaire=g;
+        //name = new TextField("Your name");
+        //sayHello = new Button("Say hello");
+        //sayHello.addClickListener(e -> {
+        //    Notification.show("Hello " + name.getValue());
+        //});
+        //sayHello.addClickShortcut(Key.ENTER);
 
-        setMargin(true);
-        setHorizontalComponentAlignment(Alignment.CENTER, name, sayHello);
+        //setMargin(true);
+        //setHorizontalComponentAlignment(Alignment.CENTER, name, sayHello);
 
         //add(name, sayHello);
         //TEST VAADIN BOUTON+CALENDRIER
@@ -106,11 +111,11 @@ public class MainView extends VerticalLayout {
         
         setHorizontalComponentAlignment(Alignment.CENTER,tabs);
        // setVerticalComponentAlignment(Alignment.START,tabs);
-    add(tabs,content);
+        add(tabs,content);
 
     }
 
- private void setContent(Tab tab) {
+    private void setContent(Tab tab) {
 		content.removeAll();
 
 		if (tab.equals(production)) {
