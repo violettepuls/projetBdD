@@ -2,144 +2,130 @@ package com.example.application.views.main;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.applayout.DrawerToggle;
+
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.charts.model.Label;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouterLink;
 
-@PageTitle("Main")
+import classe_tables.Atelier;
+import traitement.Gestionnaire;
 @Route(value = "")
+
+/* 
+public class MainView extends VerticalLayout{
+    private Gestionnaire gestionnaire;
+    private TextField username;
+    private TextField mdp;
+    private ComboBox<String> listeAtelier;
+    private Button validerAuthentification;
+    private Button creerAtelier;
+    private Notification messageErreur;
+    private TextField name;
+
+    public MainView(){
+        name = new TextField("Your name");
+        setHorizontalComponentAlignment(Alignment.CENTER, name);
+        add(name);
+    } 
+    
+}*/
+
+
+
 public class MainView extends VerticalLayout {
 
-    private TextField name;
-    private Button sayHello;
-   private final Tab production;
-	private final Tab edt;
-	private final Tab produits;
-    private final Tab operateurs;
-    private final Tab machines;
-    private final Tab atelier;
-	private final VerticalLayout content;
-    
+    public MainView() {
+        // Création des champs d'entrée
+        TextField usernameField = new TextField("Identifiant");
+        PasswordField passwordField = new PasswordField("Mot de passe");
 
-    public MainView() throws SQLException {
-        name = new TextField("Your name");
-        sayHello = new Button("Say hello");
-        sayHello.addClickListener(e -> {
-            Notification.show("Hello " + name.getValue());
+        // Bouton de connexion
+        Button loginButton = new Button("Se connecter", event -> {
+            String username = usernameField.getValue();
+            String password = passwordField.getValue();
+
+            // Vérifiez les identifiants (c'est ici que vous ajouteriez votre logique d'authentification)
+            if (isValidCredentials(username, password)) {
+                // Si les identifiants sont valides, naviguez vers la nouvelle vue
+                getUI().ifPresent(ui -> ui.navigate("accueil"));
+            } else {
+                // Affichez un message d'erreur
+                Notification.show("Identifiant ou mot de passe incorrect");
+            }
         });
-        sayHello.addClickShortcut(Key.ENTER);
 
-        setMargin(true);
-        setHorizontalComponentAlignment(Alignment.CENTER, name, sayHello);
+        // Ajout des composants à la mise en page
+        add(usernameField, passwordField, loginButton);
+        setAlignItems(Alignment.CENTER);
+        setWidth("300px");
 
-        //add(name, sayHello);
-        //TEST VAADIN BOUTON+CALENDRIER
-        AppLayoutNavbarPlacement navBar=new AppLayoutNavbarPlacement();
-
-       /*  private Tab createTab(VaadinIcon viewIcon, String viewName) {
-        Icon icon = viewIcon.create();
-        icon.getStyle().set("box-sizing", "border-box")
-                .set("margin-inline-end", "var(--lumo-space-m)")
-                .set("margin-inline-start", "var(--lumo-space-xs)")
-                .set("padding", "var(--lumo-space-xs)");
-            
-            RouterLink link = new RouterLink();
-            link.add(icon, new Span(viewName));
-            // Demo has no routes
-            // link.setRoute(viewClass.java);
-            link.setTabIndex(-1);
-            return new Tab(link)
-        } */
-
-        production = new Tab("Production");
-		edt = new Tab("Emploi du temps");
-        produits = new Tab("Produits");
-		operateurs = new Tab ("Opérateurs");
-        machines = new Tab ("Machines");
-        atelier = new Tab ("Gestion d'atelier");
-
-        //Tab production = tabs.add("Help", () -> { ... });
-        production.addComponentAsFirst(VaadinIcon.CART.create());
-        edt.addComponentAsFirst(VaadinIcon.CALENDAR.create());
-        produits.addComponentAsFirst(VaadinIcon.PACKAGE.create());
-        operateurs.addComponentAsFirst(VaadinIcon.USERS.create());
-        machines.addComponentAsFirst(VaadinIcon.WRENCH.create());
-        atelier.addComponentAsFirst(VaadinIcon.LIST.create());
-
-		Tabs tabs = new Tabs(production, edt, produits, operateurs, machines, atelier);
-		tabs.addSelectedChangeListener(event ->
-			{
-                try {
-                    setContent(event.getSelectedTab());
-                } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+        // Lien vers une autre vue (pour la démo)
+      //  RouterLink accueilLink = new RouterLink("Accueil", Vuedebase.class);
+      //  add(accueilLink);
+    }
+private boolean isValidCredentials(String username, String password) {
+        // Ajoutez votre logique d'authentification ici
+        // Vous pouvez vous connecter à une base de données, vérifier dans un service d'authentification, etc.
+        // Pour cet exemple, nous considérons que les identifiants sont valides si le champ "Identifiant" n'est pas vide
+        return !username.isEmpty();
+    }
+}
+ /*    public MainView(Gestionnaire g){
+         this.gestionnaire=g;
+        this.messageErreur = new Notification();
+        this.listeAtelier = new ComboBox<String>("Se connecter à l'atelier");
+        remplirListeAtelier();
+        this.username = new TextField("Nom d'utilisateur");
+        this.mdp = new TextField("Mot de passe");
+        this.validerAuthentification = new Button("Se connecter");
+        this.validerAuthentification.addClickListener(clickEvent -> {
+            try{
+                if(gestionnaire.authentification(this.username.getValue(), this.mdp.getValue())){
+                    if(gestionnaire.autorisationAtelier(Atelier.getIdAtelier(listeAtelier.getValue(),gestionnaire.getConnection()))){
+                        System.out.println("Authentification réussie !");
+                    }
+                    else{
+                        messageErreur.show("Vous n'avez pas accès à cet atelier.");
+                    }
+                }
+                else{
+                    messageErreur.show("Votre nom d'utilisateur ou mot de passe est incorrect.");
                 }
             }
-		);
+            catch (SQLException e){
+                messageErreur.show("Une erreur est survenue : "+e);
+            }
+        });
+        this.creerAtelier = new Button("Créer un atelier");
+        this.creerAtelier.addClickListener(clickEvent -> {
 
-		content = new VerticalLayout();
-		content.setSpacing(false);
-		setContent(tabs.getSelectedTab());
-
-		//add(tabs, content);
-
-        DrawerToggle toggle = new DrawerToggle();
-
-        H1 title = new H1("Atelier de fabrication");
-        title.getStyle().set("font-size", "var(--lumo-font-size-l)")
-                .set("margin", "0");
-
-        //Tabs tabs = getTabs();
-
-       // addToDrawer(tabs,content);
-    
-        
-        setHorizontalComponentAlignment(Alignment.CENTER,tabs);
-       // setVerticalComponentAlignment(Alignment.START,tabs);
-    add(tabs,content);
-
+        });
+        HorizontalLayout boxAtelier = new HorizontalLayout();
+        boxAtelier.add(this.listeAtelier,this.creerAtelier);
+        this.add(this.username,this.mdp,boxAtelier,this.validerAuthentification);
     }
 
- private void setContent(Tab tab) throws SQLException {
-		content.removeAll();
-
-		if (tab.equals(production)) {
-			content.add(new Paragraph("This is the Details tab"));
-		} else if (tab.equals(edt)) {
-			content.add(new Paragraph("This is the Payment tab"));
-		} else if(tab.equals(produits)){
-			content.add(new Paragraph("This is the Shipping tab"));
-		} else if(tab.equals(operateurs)){
-            content.add(new Paragraph("opérateurs"));
-        
-        } else if(tab.equals(machines)){ 
-            content.add(new VueMachine());
-        } else if(tab.equals(atelier)){
-            content.add(new Paragraph("gestion atelier"));
+    public void remplirListeAtelier(){
+        ArrayList<Atelier> ateliers = Atelier.listerAtelier(gestionnaire.getConnection());
+        ArrayList<String> ateliersNom = new ArrayList<String>();
+        for (int i=0;i<ateliers.size();i++){
+            ateliersNom.add(ateliers.get(i).getNom());
         }
+        this.listeAtelier.setItems(ateliersNom);
+    } 
+   
 
-	}
-
-
-
-    
-}
-
+    } */

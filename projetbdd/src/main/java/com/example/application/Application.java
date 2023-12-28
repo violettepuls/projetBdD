@@ -13,6 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * and some desktop browsers.
  *
  */
+
+// Lien pour trouver tous les composants Vaadin https://vaadin.com/docs/latest/components
+
 @SpringBootApplication
 @Theme(value = "mytodo")
 @PageTitle("COUCOU VIO")

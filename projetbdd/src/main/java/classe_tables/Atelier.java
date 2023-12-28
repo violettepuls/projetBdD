@@ -13,12 +13,16 @@ public class Atelier {
     private String bdd; // //92.222.25.165:3306/m3_rmbola_tembo01
     private String nom_utilisateur; // m3_rmbola_tembo01
     private String mdp; // 976e74f9
-    private ArrayList<Machine> listeMachine;
+    private ArrayList<machine> listeMachine;
     private ArrayList<Utilisateur> listeUtilisateur;
     private ArrayList<Produit> listeProduit;
     
     public String getNom() {
         return nom;
+    }
+
+    public static String getNom(Atelier atelier){
+        return atelier.getNom();
     }
 
     public void setNom(String nom) {
@@ -57,11 +61,11 @@ public class Atelier {
         this.id = id;
     }
 
-    public ArrayList<Machine> getListeMachine() {
+    public ArrayList<machine> getListeMachine() {
         return listeMachine;
     }
 
-    public void setListeMachine(ArrayList<Machine> listeMachine) {
+    public void setListeMachine(ArrayList<machine> listeMachine) {
         this.listeMachine = listeMachine;
     }
 
@@ -79,36 +83,6 @@ public class Atelier {
 
     public void setListeProduit(ArrayList<Produit> listeProduit) {
         this.listeProduit = listeProduit;
-    }
-
-    //En SQL
-    public Machine getMachine(int id){
-
-    }
-
-    //En SQL
-    public void addMachine(String nom, String ref, String etat, Double puissance, ArrayList<Double> dim, ArrayList<String> typeOperationElementaire){
-
-    }
-
-    //En SQL
-    public void deleteMachine(int id){
-
-    }
-
-    //En SQL
-    public Produit getProduit(int id){
-
-    }
-
-    //En SQL
-    public void addProduit(String nom, String ref, String gammeRef){
-
-    }
-
-    //En SQL
-    public void deleteProduit(){
-
     }
 
     public Atelier(String n, String b, String n_u, String m){
@@ -138,7 +112,7 @@ public class Atelier {
                 int id=resultat.getInt("ID");
                 String nom = resultat.getString("Nom");
                 String bdd = resultat.getString("BDD");
-                String usr=resultat.getString("Nom_Utilisateur");
+                String usr=resultat.getString("Nom_Utilisateur_BDD");
                 String mdp=resultat.getString("MDP_BDD");
                 listeAtelier.add(new Atelier(id,nom, bdd, usr, mdp));
             }
@@ -155,7 +129,7 @@ public class Atelier {
             ps.setInt(1,id);
             ResultSet resultat = ps.executeQuery();
             if(resultat.next()){
-                return new Atelier(resultat.getInt("ID"),resultat.getString("Nom"),resultat.getString("BDD"),resultat.getString("Nom_Utilisateur"),resultat.getString("MDP_BDD"));
+                return new Atelier(resultat.getInt("ID"),resultat.getString("Nom"),resultat.getString("BDD"),resultat.getString("Nom_Utilisateur_BDD"),resultat.getString("MDP_BDD"));
             }
             else{
                 System.out.println("Aucun atelier de trouvé");
@@ -171,7 +145,7 @@ public class Atelier {
     public void enregistrer(Connection con){
         try{
             con.setAutoCommit(false);
-            try (PreparedStatement st = con.prepareStatement("insert into Atelier (Nom,BDD,Nom_Utilisateur,MDP_BDD) values (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
+            try (PreparedStatement st = con.prepareStatement("insert into Atelier (Nom,BDD,Nom_Utilisateur_BDD,MDP_BDD) values (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
                 st.setString(1,this.nom);
                 st.setString(2,this.bdd);
                 st.setString(3,this.nom_utilisateur);
@@ -215,5 +189,34 @@ public class Atelier {
     public String toString(){
         String s = this.nom + ", ID : " + this.id;
         return s;
+    }
+
+    public static int getIdAtelier(String nom, String bdd, String nom_utilisateur, String mdp, Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("SELECT ID FROM Atelier WHERE (Nom,BDD,Nom_Utilisateur_BDD,MDP_BDD)=(?,?,?,?)")){
+            ps.setString(1,nom);
+            ps.setString(2,bdd);
+            ps.setString(3,nom_utilisateur);
+            ps.setString(4,mdp);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getInt("ID");
+            }
+            else{
+                return -1;
+            }
+        }
+    }
+
+    public static int getIdAtelier(String nom,Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("SELECT ID FROM Atelier WHERE (Nom)=(?)")){
+            ps.setString(1,nom);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getInt("ID");
+            }
+            else{
+                return -1;
+            }
+        }
     }
 }

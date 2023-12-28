@@ -13,7 +13,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 
-@Route("app-layout-navbar-placement")
+
 public class AppLayoutNavbarPlacement extends AppLayout {
     private final Tab details;
 	private final Tab payment;

@@ -61,6 +61,7 @@ public class VueMachine extends VerticalLayout  {
 package com.example.application.views.main;
 
 import classe_tables.machine;
+import classe_tables.Atelier;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -82,8 +83,8 @@ public class VueMachine extends Div{
         grid.addColumn(machine::getId).setHeader("Identifiant");
         grid.addColumn(machine::getRef).setHeader("Référence");
 
-        List<machine> ref = machine.getNom();
-        grid.setItems(ref);
+       // List<machine> ref = machine.listerMachine(3,con);
+       // grid.setItems(ref);
 
         add(grid); 
     }
