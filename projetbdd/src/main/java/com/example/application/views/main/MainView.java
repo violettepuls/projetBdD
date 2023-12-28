@@ -73,14 +73,16 @@ public class MainView extends VerticalLayout {
         setWidth("300px");
 
         // Lien vers une autre vue (pour la démo)
-      //  RouterLink accueilLink = new RouterLink("Accueil", Vuedebase.class);
-      //  add(accueilLink);
+       // RouterLink accueilLink = new RouterLink("accueil", Vuedebase.class);
+       // add(accueilLink);
     }
 private boolean isValidCredentials(String username, String password) {
         // Ajoutez votre logique d'authentification ici
-        // Vous pouvez vous connecter à une base de données, vérifier dans un service d'authentification, etc.
-        // Pour cet exemple, nous considérons que les identifiants sont valides si le champ "Identifiant" n'est pas vide
-        return !username.isEmpty();
+        if ("Gigi01".equals(username) && "regis03".equals(password)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
  /*    public MainView(Gestionnaire g){

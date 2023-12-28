@@ -26,7 +26,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 
 //@PageTitle("Main")
-//@Route(value = "")
+@Route(value = "accueil")
 public class Vuedebase extends VerticalLayout {
 
     private TextField name;
