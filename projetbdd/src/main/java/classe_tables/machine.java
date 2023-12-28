@@ -216,6 +216,18 @@ public class machine {
         }
     }
 
+    public static ArrayList<OperationElementaire> getOperationElementaireMachine(int idmachine, Connection con) throws SQLException{
+        ArrayList<OperationElementaire> listeOperation = new ArrayList<OperationElementaire>();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM OperationElementaire JOIN MachineOperation on MachineOperation.IDOperation = OperationElementaire.ID WHERE IDMachine = ?")){
+            ps.setInt(1,idmachine);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                listeOperation.add(new OperationElementaire(rs.getInt("OperationElementaire.ID"), rs.getString("Type"), 0));
+            }
+            return listeOperation;
+        }
+    }
+
     public static boolean estDisponible(int id, Connection con) throws SQLException{
         machine machine = getMachine(id, con);
         if (machine.getEtat()=="Disponible"){
