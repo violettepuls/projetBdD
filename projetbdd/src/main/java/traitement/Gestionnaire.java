@@ -288,7 +288,7 @@ public class Gestionnaire {
         while (reponse != "3"){
             switch(reponse){
                 case "1":
-                List<machine> Machine = getListMachineAtelier(cur_atelier);  // c ok 
+                List<machine> Machine = getListMachineAtelier(this.con);  // c ok 
                 for(int i=0; i<Machine.size();i++){
                     Machine.get(i).printf();
                 }
@@ -327,10 +327,10 @@ public class Gestionnaire {
             }
         }
 
-    public List<machine> getListMachineAtelier(Atelier AtelierActuel) throws SQLException{
+    public static List<machine> getListMachineAtelier(Connection con) throws SQLException{
         List<machine> Machine = new ArrayList<>();
 
-        try ( PreparedStatement st = this.con.prepareStatement(
+        try ( PreparedStatement st = con.prepareStatement(
                 "select * from Machine ")) {
             ResultSet res = st.executeQuery();
             while (res.next()) {

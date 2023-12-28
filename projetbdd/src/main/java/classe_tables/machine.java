@@ -79,7 +79,7 @@ public class machine {
     }
 
     public void printf(){
-        System.out.println(this.);
+        System.out.println(this.nom);
     }
 
     public static machine rechercheMachine(){
