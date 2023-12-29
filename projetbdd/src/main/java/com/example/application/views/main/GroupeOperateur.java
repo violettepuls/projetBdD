@@ -5,36 +5,33 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 
 import classe_tables.OperationElementaire;
-import classe_tables.machine;
+import classe_tables.Utilisateur;
 import traitement.Gestionnaire;
 
-public class GroupeMachine extends HorizontalLayout{
-    private machine mach;
+public class GroupeOperateur extends HorizontalLayout{
+    private Utilisateur oper;
     private TextField nom;
     private TextArea description;
     private Button supprimer;
     private Gestionnaire gestionnaire;
     private Button modifier;
     private TextField etat;
-    private Button panne;
 
-    public GroupeMachine(Gestionnaire g, machine m)throws SQLException{
+    public GroupeOperateur(Gestionnaire g, Utilisateur m)throws SQLException{
         this.gestionnaire=g;
-        this.mach=m;
+        this.oper=m;
         this.nom=new TextField();
+        this.etat=new TextField();
         this.description=new TextArea();
         this.modifier=new Button("Modifier");
         this.supprimer=new Button("Supprimer");
-        this.etat=new TextField();
-        this.panne=new Button("Signaler une panne");
 
         //paramétrage de la structure des éléments
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -49,7 +46,6 @@ public class GroupeMachine extends HorizontalLayout{
         this.etat.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
-        this.panne.addThemeVariants(ButtonVariant.LUMO_TERTIARY,ButtonVariant.LUMO_ERROR);
         HorizontalLayout entete = new HorizontalLayout();
         entete.add(this.nom,this.etat);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
@@ -59,22 +55,18 @@ public class GroupeMachine extends HorizontalLayout{
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
         VerticalLayout boutons=new VerticalLayout();
-        HorizontalLayout boutonsModif = new HorizontalLayout();
-        boutonsModif.add(this.modifier,this.supprimer);
-        boutons.add(this.panne,boutonsModif);
-        boutonsModif.setAlignItems(FlexComponent.Alignment.CENTER);
-        boutonsModif.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        boutons.add(this.modifier,this.supprimer);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
 
         //paramétrage des données des éléments
-        this.nom.setValue(this.mach.getNom());
-        this.etat.setValue(this.mach.getEtat());
+        this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
+        this.etat.setValue(this.oper.getEtat());
         this.description.setValue(decrire());
-        if(this.mach.getEtat().equals("Disponible")){
+        if(this.oper.getEtat().equals("Disponible")){
             this.etat.getStyle().setColor("green");
         }
-        else if (this.mach.getEtat().equals("En réparation")){
+        else if (this.oper.getEtat().equals("En réparation")){
             this.etat.getStyle().setColor("orange");
         }
         else{
@@ -88,12 +80,12 @@ public class GroupeMachine extends HorizontalLayout{
     }
 
     public String decrire() throws SQLException{
-        ArrayList<OperationElementaire> listeOperation = machine.listerOperationElementaireMachine(this.mach.getId(), gestionnaire.getConnection());
-        String d="Vitesse : "+/*this.machine.getVitesse()+*/"\n"+"Puissance : "+this.mach.getPuissance();
+        ArrayList<OperationElementaire> listeOperation = Utilisateur.listerOperationUtilisateur(this.oper.getId(), this.gestionnaire.getConnection());
+        String d="";
+        d=d+"Qualifications :";
         for (int i =0;i<listeOperation.size();i++){
             d=d+"\n"+"- "+listeOperation.get(i).getType();
         }
-        d=d+"\n"+"Référence : "+this.mach.getRef();
         return d;
     }
 }

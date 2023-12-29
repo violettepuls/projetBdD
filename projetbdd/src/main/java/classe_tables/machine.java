@@ -216,7 +216,7 @@ public class machine {
         }
     }
 
-    public static ArrayList<OperationElementaire> getOperationElementaireMachine(int idmachine, Connection con) throws SQLException{
+    public static ArrayList<OperationElementaire> listerOperationElementaireMachine(int idmachine, Connection con) throws SQLException{
         ArrayList<OperationElementaire> listeOperation = new ArrayList<OperationElementaire>();
         try(PreparedStatement ps = con.prepareStatement("SELECT * FROM OperationElementaire JOIN MachineOperation on MachineOperation.IDOperation = OperationElementaire.ID WHERE IDMachine = ?")){
             ps.setInt(1,idmachine);

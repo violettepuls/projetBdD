@@ -73,6 +73,10 @@ public class Utilisateur {
         this.mdp = mdp;
     }
 
+    public String getEtat(){
+        return this.etat;
+    }
+
     public Utilisateur(int id, String nom, String prenom, String usr, String role, boolean op, String etat){
         this.id=id;
         this.nom=nom;
@@ -405,6 +409,18 @@ public class Utilisateur {
         try(PreparedStatement ps = con.prepareStatement("REMOVE FROM Qualification WHERE (IDOperateur) = (?)")){
             ps.setInt(1,IDUtilisateur);
             ps.executeUpdate();
+        }
+    }
+
+    public static ArrayList<OperationElementaire> listerOperationUtilisateur(int idutilisateur,Connection con)throws SQLException{
+        ArrayList<OperationElementaire> listeOperation = new ArrayList<OperationElementaire>();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM OperationElementaire JOIN Qualification on Qualification.IDOperation = OperationElementaire.ID WHERE IDOperateur = ?")){
+            ps.setInt(1,idutilisateur);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                listeOperation.add(new OperationElementaire(rs.getInt("OperationElemenataire.ID"),rs.getString("Type"),rs.getDouble("Unite_Operation")));
+            }
+            return listeOperation;
         }
     }
 
