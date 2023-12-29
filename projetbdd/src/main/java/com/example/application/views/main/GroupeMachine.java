@@ -38,7 +38,7 @@ public class GroupeMachine extends HorizontalLayout{
 
         //paramétrage de la structure des éléments
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
-        this.setPadding(true);
+        //this.setPadding(true);
         this.setWidth("auto");
         this.setHeight("100px");
         this.nom.setReadOnly(true);
@@ -89,7 +89,7 @@ public class GroupeMachine extends HorizontalLayout{
 
     public String decrire() throws SQLException{
         ArrayList<OperationElementaire> listeOperation = machine.listerOperationElementaireMachine(this.mach.getId(), gestionnaire.getConnection());
-        String d="Vitesse : "+/*this.machine.getVitesse()+*/"\n"+"Puissance : "+this.mach.getPuissance();
+        String d="Vitesse : "+this.mach.getVitesse()+"\n"+"Puissance : "+this.mach.getPuissance();
         for (int i =0;i<listeOperation.size();i++){
             d=d+"\n"+"- "+listeOperation.get(i).getType();
         }

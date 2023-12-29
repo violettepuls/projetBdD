@@ -75,19 +75,24 @@ public class machine {
         this.listeOperation = listeOperation;
     }
 
+    public double getVitesse(){
+        return this.vitesse;
+    }
+
     @Override
     public String toString(){
         String s = this.nom + ", " + this.ref + ", ID : " + this.id;
         return s;
     }
     
-    public machine(int id, String nom, String ref,String etat,double puissance, int Atelier){
+    public machine(int id, String nom, String ref,String etat,double puissance,double vitesse, int Atelier){
         this.id=id;
         this.ref=ref;
         this.etat=etat;
         this.puissance=puissance;
         this.nom=nom;
         this.IdAtelier=Atelier;
+        this.vitesse=vitesse;
     }
 
     public machine(int id, String nom, String ref,String etat,double puissance){
@@ -130,7 +135,7 @@ public class machine {
             st.setInt(1,AtelierActuel.getId());
             ResultSet res = st.executeQuery();
             while (res.next()) {
-                listeMachine.add(new machine(res.getInt("ID"), res.getString("Nom"), res.getString("Reference"), res.getString("Etat"), res.getDouble("Puissance"), res.getInt("IDAtelier")));
+                listeMachine.add(new machine(res.getInt("ID"), res.getString("Nom"), res.getString("Reference"), res.getString("Etat"), res.getDouble("Puissance"), res.getDouble("Vitesse"),res.getInt("IDAtelier")));
             }
         }
 
@@ -190,7 +195,7 @@ public class machine {
             ps.setInt(1,id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()){
-                return new machine(id, rs.getString("Nom"), rs.getString("Reference"), rs.getString("Etat"), rs.getDouble("Puissance"), rs.getInt("Atelier"));
+                return new machine(id, rs.getString("Nom"), rs.getString("Reference"), rs.getString("Etat"), rs.getDouble("Puissance"), rs.getDouble("Vitesse"),rs.getInt("Atelier"));
             }
             else{
                 return null;

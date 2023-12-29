@@ -1,5 +1,6 @@
 package com.example.application.views.main;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.vaadin.flow.component.Key;
@@ -41,7 +42,7 @@ public class MainView extends VerticalLayout {
     private Gestionnaire gestionnaire;
     
 
-    public MainView(Gestionnaire g) {
+    public MainView(Gestionnaire g) throws SQLException{
         this.gestionnaire=g;
         //name = new TextField("Your name");
         //sayHello = new Button("Say hello");
@@ -89,7 +90,15 @@ public class MainView extends VerticalLayout {
 
 		Tabs tabs = new Tabs(production, edt, produits, operateurs, machines, atelier);
 		tabs.addSelectedChangeListener(event ->
-			setContent(event.getSelectedTab())
+			{
+                try {
+                    setContent(event.getSelectedTab());
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    //e.printStackTrace();
+                    System.out.println("Erreur : "+e);
+                }
+            }
 		);
 
 		content = new VerticalLayout();
@@ -115,7 +124,7 @@ public class MainView extends VerticalLayout {
 
     }
 
-    private void setContent(Tab tab) {
+    private void setContent(Tab tab) throws SQLException{
 		content.removeAll();
 
 		if (tab.equals(production)) {
@@ -128,7 +137,7 @@ public class MainView extends VerticalLayout {
             content.add(new Paragraph("opérateurs"));
         
         } else if(tab.equals(machines)){
-            content.add(new Paragraph("machines"));
+            content.add(new VueMachine(gestionnaire));
         } else if(tab.equals(atelier)){
             content.add(new Paragraph("gestion atelier"));
         }

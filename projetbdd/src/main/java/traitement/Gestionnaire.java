@@ -57,6 +57,10 @@ public class Gestionnaire {
         this.con=c;
     }
 
+    public Atelier getCurAtelier(){
+        return this.cur_atelier;
+    }
+
     public void initialiserConnection() throws SQLException, ClassNotFoundException{ // Initialisation de la connexion à notre base de données principale. C'est celle-ci qui contiendra la liste de tous les ateliers existants, dont chacun d'entre eux pourraient avoir ses données ailleurs.
         try {
             Connection c;

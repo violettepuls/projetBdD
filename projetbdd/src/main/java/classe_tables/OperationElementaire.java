@@ -37,7 +37,7 @@ public class OperationElementaire {
     public static ArrayList<OperationElementaire> listerOperationElementaire(Connection con) throws SQLException{
         ArrayList<OperationElementaire> liste = new ArrayList<OperationElementaire>();
         try(Statement st = con.createStatement()){
-            ResultSet rs = st.executeQuery("SELECT * FROM OperationElementaire WHERE Unite_Operation IS NULL");
+            ResultSet rs = st.executeQuery("SELECT * FROM OperationElementaire WHERE Unite_Operation = 0");
             while (rs.next()){
                 liste.add(new OperationElementaire(rs.getInt("ID"), rs.getString("Type"), 0));
             }
@@ -103,7 +103,13 @@ public class OperationElementaire {
 
     @Override
     public String toString(){
-        String s = this.type + " - " + this.uniteOperation + ", ID : " + this.id;
+        String s = this.type;
+        if (this.uniteOperation==0){
+            s=s+ " - " + this.uniteOperation + ", ID : " + this.id;
+        }
+        else{
+            s=s+ ", ID : " + this.id;
+        }
         return s;
     }
 
