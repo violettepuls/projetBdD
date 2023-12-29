@@ -9,6 +9,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
@@ -19,7 +20,7 @@ import traitement.Gestionnaire;
 public class VueAuthentification extends VerticalLayout{
     private Gestionnaire gestionnaire;
     private TextField username;
-    private TextField mdp;
+    private PasswordField mdp;
     private ComboBox<String> listeAtelier;
     private Button validerAuthentification;
     private Button creerAtelier;
@@ -31,7 +32,7 @@ public class VueAuthentification extends VerticalLayout{
         this.listeAtelier = new ComboBox<String>("Se connecter à l'atelier");
         remplirListeAtelier();
         this.username = new TextField("Nom d'utilisateur");
-        this.mdp = new TextField("Mot de passe");
+        this.mdp = new PasswordField("Mot de passe");
         this.validerAuthentification = new Button("Se connecter");
         this.validerAuthentification.addClickListener(clickEvent -> {
             authentifier();
