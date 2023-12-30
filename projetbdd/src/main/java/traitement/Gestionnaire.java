@@ -455,7 +455,7 @@ public class Gestionnaire {
                         listeOperation.add(OperationElementaire.getOperation(r5, this.con));
                     }
                 }
-                OperationElementaire.associerMachineOperation(listeOperation, machine.getIdMachine(r1,r2,r3, r4,r9, this.cur_atelier, this.con), con);
+                OperationElementaire.associerListeMachineOperation(listeOperation, machine.getIdMachine(r1,r2,r3, r4,r9, this.cur_atelier, this.con), con);
                 break;
                 case "3":
                 System.out.println("Quelle machine supprimer ? ");
@@ -617,7 +617,7 @@ public class Gestionnaire {
                             listeOperation.add(OperationElementaire.getOperation(r8, this.con));
                         }
                     }
-                    Utilisateur.associerOperationUtilisateur(listeOperation, Utilisateur.getIdUtilisateur(r2, r3, r4, r5, r6, true, r7, con), con);
+                    Utilisateur.associerListeOperationUtilisateur(listeOperation, Utilisateur.getIdUtilisateur(r2, r3, r4, r5, r6, true, r7, con), con);
                 }
                 else if (r1.equals("e")){
                     ArrayList<Utilisateur> listeUtilisateur = Utilisateur.listerUtilisateur(this.cur_atelier,this.con);
@@ -626,7 +626,7 @@ public class Gestionnaire {
                     }
                     System.out.println("Quel utilisateur devient opérateur ? ");
                     int r10 = Lire.i();
-                    Utilisateur.modifierOperateur(r10, true, con);
+                    Utilisateur.modifierStatutOperateur(r10, true, con);
                     int r11 = -1;
                     ArrayList<OperationElementaire> listeOperation = OperationElementaire.listerOperationElementaire(this.con);
                     while (r11!=0){
@@ -645,7 +645,7 @@ public class Gestionnaire {
                             listeOperation.add(OperationElementaire.getOperation(r11, this.con));
                         }
                     }
-                    Utilisateur.associerOperationUtilisateur(listeOperation, r10, con);
+                    Utilisateur.associerListeOperationUtilisateur(listeOperation, r10, con);
                 }
                 else{
                     System.out.println("Réponse invalide !");

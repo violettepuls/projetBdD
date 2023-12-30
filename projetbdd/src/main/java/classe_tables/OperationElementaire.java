@@ -48,7 +48,7 @@ public class OperationElementaire {
     public static ArrayList<OperationElementaire> listerOperation(Connection con) throws SQLException{
         ArrayList<OperationElementaire> liste = new ArrayList<OperationElementaire>();
         try(Statement st = con.createStatement()){
-            ResultSet rs = st.executeQuery("SELECT * FROM OperationElementaire WHERE Unite_Operation IS NOT NULL");
+            ResultSet rs = st.executeQuery("SELECT * FROM OperationElementaire WHERE Unite_Operation != 0");
             while (rs.next()){
                 liste.add(new OperationElementaire(rs.getInt("ID"), rs.getString("Type"), rs.getDouble("Unite_Operation")));
             }
@@ -84,19 +84,31 @@ public class OperationElementaire {
         }
     }
 
-    public static void associerMachineOperation(ArrayList<OperationElementaire> liste, int idmachine, Connection con) throws SQLException{
+    public static void associerListeMachineOperation(ArrayList<OperationElementaire> liste, int idmachine, Connection con) throws SQLException{
         for (int i=0; i<liste.size();i++){
-            try(PreparedStatement ps = con.prepareStatement("INSERT INTO MachineOperation (IDMachine,IDOperation) values (?,?)")){
-                ps.setInt(1,idmachine);
-                ps.setInt(2,liste.get(i).getId());
-                ps.executeUpdate();
-            }
+            associerMachineOperation(liste.get(i), idmachine, con);
         }
     }
 
-    public static void dissocierMachineOperation(int idmachine, Connection con) throws SQLException{
-        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM MachineOperation WHERE IDMachine = ?")){
+    public static void associerMachineOperation(OperationElementaire operation, int idmachine, Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO MachineOperation (IDMachine,IDOperation) values (?,?)")){
             ps.setInt(1,idmachine);
+            ps.setInt(2,operation.getId());
+            ps.executeUpdate();
+        }
+    }
+
+    public static void dissocierMachineOperationGlobal(int idmachine, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM MachineOperation WHERE IDMachine = ?")){
+            ps.setInt(1,idmachine);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void dissocierMachineOperation(int idoperation, int idmachine, Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM MachineOperation WHERE (IDMachine,IDOperation) = (?,?)")){
+            ps.setInt(1,idmachine);
+            ps.setInt(2,idoperation);
             ps.executeUpdate();
         }
     }
