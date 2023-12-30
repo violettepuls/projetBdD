@@ -23,6 +23,8 @@ public class GroupeOperateur extends HorizontalLayout{
     private Gestionnaire gestionnaire;
     private Button modifier;
     private TextField etat;
+    private VerticalLayout texte;
+    private VerticalLayout boutons;
 
     public GroupeOperateur(Gestionnaire g, Utilisateur m)throws SQLException{
         this.gestionnaire=g;
@@ -32,6 +34,8 @@ public class GroupeOperateur extends HorizontalLayout{
         this.description=new TextArea();
         this.modifier=new Button("Modifier");
         this.supprimer=new Button("Supprimer");
+        this.texte=new VerticalLayout();
+        this.boutons=new VerticalLayout();
 
         //paramétrage de la structure des éléments
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -49,12 +53,10 @@ public class GroupeOperateur extends HorizontalLayout{
         HorizontalLayout entete = new HorizontalLayout();
         entete.add(this.nom,this.etat);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        VerticalLayout texte=new VerticalLayout();
         texte.add(entete,this.description);
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
-        VerticalLayout boutons=new VerticalLayout();
         boutons.add(this.modifier,this.supprimer);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -72,6 +74,12 @@ public class GroupeOperateur extends HorizontalLayout{
         else{
             this.etat.getStyle().setColor("red");
         }
+        this.supprimer.addClickListener(clickevent -> {
+            supprimer();
+        });
+        this.modifier.addClickListener(clickevent ->{
+            modifier();
+        });
 
         //ajout des éléments à la page
         this.add(texte,boutons);
@@ -87,5 +95,51 @@ public class GroupeOperateur extends HorizontalLayout{
             d=d+"\n"+"- "+listeOperation.get(i).getType();
         }
         return d;
+    }
+
+    public void supprimer(){
+        try{
+            Utilisateur.supprimerOperateur(this.oper.getId(), this.gestionnaire.getConnection());
+            this.removeAll();
+        }
+        catch(SQLException e){
+            System.out.println("Erreur : "+e);
+        }
+    }
+
+    public void recharger()throws SQLException{
+        this.oper=Utilisateur.getUtilisateur(this.oper.getId(), this.gestionnaire.getConnection());
+        this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
+        this.etat.setValue(this.oper.getEtat());
+        this.description.setValue(decrire());
+        if(this.oper.getEtat().equals("Disponible")){
+            this.etat.getStyle().setColor("green");
+        }
+        else if (this.oper.getEtat().equals("En réparation")){
+            this.etat.getStyle().setColor("orange");
+        }
+        else{
+            this.etat.getStyle().setColor("red");
+        }
+        this.add(this.texte,this.boutons);
+    }
+
+    public void modifier(){
+        try{
+            this.removeAll();
+            //changer ici la hauteur de this
+            this.add(new ParametreOperateur(this));
+        }
+        catch(SQLException e){
+            System.out.println("Erreur : "+e);
+        }
+    }
+
+    public Utilisateur getOperateur(){
+        return this.oper;
+    }
+
+    public Gestionnaire getGestionnaire(){
+        return this.gestionnaire;
     }
 }

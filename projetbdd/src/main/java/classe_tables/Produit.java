@@ -96,7 +96,7 @@ public class Produit {
     }
 
     public static void dissocierAtelierProduit(int idproduit, int idatelier, Connection con) throws SQLException{
-        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM AtelierProduit WHERE (IDProduit,IDAtelier) = (?,?)")){
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierProduit WHERE (IDProduit,IDAtelier) = (?,?)")){
             ps.setInt(1,idproduit);
             ps.setInt(2,idatelier);
             ps.executeUpdate();
@@ -104,7 +104,7 @@ public class Produit {
     }
 
     public static void dissocierAtelierProduitGlobal(int idproduit, Connection con) throws SQLException{
-        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM AtelierProduit WHERE IDProduit = ?")){
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierProduit WHERE IDProduit = ?")){
             ps.setInt(1,idproduit);
             ps.executeUpdate();
         }
@@ -129,16 +129,22 @@ public class Produit {
         }
     }
 
-    public static void supprimerProduit(int id, int idatelier, Connection con) throws SQLException{
-        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM Produit WHERE ID = ?")){
-            dissocierAtelierProduit(id, idatelier, con);
-            ps.setInt(1,id);
+    public static void modifierProduit(int idproduit,String nom, String ref, Gamme gamme, Connection con) throws SQLException {
+        try(PreparedStatement ps = con.prepareStatement("UPDATE Produit SET (Nom,Reference,IDGamme) values (?,?,?) WHERE ID = ?")){
+            ps.setString(1,nom);
+            ps.setString(2,ref);
+            ps.setInt(3,gamme.getId());
+            ps.setInt(4,idproduit);
             ps.executeUpdate();
         }
     }
 
+    public static void supprimerProduit(int id, int idatelier, Connection con) throws SQLException{
+        dissocierAtelierProduit(id, idatelier, con);
+    }
+
     public static void supprimerProduitGlobal(int id, Connection con) throws SQLException{
-        try(PreparedStatement ps = con.prepareStatement("REMOVE FROM Produit WHERE ID = ?")){
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM Produit WHERE ID = ?")){
             dissocierAtelierProduitGlobal(id, con);
             ps.setInt(1,id);
             ps.executeUpdate();

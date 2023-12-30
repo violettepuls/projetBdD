@@ -9,7 +9,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 
 import classe_tables.OperationElementaire;
@@ -25,6 +24,8 @@ public class GroupeMachine extends HorizontalLayout{
     private Button modifier;
     private TextField etat;
     private Button panne;
+    private VerticalLayout texte;
+    private VerticalLayout boutons;
 
     public GroupeMachine(Gestionnaire g, machine m)throws SQLException{
         this.gestionnaire=g;
@@ -35,6 +36,8 @@ public class GroupeMachine extends HorizontalLayout{
         this.supprimer=new Button("Supprimer");
         this.etat=new TextField();
         this.panne=new Button("Signaler une panne");
+        this.texte=new VerticalLayout();
+        this.boutons=new VerticalLayout();
 
         //paramétrage de la structure des éléments
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -53,12 +56,10 @@ public class GroupeMachine extends HorizontalLayout{
         HorizontalLayout entete = new HorizontalLayout();
         entete.add(this.nom,this.etat);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        VerticalLayout texte=new VerticalLayout();
         texte.add(entete,this.description);
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
-        VerticalLayout boutons=new VerticalLayout();
         HorizontalLayout boutonsModif = new HorizontalLayout();
         boutonsModif.add(this.modifier,this.supprimer);
         boutons.add(this.panne,boutonsModif);
@@ -80,6 +81,12 @@ public class GroupeMachine extends HorizontalLayout{
         else{
             this.etat.getStyle().setColor("red");
         }
+        this.supprimer.addClickListener(clickevent -> {
+            supprimer();
+        });
+        this.modifier.addClickListener(clickevent -> {
+            modifier();
+        });
 
         //ajout des éléments à la page
         this.add(texte,boutons);
@@ -95,5 +102,51 @@ public class GroupeMachine extends HorizontalLayout{
         }
         d=d+"\n"+"Référence : "+this.mach.getRef();
         return d;
+    }
+
+    public void supprimer(){
+        try{
+            machine.supprimerMachine(this.mach.getId(), this.gestionnaire.getConnection());
+            this.removeAll();
+        }
+        catch (SQLException e){
+            System.out.println("Erreur : "+e);
+        }
+    }
+
+    public void recharger() throws SQLException{
+        this.mach=machine.getMachine(this.mach.getId(), this.gestionnaire.getConnection());
+        this.nom.setValue(this.mach.getNom());
+        this.etat.setValue(this.mach.getEtat());
+        this.description.setValue(decrire());
+        if(this.mach.getEtat().equals("Disponible")){
+            this.etat.getStyle().setColor("green");
+        }
+        else if (this.mach.getEtat().equals("En réparation")){
+            this.etat.getStyle().setColor("orange");
+        }
+        else{
+            this.etat.getStyle().setColor("red");
+        }
+        this.add(this.texte,this.boutons);
+    }
+
+    public void modifier(){
+        try{
+            this.removeAll();
+            //changer ici la hauteur de this
+            this.add(new ParametreMachine(this));
+        }
+        catch(SQLException e){
+            System.out.println("Erreur : "+e);
+        }
+    }
+
+    public machine getMachine(){
+        return this.mach;
+    }
+
+    public Gestionnaire getGestionnaire(){
+        return this.gestionnaire;
     }
 }

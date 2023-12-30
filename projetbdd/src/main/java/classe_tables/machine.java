@@ -109,19 +109,34 @@ public class machine {
             insert into Machine (Nom,Reference,Etat,Puissance,Vitesse,IDAtelier)
             values (?,?,?,?,?,?)
             """)) {
-                pst.setString(1, nom);
-                pst.setString(2, ref);
-                pst.setString(3, Etat);
-                pst.setDouble(4, P);
-                pst.setDouble(5,vitesse);
-                pst.setInt(6, Atelier.getId());
-                pst.executeUpdate();
-            }
+            pst.setString(1, nom);
+            pst.setString(2, ref);
+            pst.setString(3, Etat);
+            pst.setDouble(4, P);
+            pst.setDouble(5,vitesse);
+            pst.setInt(6, Atelier.getId());
+            pst.executeUpdate();
         }
+    }
+
+    public static void modifierMachine(int idmachine,String nom, String ref, double P, double vitesse, Connection con) throws SQLException { // cas où une machine ne peut appartenir qu'à 1 seul atelier
+        try(PreparedStatement pst = con.prepareStatement(
+            """
+            UPDATE Machine SET Nom=?,Reference=?,Puissance=?,Vitesse
+            = ? WHERE ID = ?
+            """)) {
+            pst.setString(1, nom);
+            pst.setString(2, ref);
+            pst.setDouble(3, P);
+            pst.setDouble(4,vitesse);
+            pst.setInt(5,idmachine);
+            pst.executeUpdate();
+        }
+    }
 
     public static void supprimerMachine(int id, Connection con) throws SQLException{
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Machine WHERE ID = ?")){
-            OperationElementaire.dissocierMachineOperation(id, con);
+            OperationElementaire.dissocierMachineOperationGlobal(id, con);
             ps.setInt(1,id);
             ps.executeUpdate();
         }
@@ -195,7 +210,7 @@ public class machine {
             ps.setInt(1,id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()){
-                return new machine(id, rs.getString("Nom"), rs.getString("Reference"), rs.getString("Etat"), rs.getDouble("Puissance"), rs.getDouble("Vitesse"),rs.getInt("Atelier"));
+                return new machine(id, rs.getString("Nom"), rs.getString("Reference"), rs.getString("Etat"), rs.getDouble("Puissance"), rs.getDouble("Vitesse"),rs.getInt("IDAtelier"));
             }
             else{
                 return null;
