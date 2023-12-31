@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -36,6 +37,7 @@ public class VueProduit extends VerticalLayout {
 
         //Placement et paramétrage des éléments
         this.corps.setContent(listeProduit);
+        this.corps.setSizeFull();
         this.add(titre,corps,ajouter);
         
     }
@@ -50,6 +52,14 @@ public class VueProduit extends VerticalLayout {
         ArrayList<Produit> liste = Produit.listerProduit(this.gestionnaire.getCurAtelier(), this.gestionnaire.getConnection());
         for (int i=0;i<liste.size();i++){
             this.listeProduit.add(new GroupeProduit(gestionnaire, liste.get(i)));
+            if (i < liste.size() - 1) {
+                this.listeProduit.add(new Spacer());
+            }
+        }
+    }
+    public class Spacer extends Div {
+        public Spacer() {
+            setHeight("4em"); // Vous pouvez ajuster la hauteur selon vos besoins
         }
     }
 

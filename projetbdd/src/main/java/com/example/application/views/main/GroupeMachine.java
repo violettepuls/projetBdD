@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -56,13 +57,14 @@ public class GroupeMachine extends HorizontalLayout{
         HorizontalLayout entete = new HorizontalLayout();
         entete.add(this.nom,this.etat);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        texte.add(entete,this.description);
+        texte.add(entete,this.description,new Spacer());
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
+        texte.getElement().getStyle().set("margin-bottom", "70px");
         HorizontalLayout boutonsModif = new HorizontalLayout();
         boutonsModif.add(this.modifier,this.supprimer);
-        boutons.add(this.panne,boutonsModif);
+        boutons.add(this.panne,boutonsModif,new Spacer());
         boutonsModif.setAlignItems(FlexComponent.Alignment.CENTER);
         boutonsModif.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
@@ -87,11 +89,17 @@ public class GroupeMachine extends HorizontalLayout{
         this.modifier.addClickListener(clickevent -> {
             modifier();
         });
-
+        
+        
         //ajout des éléments à la page
         this.add(texte,boutons);
         this.setFlexGrow(1, texte);
 
+    }
+    public class Spacer extends Div {
+        public Spacer() {
+            setHeight("6em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
     }
 
     public String decrire() throws SQLException{
@@ -128,7 +136,7 @@ public class GroupeMachine extends HorizontalLayout{
         else{
             this.etat.getStyle().setColor("red");
         }
-        this.add(this.texte,this.boutons);
+       
     }
 
     public void modifier(){

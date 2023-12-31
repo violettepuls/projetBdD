@@ -8,6 +8,7 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -28,6 +29,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 
 @PageTitle("Main")
 @Route(value = "accueil")
+
 public class MainView extends VerticalLayout {
 
     //private TextField name;
