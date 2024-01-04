@@ -1,7 +1,6 @@
 package com.example.application.views.main;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,7 +11,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 import classe_tables.Gamme;
-import classe_tables.OperationElementaire;
 import classe_tables.Produit;
 import traitement.Gestionnaire;
 

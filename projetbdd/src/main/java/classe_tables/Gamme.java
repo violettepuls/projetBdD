@@ -60,6 +60,17 @@ public class Gamme {
         return liste;
     }
 
+    public static ArrayList<Gamme> listerGamme(Connection con) throws SQLException{
+        ArrayList<Gamme> liste = new ArrayList<Gamme>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Gamme")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                liste.add(new Gamme(rs.getInt("Gamme.ID"), rs.getString("Gamme.Reference")));
+            }
+        }
+        return liste;
+    }
+
     @Override
     public String toString(){
         String s = this.ref + ", ID : " + this.id;
@@ -108,5 +119,47 @@ public class Gamme {
                 ps.executeUpdate();
             }
         }
+    }
+
+    public static void supprimerGammeGlobal(int idgamme, Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("UPDATE Produit SET IDGamme = -1 WHERE IDGAMME = ?")){
+            ps.setInt(1,idgamme);
+            ps.executeUpdate();
+            try(PreparedStatement ps2 = con.prepareStatement("DELETE FROM OperationGamme WHERE IDGamme = ?")){
+                ps2.setInt(1,idgamme);
+                ps2.executeUpdate();
+                try(PreparedStatement ps3 = con.prepareStatement("DELETE FROM Gamme WHERE ID = ?")){
+                    ps3.setInt(1,idgamme);
+                    ps3.executeUpdate();
+                }
+            }
+        }
+    }
+
+    public static void modifierGamme(int idgamme, ArrayList<OperationElementaire> operation, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM OperationGamme WHERE IDGamme = ?")){
+            ps.setInt(1,idgamme);
+            ps.executeUpdate();
+            for(int i = 0;i<operation.size();i++){
+                try(PreparedStatement ps2 = con.prepareStatement("INSERT INTO OperationGamme (IDOperation,IDGamme,Ordre) values (?,?,?)")){
+                    ps2.setInt(1,operation.get(i).getId());
+                    ps2.setInt(2,idgamme);
+                    ps2.setInt(3,i);
+                    ps2.executeUpdate();
+                }
+            }
+        }
+    }
+
+    public static ArrayList<OperationElementaire> getOperationGamme(int idgamme, Connection con)throws SQLException{
+        ArrayList<OperationElementaire> listeOperation = new ArrayList<OperationElementaire>();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM OperationGamme WHERE IDGamme = ?")){
+            ps.setInt(1,idgamme);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                listeOperation.add(rs.getInt("Ordre"),OperationElementaire.getOperation(rs.getInt("IDOperation"), con));
+            }
+        }
+        return listeOperation;
     }
 }
