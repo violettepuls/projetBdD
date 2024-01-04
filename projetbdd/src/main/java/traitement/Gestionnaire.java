@@ -2,16 +2,10 @@ package traitement;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.tomcat.websocket.Util;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 import classe_tables.Atelier;
 import classe_tables.Gamme;
