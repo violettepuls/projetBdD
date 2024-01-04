@@ -13,6 +13,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import classe_tables.machine;
 import traitement.Gestionnaire;
 
+
 public class VueMachine extends VerticalLayout{
     private TextField titre;
     private Button ajouter;
@@ -42,12 +43,29 @@ public class VueMachine extends VerticalLayout{
         this.corps.getStyle().set("max-width", "100%");
         
         this.add(titre,corps,ajouter);
+        this.ajouter.addClickListener(clickevent -> {
+            ajouter();
+            
+        });
         
     }
 
     public void ajouter(){
         //ouvre une VueCreationMachine qui revient sur VueMachine à la fermeture et créé une machine dans la BDD quand bouton Validé appuyé
         //enleve le reste (this.removeAll()) de l'affichage
+        try{
+            //changer ici la hauteur de this
+            
+            VueCreationMachine ajout = new VueCreationMachine(gestionnaire);
+            this.add(ajout);
+            listeMachine.removeAll();
+            formater();
+           
+        }
+        catch(SQLException e){
+            System.out.println("Erreur : "+e);
+        }
+
     }
     
     public void formater() throws SQLException{
