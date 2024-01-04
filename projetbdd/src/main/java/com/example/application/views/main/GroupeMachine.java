@@ -136,7 +136,7 @@ public class GroupeMachine extends HorizontalLayout{
         else{
             this.etat.getStyle().setColor("red");
         }
-       
+        this.add(texte,boutons);
     }
 
     public void modifier(){

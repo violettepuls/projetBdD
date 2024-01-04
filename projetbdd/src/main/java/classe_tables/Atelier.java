@@ -165,11 +165,13 @@ public class Atelier {
         }
     }
 
-    public static void supprimer(int id, Connection con){
+    public static void supprimer(int idatelier, Connection con){
         try{
             con.setAutoCommit(false);
             try (PreparedStatement ps = con.prepareStatement("DELETE FROM Atelier WHERE ID = ?")){
-                ps.setInt(1,id);
+                dissocierProduitAtelierGlobal(idatelier, con);
+                dissocierUtilisateurAtelierGlobal(idatelier, con);
+                ps.setInt(1,idatelier);
                 ps.executeUpdate();
                 System.out.println("Atelier supprimé !");
             }
@@ -182,6 +184,17 @@ public class Atelier {
         }
         catch (SQLException f){
             System.out.println("Erreur setAutoCommit : " + f);
+        }
+    }
+
+    public static void modifierAtelier(int idAtelier, String nom, String bdd, String usr, String mdp,Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("UPDATE Atelier SET Nom = ?, BDD = ?, Nom_Utilisateur_BDD = ?, MDP_BDD = ? WHERE ID = ?")){
+            ps.setString(1,nom);
+            ps.setString(2,bdd);
+            ps.setString(3,usr);
+            ps.setString(4,mdp);
+            ps.setInt(5,idAtelier);
+            ps.executeUpdate();
         }
     }
 
@@ -217,6 +230,20 @@ public class Atelier {
             else{
                 return -1;
             }
+        }
+    }
+
+    public static void dissocierProduitAtelierGlobal(int idatelier, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierProduit WHERE IDAtelier = ?")){
+            ps.setInt(1,idatelier);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void dissocierUtilisateurAtelierGlobal(int idatelier, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierUtilisateur WHERE (IDAtelier) = (?)")){
+            ps.setInt(1,idatelier);
+            ps.executeUpdate();
         }
     }
 }

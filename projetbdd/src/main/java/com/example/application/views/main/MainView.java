@@ -141,7 +141,7 @@ public class MainView extends VerticalLayout {
         } else if(tab.equals(machines)){
             content.add(new VueMachine(gestionnaire));
         } else if(tab.equals(atelier)){
-            content.add(new Paragraph("gestion atelier"));
+            content.add(new VueGestionAtelier(gestionnaire));
         }
 
 	}

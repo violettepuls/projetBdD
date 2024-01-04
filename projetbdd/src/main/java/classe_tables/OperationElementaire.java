@@ -47,6 +47,19 @@ public class OperationElementaire {
         }
     }
 
+    public static ArrayList<machine> listerMachineOperationElementaire(int idoperation,int idatelier, Connection con)throws SQLException{
+        ArrayList<machine> liste = new ArrayList<machine>();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Machine JOIN MachineOperation on MachineOperation.IDMachine = Machine.ID WHERE (MachineOperation.IDOperation,Machine.IDAtelier)=(?,?)")){
+            ps.setInt(1,idoperation);
+            ps.setInt(2,idatelier);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                liste.add(new machine(rs.getInt("Machine.ID"), rs.getString("Machine.Nom"), rs.getString("Machine.Reference"), rs.getString("Machine.Etat"), rs.getDouble("Machine.Puissance"), rs.getDouble("Machine.Vitesse"), rs.getInt("Machine.IDAtelier")));
+            }
+        }
+        return liste;
+    }
+
     public static ArrayList<OperationElementaire> listerOperation(Connection con) throws SQLException{
         ArrayList<OperationElementaire> liste = new ArrayList<OperationElementaire>();
         try(Statement st = con.createStatement()){

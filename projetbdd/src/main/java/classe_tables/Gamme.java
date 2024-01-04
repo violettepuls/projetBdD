@@ -60,12 +60,24 @@ public class Gamme {
         return liste;
     }
 
-    public static ArrayList<Gamme> listerGamme(Connection con) throws SQLException{
+    public static ArrayList<Gamme> listerGammeGlobal(Connection con) throws SQLException{
         ArrayList<Gamme> liste = new ArrayList<Gamme>();
         try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Gamme")){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 liste.add(new Gamme(rs.getInt("Gamme.ID"), rs.getString("Gamme.Reference")));
+            }
+        }
+        return liste;
+    }
+
+    public static ArrayList<Produit> listerProduitGamme(int idgamme, Connection con)throws SQLException{
+        ArrayList<Produit> liste = new ArrayList<Produit>();
+        try(PreparedStatement ps = con.prepareStatement("SELECT * FROM Produit WHERE IDGamme = ?")){
+            ps.setInt(1,idgamme);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                liste.add(new Produit(rs.getInt("ID"),rs.getString("Nom"),rs.getString("Reference"),rs.getInt("IDGamme")));
             }
         }
         return liste;

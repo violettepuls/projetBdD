@@ -491,7 +491,7 @@ public class Gestionnaire {
                 String r1 = Lire.S();
                 System.out.println("Reference : ");
                 String r2 = Lire.S();
-                ArrayList<Gamme> listeGamme = Gamme.listerGamme(/*cur_atelier,*/ con);
+                ArrayList<Gamme> listeGamme = Gamme.listerGammeGlobal(/*cur_atelier,*/ con);
                 for (int i=0;i<listeGamme.size();i++){
                     System.out.println(listeGamme.get(i).toString());
                 }
