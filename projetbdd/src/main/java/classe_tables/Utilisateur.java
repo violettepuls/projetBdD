@@ -15,7 +15,6 @@ public class Utilisateur {
     private String mdp;
     private boolean operateur;
     private String etat; //Etats possibles : Disponible, Indisponible
-    private ArrayList<Integer> idAtelier;
 
     public int getId(){
         return this.id;
@@ -362,7 +361,7 @@ public class Utilisateur {
     public static void modifierUtilisateur(int idutilisateur,String prenom, String nom, String nom_utilisateur, String role, String mdp, boolean operateur, String etat, Connection con) throws SQLException {
         try{
             con.setAutoCommit(false);
-            try (PreparedStatement st = con.prepareStatement("UPDATE Utilisateur SET (Prenom,Nom,Nom_Utilisateur,Role,MDP,Operateur,Etat) = (?,?,?,?,?,?,?) WHERE ID = ?")){
+            try (PreparedStatement st = con.prepareStatement("UPDATE Utilisateur SET Prenom = ?,Nom = ?,Nom_Utilisateur = ?,Role = ?,MDP = ?,Operateur = ?,Etat = ? WHERE ID = ?")){
                 st.setString(1,prenom);
                 st.setString(2,nom);
                 st.setString(3,nom_utilisateur);

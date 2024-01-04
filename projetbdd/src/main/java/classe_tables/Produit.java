@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.mysql.cj.jdbc.exceptions.SQLError;
 
 public class Produit {
     private int id;
@@ -130,7 +129,7 @@ public class Produit {
     }
 
     public static void modifierProduit(int idproduit,String nom, String ref, Gamme gamme, Connection con) throws SQLException {
-        try(PreparedStatement ps = con.prepareStatement("UPDATE Produit SET (Nom,Reference,IDGamme) values (?,?,?) WHERE ID = ?")){
+        try(PreparedStatement ps = con.prepareStatement("UPDATE Produit SET Nom = ?,Reference = ?,IDGamme = ? WHERE ID = ?")){
             ps.setString(1,nom);
             ps.setString(2,ref);
             ps.setInt(3,gamme.getId());

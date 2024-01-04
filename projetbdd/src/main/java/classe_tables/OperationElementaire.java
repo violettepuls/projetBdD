@@ -1,6 +1,5 @@
 package classe_tables;
 
-import java.rmi.server.Operation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare.Prepare;
 
 public class OperationElementaire {
     private int id;
@@ -26,6 +24,10 @@ public class OperationElementaire {
     }
     public void setType(String type) {
         this.type = type;
+    }
+
+    public double getUniteOperation(){
+        return this.uniteOperation;
     }
 
     public OperationElementaire(int id, String type, double uo){
@@ -117,12 +119,16 @@ public class OperationElementaire {
     public String toString(){
         String s = this.type;
         if (this.uniteOperation==0){
-            s=s+ " - " + this.uniteOperation + ", ID : " + this.id;
-        }
-        else{
             s=s+ ", ID : " + this.id;
         }
+        else{
+            s=s+ " - " + this.uniteOperation + ", ID : " + this.id;
+        }
         return s;
+    }
+
+    public String affichage(){
+        return this.type + " - " + this.uniteOperation;
     }
 
     public static int getIdOperation(String type, double uo,Connection con) throws SQLException{
