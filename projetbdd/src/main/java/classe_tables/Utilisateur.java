@@ -274,6 +274,24 @@ public class Utilisateur {
         return liste;
     }
 
+    public static ArrayList<Utilisateur> listerNonOperateur(Atelier atelier, Connection con)throws SQLException{
+        ArrayList<Integer> listeExistant = new ArrayList<Integer>();
+        for (int i=0;i<listerOperateur(atelier, con).size();i++){
+            listeExistant.add(listerOperateur(atelier, con).get(i).getId());
+        }
+        ArrayList<Utilisateur> liste = new ArrayList<Utilisateur>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur JOIN AtelierUtilisateur on Utilisateur.ID = AtelierUtilisateur.IDUtilisateur WHERE IDAtelier = ?")){
+            ps.setInt(1,atelier.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                if(!listeExistant.contains(rs.getInt("ID"))){
+                    liste.add(new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getBoolean("Operateur"),rs.getString("Etat")));
+                }
+            }
+        }
+        return liste;
+    }
+
     public static void creerUtilisateurGlobal(String prenom, String nom, String nom_utilisateur, String role, String mdp, boolean operateur, String etat, Connection con) throws SQLException {
         try{
             con.setAutoCommit(false);

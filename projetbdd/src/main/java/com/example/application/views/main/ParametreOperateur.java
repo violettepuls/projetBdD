@@ -17,7 +17,7 @@ public class ParametreOperateur extends HorizontalLayout{
     private GroupeOperateur gpOperateur;
     private TextField nom;
     private TextField prenom;
-    private MultiSelectComboBox<OperationElementaire> operation; //n'a pas encore été traitée
+    private MultiSelectComboBox<OperationElementaire> operation;
     private Button valider;
     private Button annuler;
     private VerticalLayout boutons;
@@ -28,6 +28,7 @@ public class ParametreOperateur extends HorizontalLayout{
     private TextField nouvelleOperation;
     private HorizontalLayout champNouvelleOperation;
     private Button disponible;
+    private ArrayList<OperationElementaire> listeOperation;
 
     public ParametreOperateur(GroupeOperateur go)throws SQLException{
         //Déclaration des éléments
@@ -62,9 +63,11 @@ public class ParametreOperateur extends HorizontalLayout{
         else{
             this.disponible.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
         }
-        this.operation.setItems(OperationElementaire.listerOperationElementaire(this.gpOperateur.getGestionnaire().getConnection()));
+        listeOperation = OperationElementaire.listerOperationElementaire(this.gpOperateur.getGestionnaire().getConnection());
+        matchingOperations(Utilisateur.listerOperationUtilisateur(this.gpOperateur.getOperateur().getId(), this.gpOperateur.getGestionnaire().getConnection()));
+        this.operation.setItems(listeOperation);
         this.operation.setItemLabelGenerator(OperationElementaire::getType);
-        this.operation.setValue(Utilisateur.listerOperationUtilisateur(this.gpOperateur.getOperateur().getId(), this.gpOperateur.getGestionnaire().getConnection()));
+        this.operation.setValue(listeOperation.subList(0, Utilisateur.listerOperationUtilisateur(this.gpOperateur.getOperateur().getId(), this.gpOperateur.getGestionnaire().getConnection()).size()));
 
         //Mise en fonction des boutons et actions
         this.valider.addClickListener(clickevent -> {
@@ -110,15 +113,19 @@ public class ParametreOperateur extends HorizontalLayout{
     }
 
     public void creerOperation(){
-        this.remove(this.creerOperation);
-        this.add(this.champNouvelleOperation);
+        this.champOperation.remove(this.creerOperation);
+        this.champOperation.add(this.champNouvelleOperation);
     }
 
     public void ajouterNouvelleOperation(){
         try{
+            ArrayList<OperationElementaire> selectedBefore = new ArrayList<OperationElementaire>(this.operation.getSelectedItems());
             OperationElementaire.creerOperationElementaire(this.nouvelleOperation.getValue(), this.gpOperateur.getGestionnaire().getConnection());
-            this.operation.setItems(OperationElementaire.listerOperationElementaire(this.gpOperateur.getGestionnaire().getConnection()));
+            listeOperation = OperationElementaire.listerOperationElementaire(this.gpOperateur.getGestionnaire().getConnection());
+            matchingOperations(selectedBefore);
+            this.operation.setItems(listeOperation);
             this.operation.setItemLabelGenerator(OperationElementaire::getType);
+            this.operation.setValue(listeOperation.subList(0, Utilisateur.listerOperationUtilisateur(this.gpOperateur.getOperateur().getId(), this.gpOperateur.getGestionnaire().getConnection()).size()));
         }
         catch(SQLException e){
             System.out.println("Erreur : "+e);
@@ -139,6 +146,26 @@ public class ParametreOperateur extends HorizontalLayout{
         }
         catch (SQLException e){
             System.out.println("Erreur de dispo : "+e);
+        }
+    }
+
+    public void matchingOperations(ArrayList<OperationElementaire> preselection){
+        try {
+            ArrayList<Integer> listeOperationID = new ArrayList<Integer>();
+            for (int i=0;i<listeOperation.size();i++){
+                listeOperationID.add(listeOperation.get(i).getId());
+            }
+            for (int i=0;i<preselection.size();i++){
+                if(listeOperationID.contains(preselection.get(i).getId())){
+                    int position = listeOperationID.indexOf(preselection.get(i).getId());
+                    OperationElementaire temp = listeOperation.get(position);
+                    listeOperation.remove(position);
+                    listeOperation.add(0,temp);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Erreur matching operations : "+e);
         }
     }
 }
