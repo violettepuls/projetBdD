@@ -54,7 +54,7 @@ public class VueGererGroupe extends VerticalLayout{
             if(this.categorie.getValue().equals("Produit")){
                 ArrayList<Produit> listeProduit = Produit.listerProduitGlobal(this.gestionnaire.getConnection());
                 for (int i=0;i<listeProduit.size();i++){
-                    this.listeElement.add(new GroupeProduit(gestionnaire, listeProduit.get(i)));
+                    this.listeElement.add(new GroupeProduit(gestionnaire, listeProduit.get(i),"Groupe"));
                 }
             }
             else if(this.categorie.getValue().equals("Gamme")){

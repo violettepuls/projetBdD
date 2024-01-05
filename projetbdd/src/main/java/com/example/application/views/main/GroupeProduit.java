@@ -23,8 +23,10 @@ public class GroupeProduit extends HorizontalLayout{
     private Button modifier;
     private VerticalLayout texte;
     private VerticalLayout boutons;
+    private String args;
 
-    public GroupeProduit(Gestionnaire g, Produit m)throws SQLException{
+    public GroupeProduit(Gestionnaire g, Produit m,String args)throws SQLException{
+        this.args=args;
         this.gestionnaire=g;
         this.prod=m;
         this.nom=new TextField();
@@ -77,7 +79,12 @@ public class GroupeProduit extends HorizontalLayout{
 
     public void supprimer(){
         try{
-            Produit.supprimerProduit(this.prod.getId(), this.gestionnaire.getCurAtelier().getId(), this.gestionnaire.getConnection());
+            if(this.args.equals("Groupe")){
+                Produit.supprimerProduitGlobal(this.prod.getId(), gestionnaire.getConnection());
+            }
+            else{
+                Produit.supprimerProduit(this.prod.getId(), this.gestionnaire.getCurAtelier().getId(), this.gestionnaire.getConnection());
+            }
             this.removeAll();
         }
         catch(SQLException e){

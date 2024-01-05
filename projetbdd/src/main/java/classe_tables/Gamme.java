@@ -133,10 +133,25 @@ public class Gamme {
         }
     }
 
+    /*
     public static void supprimerGammeGlobal(int idgamme, Connection con)throws SQLException{
         try(PreparedStatement ps = con.prepareStatement("UPDATE Produit SET IDGamme = -1 WHERE IDGAMME = ?")){
             ps.setInt(1,idgamme);
             ps.executeUpdate();
+            try(PreparedStatement ps2 = con.prepareStatement("DELETE FROM OperationGamme WHERE IDGamme = ?")){
+                ps2.setInt(1,idgamme);
+                ps2.executeUpdate();
+                try(PreparedStatement ps3 = con.prepareStatement("DELETE FROM Gamme WHERE ID = ?")){
+                    ps3.setInt(1,idgamme);
+                    ps3.executeUpdate();
+                }
+            }
+        }
+    }
+    */
+
+    public static void supprimerGammeGlobal(int idgamme, Connection con)throws SQLException{
+        if(listerProduitGamme(idgamme, con).isEmpty()){
             try(PreparedStatement ps2 = con.prepareStatement("DELETE FROM OperationGamme WHERE IDGamme = ?")){
                 ps2.setInt(1,idgamme);
                 ps2.executeUpdate();

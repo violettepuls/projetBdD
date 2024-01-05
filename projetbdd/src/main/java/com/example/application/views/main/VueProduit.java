@@ -48,14 +48,19 @@ public class VueProduit extends VerticalLayout {
 
 
     public void ajouter(){
-        //ouvre une VueCreationMachine qui revient sur VueMachine à la fermeture et créé une machine dans la BDD quand bouton Validé appuyé
-        //enleve le reste (this.removeAll()) de l'affichage
+        try {
+            this.removeAll();
+            this.add(new ParametreProduit(this));  
+        } catch (Exception e) {
+            System.out.println("Erreur ajouter produit : "+e);
+        }
     }
     
     public void formater() throws SQLException{
+        this.listeProduit.removeAll();
         ArrayList<Produit> liste = Produit.listerProduit(this.gestionnaire.getCurAtelier(), this.gestionnaire.getConnection());
         for (int i=0;i<liste.size();i++){
-            this.listeProduit.add(new GroupeProduit(gestionnaire, liste.get(i)));
+            this.listeProduit.add(new GroupeProduit(gestionnaire, liste.get(i),""));
             if (i < liste.size() - 1) {
                 this.listeProduit.add(new Spacer());
             }
@@ -67,4 +72,13 @@ public class VueProduit extends VerticalLayout {
         }
     }
 
+    public Gestionnaire getGestionnaire(){
+        return this.gestionnaire;
+    }
+
+    public void recharger()throws SQLException{
+        this.removeAll();
+        formater();
+        this.add(titre,corps,ajouter);
+    }
 }
