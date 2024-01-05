@@ -25,6 +25,7 @@ public class VueGestionAtelier extends VerticalLayout{
         this.gererUtilisateur = new Tab("Gérer les utilisateurs");
         this.tabs = new Tabs(gererAtelier,gererGroupe,gererUtilisateur);
         this.add(tabs,content);
+        this.content.add(new VueGererAtelier(gestionnaire));
 
         //Attribution des fonctions
         this.tabs.addSelectedChangeListener(event ->{
