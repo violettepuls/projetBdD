@@ -69,7 +69,7 @@ public class VueAuthentification extends VerticalLayout{
 
         layout.add(this.imagelogin,this.username, this.mdp,this.listeAtelier, this.validerAuthentification);
 
-        HorizontalLayout layout2 = new HorizontalLayout();
+        this.layout2 = new HorizontalLayout();
         layout2.setSizeFull();
         layout2.add(layout,this.creerAtelier);
 
