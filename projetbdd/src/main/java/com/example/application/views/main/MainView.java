@@ -33,6 +33,7 @@ public class MainView extends VerticalLayout {
 	private final VerticalLayout content;
     private Gestionnaire gestionnaire;
     private HorizontalLayout entete;
+    private HorizontalLayout corps;
     private TextField connecte;
     private TextField currentUser;
     private Button parametre;
@@ -98,16 +99,19 @@ public class MainView extends VerticalLayout {
 		);
 
 		content = new VerticalLayout();
-		content.setSpacing(false);
 		setContent(tabs.getSelectedTab());
 
         H1 title = new H1("Atelier de fabrication");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
-                .set("margin", "0");    
-        
+                .set("margin", "0");
         setHorizontalComponentAlignment(Alignment.CENTER,tabs);
-        add(entete,tabs,content);
+        this.corps=new HorizontalLayout(tabs,content);
+        add(entete,corps);
 
+        //Esthétique
+        this.tabs.setOrientation(Tabs.Orientation.VERTICAL);
+		content.setSpacing(false);
+        setHorizontalComponentAlignment(Alignment.START,tabs);
     }
 
     private void setContent(Tab tab) throws SQLException{
@@ -138,7 +142,7 @@ public class MainView extends VerticalLayout {
         this.removeAll();
         this.gestionnaire.setCurUser(gestionnaire.getCurUser().getId());
         this.currentUser.setValue(this.gestionnaire.getCurUser().getNomComplet());
-        this.add(entete,tabs,content);
+        this.add(entete,corps);
     }
 }
 
