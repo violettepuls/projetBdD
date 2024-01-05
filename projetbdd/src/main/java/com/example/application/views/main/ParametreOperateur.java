@@ -78,6 +78,8 @@ public class ParametreOperateur extends HorizontalLayout{
         });
         this.validerNouvelleOperation.addClickListener(clickevent -> {
             ajouterNouvelleOperation();
+            this.champOperation.add(this.creerOperation);
+            this.champOperation.remove(this.champNouvelleOperation);
         });
         this.creerOperation.addClickListener(clickevent -> {
             creerOperation();

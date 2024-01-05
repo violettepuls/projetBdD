@@ -28,6 +28,7 @@ public class ParametreMachine extends HorizontalLayout{
     private Button validerNouvelleOperation;
     private TextField nouvelleOperation;
     private HorizontalLayout champNouvelleOperation;
+    private ArrayList<OperationElementaire> listeOperation;
 
     public ParametreMachine(GroupeMachine gm)throws SQLException{
         //Déclaration des éléments
@@ -56,9 +57,11 @@ public class ParametreMachine extends HorizontalLayout{
         this.ref.setValue(this.gpMachine.getMachine().getRef());
         this.puissance.setValue(String.valueOf(this.gpMachine.getMachine().getPuissance()));
         this.vitesse.setValue(String.valueOf(this.gpMachine.getMachine().getVitesse()));
-        this.operation.setItems(OperationElementaire.listerOperationElementaire(this.gpMachine.getGestionnaire().getConnection()));
+        listeOperation = OperationElementaire.listerOperationElementaire(this.gpMachine.getGestionnaire().getConnection());
+        matchingOperations(machine.listerOperationElementaireMachine(this.gpMachine.getMachine().getId(), this.gpMachine.getGestionnaire().getConnection()));
+        this.operation.setItems(listeOperation);
         this.operation.setItemLabelGenerator(OperationElementaire::getType);
-        this.operation.setValue(machine.listerOperationElementaireMachine(this.gpMachine.getMachine().getId(), this.gpMachine.getGestionnaire().getConnection()));
+        this.operation.setValue(listeOperation.subList(0, machine.listerOperationElementaireMachine(this.gpMachine.getMachine().getId(), this.gpMachine.getGestionnaire().getConnection()).size()));
 
         //Mise en fonction des boutons et actions
         this.valider.addClickListener(clickevent -> {
@@ -69,6 +72,8 @@ public class ParametreMachine extends HorizontalLayout{
         });
         this.validerNouvelleOperation.addClickListener(clickevent -> {
             ajouterNouvelleOperation();
+            this.champOperation.add(this.creerOperation);
+            this.champOperation.remove(this.champNouvelleOperation);
         });
         this.creerOperation.addClickListener(clickevent -> {
             creerOperation();
@@ -102,18 +107,42 @@ public class ParametreMachine extends HorizontalLayout{
     }
 
     public void creerOperation(){
-        this.remove(this.creerOperation);
+        this.champOperation.remove(this.creerOperation);
         this.add(this.champNouvelleOperation);
     }
 
     public void ajouterNouvelleOperation(){
         try{
+            ArrayList<OperationElementaire> selectedBefore = new ArrayList<OperationElementaire>(this.operation.getSelectedItems());
             OperationElementaire.creerOperationElementaire(this.nouvelleOperation.getValue(), this.gpMachine.getGestionnaire().getConnection());
-            this.operation.setItems(OperationElementaire.listerOperationElementaire(this.gpMachine.getGestionnaire().getConnection()));
+            listeOperation=OperationElementaire.listerOperationElementaire(this.gpMachine.getGestionnaire().getConnection());
+            matchingOperations(selectedBefore);
+            this.operation.setItems(listeOperation);
             this.operation.setItemLabelGenerator(OperationElementaire::getType);
+            this.operation.setValue(listeOperation.subList(0, machine.listerOperationElementaireMachine(this.gpMachine.getMachine().getId(), this.gpMachine.getGestionnaire().getConnection()).size()));
         }
         catch(SQLException e){
             System.out.println("Erreur : "+e);
+        }
+    }
+
+    public void matchingOperations(ArrayList<OperationElementaire> preselection){
+        try {
+            ArrayList<Integer> listeOperationID = new ArrayList<Integer>();
+            for (int i=0;i<listeOperation.size();i++){
+                listeOperationID.add(listeOperation.get(i).getId());
+            }
+            for (int i=0;i<preselection.size();i++){
+                if(listeOperationID.contains(preselection.get(i).getId())){
+                    int position = listeOperationID.indexOf(preselection.get(i).getId());
+                    OperationElementaire temp = listeOperation.get(position);
+                    listeOperation.remove(position);
+                    listeOperation.add(0,temp);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Erreur matching operations : "+e);
         }
     }
 }
