@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.charts.model.Label;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -26,11 +29,14 @@ public class VueAuthentification extends VerticalLayout{
     private Button creerAtelier;
     private Notification messageErreur;
     private HorizontalLayout boxAtelier;
+    private Image imagelogin;
+    private Image logoinsa;
     
     public VueAuthentification() throws ClassNotFoundException,SQLException{
         this.gestionnaire=new Gestionnaire();
         this.messageErreur = new Notification();
-        this.listeAtelier = new ComboBox<String>("Se connecter à l'atelier");
+        this.listeAtelier = new ComboBox<String>("Selectionner Atelier");
+      //  this.listeAtelier.setPlaceholder("Atelier");
         remplirListeAtelier();
         this.username = new TextField("Nom d'utilisateur");
         this.mdp = new PasswordField("Mot de passe");
@@ -44,7 +50,37 @@ public class VueAuthentification extends VerticalLayout{
         });
         this.boxAtelier = new HorizontalLayout();
         boxAtelier.add(this.listeAtelier,this.creerAtelier);
-        this.add(this.username,this.mdp,boxAtelier,this.validerAuthentification);
+        boxAtelier.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        this.imagelogin = new Image("https://cdn.icon-icons.com/icons2/1769/PNG/512/4092564-about-mobile-ui-profile-ui-user-website_114033.png","");
+        imagelogin.setHeight("8em");
+
+        this.logoinsa = new Image("https://www.eduopinions.com/wp-content/uploads/2018/02/logo-coul-e1472661333433.jpg","");
+        logoinsa.setHeight("5em");
+        logoinsa.getStyle().set("position","fixed").set("bottom","3em").set("right","3em");
+
+
+     //   creerAtelier.getStyle().set("position","fixed").set("top","25em").set("right","15em");
+
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+       // layout.setJustifyContentMode(JustifyContentMode.START);
+        layout.setSizeFull();
+
+        layout.add(this.imagelogin,this.username, this.mdp,this.listeAtelier, this.validerAuthentification);
+
+        HorizontalLayout layout2 = new HorizontalLayout();
+        layout2.setSizeFull();
+        layout2.add(layout,this.creerAtelier);
+
+        add(layout2,this.logoinsa);
+    
+    }
+     public class Spacer extends Div {
+        public Spacer() {
+            setHeight("10em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
     }
 
     public void remplirListeAtelier(){
