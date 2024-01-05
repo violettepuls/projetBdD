@@ -76,6 +76,37 @@ public class Utilisateur {
         return this.etat;
     }
 
+    public String getNomComplet(){
+        return this.prenom+" "+this.nom;
+    }
+
+    public boolean isAvailable(){
+        if(this.etat.equals("Disponible")){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean isAdmin(){
+        if(this.role.equals("Admin")){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public String getOperateur(){
+        if (isOperateur()){
+            return "Opérateur";
+        }
+        else{
+            return "";
+        }
+    }
+
     public Utilisateur(int id, String nom, String prenom, String usr, String role, boolean op, String etat){
         this.id=id;
         this.nom=nom;
@@ -307,6 +338,18 @@ public class Utilisateur {
         }
         return liste;
     }
+    
+    public static ArrayList<Utilisateur> listerUtilisateurHorsAtelier(Atelier atelier, Connection con)throws SQLException{
+        ArrayList<Utilisateur> liste = new ArrayList<Utilisateur>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur JOIN AtelierUtilisateur ON AtlierUtilisateur.IDUtilisateur = Utilisateur.ID WHERE IDAtelier != ?")){
+            ps.setInt(1,atelier.getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                liste.add(new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getBoolean("Operateur"),rs.getString("Etat")));
+            }
+        }
+        return liste;
+    }
 
     public static ArrayList<Utilisateur> listerUtilisateurGlobal(Connection con) throws SQLException{
         ArrayList<Utilisateur> liste = new ArrayList<Utilisateur>();
@@ -483,6 +526,21 @@ public class Utilisateur {
     public static void modifierStatutOperateur(int idutilisateur, boolean operateur, Connection con) throws SQLException{
         try(PreparedStatement ps = con.prepareStatement("UPDATE Utilisateur SET Operateur = ? WHERE ID = ?")){
             ps.setBoolean(1,operateur);
+            ps.setInt(2,idutilisateur);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void modifierStatutAdmin(int idutilisateur, boolean admin, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("UPDATE Utilisateur SET Role = ? WHERE ID = ?")){
+            String role ="";
+            if(admin){
+                role="Admin";
+            }
+            else{
+                role="Utilisateur";
+            }
+            ps.setString(1,role);
             ps.setInt(2,idutilisateur);
             ps.executeUpdate();
         }
