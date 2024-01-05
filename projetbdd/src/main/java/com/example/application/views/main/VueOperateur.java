@@ -35,6 +35,11 @@ public class VueOperateur extends VerticalLayout{
         this.corps.setContent(listeOperateur);
         this.corps.setSizeFull();
         this.add(titre,corps,ajouter);
+
+        //Atribution des fonctions
+        this.ajouter.addClickListener(clickevent->{
+            ajouter();
+        });
         
         //Esthétique
 
@@ -42,11 +47,17 @@ public class VueOperateur extends VerticalLayout{
 
 
     public void ajouter(){
-        //ouvre une VueCreationMachine qui revient sur VueMachine à la fermeture et créé une machine dans la BDD quand bouton Validé appuyé (COPIE COLLE, MAIS IDEE IDENTIQUE AVEC OPERATEur)
-        //enleve le reste (this.removeAll()) de l'affichage
+        try {
+            this.removeAll();
+            this.add(new VueCreationOperateur(this));
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println("Erreur ajout operateur : "+e);
+        }
     }
     
     public void formater() throws SQLException{
+        this.listeOperateur.removeAll();
         ArrayList<Utilisateur> liste = Utilisateur.listerOperateur(this.gestionnaire.getCurAtelier(), this.gestionnaire.getConnection());
         for (int i=0;i<liste.size();i++){
             this.listeOperateur.add(new GroupeOperateur(gestionnaire, liste.get(i)));
@@ -59,5 +70,15 @@ public class VueOperateur extends VerticalLayout{
         public Spacer() {
             setHeight("4em"); // Vous pouvez ajuster la hauteur selon vos besoins
         }
+    }
+
+    public Gestionnaire getGestionnaire(){
+        return this.gestionnaire;
+    }
+
+    public void recharger()throws SQLException{
+        this.removeAll();
+        formater();
+        this.add(titre,corps,ajouter);
     }
 }
