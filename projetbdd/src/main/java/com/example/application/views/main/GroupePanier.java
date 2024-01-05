@@ -5,9 +5,6 @@ import java.util.Collections;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -18,31 +15,38 @@ import classe_tables.Gamme;
 import classe_tables.Produit;
 import traitement.Gestionnaire;
 
-public class GroupeProduction extends HorizontalLayout{
+public class GroupePanier extends HorizontalLayout{
+    private VuePanier vp;
     private Produit prod;
+    private int nombre;
+    private TextField qte;
     private TextField nom;
     private TextArea description;
     private Gestionnaire gestionnaire;
-    private Button ajouter;
+    private Button supprimer;
     private VerticalLayout texte;
 
-    public GroupeProduction(Gestionnaire g, Produit m)throws SQLException{
+    public GroupePanier(VuePanier v, Produit m)throws SQLException{
         //Déclaration
-        this.gestionnaire=g;
+        this.vp=v;
+        this.gestionnaire=v.getGestionnaire();
         this.prod=m;
+        this.nombre=Collections.frequency(gestionnaire.getPanier(), m);
+        this.qte = new TextField("Quantité");
         this.nom=new TextField();
         this.description=new TextArea();
-        this.ajouter=new Button("Ajouter");
+        this.supprimer=new Button("Supprimer");
         this.texte=new VerticalLayout(this.nom,this.description);
-        this.add(texte,ajouter);
+        this.add(qte,texte,supprimer);
 
         //paramétrage des données des éléments
         this.nom.setValue(this.prod.getNom());
         this.description.setValue(decrire());
+        this.qte.setValue(String.valueOf(nombre));
 
         //Attribution des fonctions
-        this.ajouter.addClickListener(clickevent->{
-            ajouterAuPanier();
+        this.supprimer.addClickListener(clickevent->{
+            supprimer();
         });
 
         //Esthétique
@@ -58,7 +62,7 @@ public class GroupeProduction extends HorizontalLayout{
         this.nom.getStyle().setBorder(null);
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
-        this.ajouter.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
+        this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
 
     }
 
@@ -69,9 +73,19 @@ public class GroupeProduction extends HorizontalLayout{
         return d;
     }
 
-    public void ajouterAuPanier(){
-        this.gestionnaire.ajouterAuPanier(this.prod);
-        Notification notification = Notification.show("Ajouté au panier. Total : "+Collections.frequency(this.gestionnaire.getPanier(),this.prod), 1000, Position.BOTTOM_CENTER);
-        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    public void supprimer(){
+        this.gestionnaire.getPanier().remove(this.prod);
+        if(nombre==1){
+            try {
+                this.vp.recharger();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                System.out.println("Erreur suppression : "+e);
+            }
+        }
+        else{
+            this.nombre=this.nombre-1;
+            this.qte.setValue(String.valueOf(nombre));
+        }
     }
 }

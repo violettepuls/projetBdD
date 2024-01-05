@@ -59,6 +59,18 @@ public class Gestionnaire {
         return this.cur_atelier;
     }
 
+    public ArrayList<Produit> getPanier(){
+        return this.cur_panier;
+    }
+
+    public void ajouterAuPanier(Produit p){
+        this.cur_panier.add(p);
+    }
+
+    public void reinitialiserPanier(){
+        this.cur_panier=new ArrayList<Produit>();
+    }
+
     public void initialiserConnection() throws SQLException, ClassNotFoundException{ // Initialisation de la connexion à notre base de données principale. C'est celle-ci qui contiendra la liste de tous les ateliers existants, dont chacun d'entre eux pourraient avoir ses données ailleurs.
         try {
             Connection c;
@@ -190,6 +202,7 @@ public class Gestionnaire {
     public boolean autorisationAtelier(int idAtelier)throws SQLException{
         if (Utilisateur.listerAtelierUtilisateur(this.cur_user.getId(), con).contains(idAtelier)){
             this.setCurAtelier(idAtelier);
+            this.cur_panier=new ArrayList<Produit>();
             return true;
         }
         else{

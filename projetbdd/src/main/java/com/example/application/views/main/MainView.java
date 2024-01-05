@@ -118,7 +118,7 @@ public class MainView extends VerticalLayout {
 		content.removeAll();
 
 		if (tab.equals(production)) {
-			content.add(new Paragraph("This is the Details tab"));
+			content.add(new VueProduction(gestionnaire));
 		} else if (tab.equals(edt)) {
 			content.add(new Paragraph("This is the Payment tab"));
 		} else if(tab.equals(produits)){
