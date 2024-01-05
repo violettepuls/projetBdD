@@ -67,6 +67,24 @@ public class Produit {
         return liste;
     }
 
+    public static ArrayList<Produit> listerProduitHorsAtelier(Atelier atelier,Connection con) throws SQLException{
+        ArrayList<Produit> listeExistant=listerProduit(atelier, con);
+        ArrayList<Integer> listeID=new ArrayList<Integer>();
+        for (int i=0;i<listeExistant.size();i++){
+            listeID.add(listeExistant.get(i).getId());
+        }
+        ArrayList<Produit> liste = new ArrayList<Produit>();
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Produit")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                if(!listeID.contains(rs.getInt("ID"))){
+                    liste.add(new Produit(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Reference"), rs.getInt("IDGamme")));
+                }
+            }
+        }
+        return liste;
+    }
+
     @Override
     public String toString(){
         String s = this.nom + ", ID : " + this.id;

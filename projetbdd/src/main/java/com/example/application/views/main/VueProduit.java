@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -22,24 +24,34 @@ public class VueProduit extends VerticalLayout {
     private Gestionnaire gestionnaire;
     private Scroller corps;
     private VerticalLayout listeProduit;
+    private ComboBox<Produit> ajouterExistant;
+    private HorizontalLayout boutons;
 
     public VueProduit(Gestionnaire g) throws SQLException{
         //Déclaration des éléments
         this.gestionnaire=g;
         this.titre = new TextField();
         this.ajouter = new Button("Ajouter");
+        this.ajouterExistant=new ComboBox<Produit>();
         this.corps = new Scroller();
         this.listeProduit = new VerticalLayout();
+        this.boutons=new HorizontalLayout(ajouter,ajouterExistant);
         this.corps.setContent(listeProduit);
-        this.add(titre,corps,ajouter);
+        this.add(titre,corps,boutons);
 
         //Pré-remplissage
         this.titre.setValue("Liste des Produits");
+        this.ajouterExistant.setPlaceholder("Ajouter un produit existant");
+        this.ajouterExistant.setItems(Produit.listerProduitHorsAtelier(gestionnaire.getCurAtelier(),gestionnaire.getConnection()));
+        this.ajouterExistant.setItemLabelGenerator(Produit::getNom);
         formater();
 
         //Attribution des fonctions
         this.ajouter.addClickListener(clickevent->{
             ajouter();
+        });
+        this.ajouterExistant.addValueChangeListener(event->{
+            ajouterExistant();
         });
         
         //Esthétique
@@ -51,6 +63,15 @@ public class VueProduit extends VerticalLayout {
         try {
             this.removeAll();
             this.add(new ParametreProduit(this));  
+        } catch (Exception e) {
+            System.out.println("Erreur ajouter produit : "+e);
+        }
+    }
+
+    public void ajouterExistant(){
+        try {
+            Produit.associerAtelierProduit(gestionnaire.getCurAtelier().getId(), ajouterExistant.getValue().getId(), gestionnaire.getConnection());
+            formater();
         } catch (Exception e) {
             System.out.println("Erreur ajouter produit : "+e);
         }
@@ -79,6 +100,6 @@ public class VueProduit extends VerticalLayout {
     public void recharger()throws SQLException{
         this.removeAll();
         formater();
-        this.add(titre,corps,ajouter);
+        this.add(titre,corps,boutons);
     }
 }
