@@ -31,6 +31,8 @@ public class VueAuthentification extends VerticalLayout{
     private HorizontalLayout boxAtelier;
     private Image imagelogin;
     private Image logoinsa;
+    private HorizontalLayout layout2;
+    private VerticalLayout layout;
     
     public VueAuthentification() throws ClassNotFoundException,SQLException{
         this.gestionnaire=new Gestionnaire();
@@ -120,7 +122,7 @@ public class VueAuthentification extends VerticalLayout{
             this.gestionnaire=new Gestionnaire();
             this.removeAll();
             remplirListeAtelier();
-            this.add(this.username,this.mdp,boxAtelier,this.validerAuthentification);
+            add(layout2,this.logoinsa);
         }
         catch(Exception e){
             System.out.println("Erreur chargement VA : "+e);
