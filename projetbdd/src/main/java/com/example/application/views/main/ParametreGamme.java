@@ -102,6 +102,9 @@ public class ParametreGamme extends HorizontalLayout{
         this.annuler.addClickListener(clickevent -> {
             annuler();
         });
+
+        //Esthétique
+        
     }
 
     public void chargerGamme(){

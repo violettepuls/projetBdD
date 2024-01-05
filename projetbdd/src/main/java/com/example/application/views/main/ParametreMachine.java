@@ -48,8 +48,6 @@ public class ParametreMachine extends HorizontalLayout{
         this.champParametre=new VerticalLayout(this.nom,this.ref,this.puissance,this.vitesse);
         this.champOperation=new VerticalLayout(this.operation,this.creerOperation);
         this.champNouvelleOperation= new HorizontalLayout(this.nouvelleOperation,this.validerNouvelleOperation);
-        
-        //Ajout de tout dans l'élément principal
         this.add(this.champParametre,this.champOperation,this.boutons);
 
         //Paramètres initiaux des champs

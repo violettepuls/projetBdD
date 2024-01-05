@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.charts.model.Label;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -27,7 +26,6 @@ public class VueAuthentification extends VerticalLayout{
     private ComboBox<String> listeAtelier;
     private Button validerAuthentification;
     private Button creerAtelier;
-    private Notification messageErreur;
     private HorizontalLayout boxAtelier;
     private Image imagelogin;
     private Image logoinsa;
@@ -36,7 +34,6 @@ public class VueAuthentification extends VerticalLayout{
     
     public VueAuthentification() throws ClassNotFoundException,SQLException{
         this.gestionnaire=new Gestionnaire();
-        this.messageErreur = new Notification();
         this.listeAtelier = new ComboBox<String>("Selectionner Atelier");
       //  this.listeAtelier.setPlaceholder("Atelier");
         remplirListeAtelier();
@@ -65,7 +62,7 @@ public class VueAuthentification extends VerticalLayout{
      //   creerAtelier.getStyle().set("position","fixed").set("top","25em").set("right","15em");
 
 
-        VerticalLayout layout = new VerticalLayout();
+        this.layout = new VerticalLayout();
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
        // layout.setJustifyContentMode(JustifyContentMode.START);
         layout.setSizeFull();
@@ -105,15 +102,15 @@ public class VueAuthentification extends VerticalLayout{
                         this.add(mv);
                     }
                     else{
-                        messageErreur.show("Vous n'avez pas accès à cet atelier.");
+                        Notification.show("Vous n'avez pas accès à cet atelier.");
                     }
                 }
                 else{
-                    messageErreur.show("Votre nom d'utilisateur ou mot de passe est incorrect.");
+                    Notification.show("Votre nom d'utilisateur ou mot de passe est incorrect.");
                 }
             }
             catch (SQLException e){
-                messageErreur.show("Une erreur est survenue : "+e);
+                Notification.show("Une erreur est survenue : "+e);
             }
     }
 
@@ -122,7 +119,7 @@ public class VueAuthentification extends VerticalLayout{
             this.gestionnaire=new Gestionnaire();
             this.removeAll();
             remplirListeAtelier();
-            add(layout2,this.logoinsa);
+            this.add(layout2,this.logoinsa);
         }
         catch(Exception e){
             System.out.println("Erreur chargement VA : "+e);

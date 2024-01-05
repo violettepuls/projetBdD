@@ -91,8 +91,6 @@ public class MainView extends VerticalLayout {
                 try {
                     setContent(event.getSelectedTab());
                 } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    //e.printStackTrace();
                     System.out.println("Erreur : "+e);
                 }
             }

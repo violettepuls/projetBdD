@@ -3,7 +3,6 @@ package com.example.application.views.main;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.example.application.views.main.GroupeMachine.Spacer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -28,26 +27,24 @@ public class VueMachine extends VerticalLayout{
         this.ajouter = new Button("Ajouter");
         this.corps = new Scroller();
         this.listeMachine = new VerticalLayout();
+        this.add(titre,corps,ajouter);
 
-        //Acquisition des données
+        //Pré-remplissage
         this.titre.setValue("Liste des Machines");
         formater();
-
-        //Placement et paramétrage des éléments
-        this.setSizeFull(); // Définir la hauteur de la vue à 100%
-
-        // Paramétrage du Scroller et de son conteneur parent
         this.corps.setContent(listeMachine);
-        this.corps.setSizeFull();
-        this.corps.getStyle().set("max-height", "100%");
-        this.corps.getStyle().set("max-width", "100%");
-        
-        this.add(titre,corps,ajouter);
+
+        //Attribution des fonctions
         this.ajouter.addClickListener(clickevent -> {
             ajouter();
             
         });
         
+        //Esthétique
+        this.setSizeFull(); // Définir la hauteur de la vue à 100%
+        this.corps.setSizeFull();
+        this.corps.getStyle().set("max-height", "100%");
+        this.corps.getStyle().set("max-width", "100%");
     }
 
     public void ajouter(){

@@ -24,24 +24,26 @@ public class VueProduit extends VerticalLayout {
     private VerticalLayout listeProduit;
 
     public VueProduit(Gestionnaire g) throws SQLException{
-        //déclaration des éléments
+        //Déclaration des éléments
         this.gestionnaire=g;
         this.titre = new TextField();
         this.ajouter = new Button("Ajouter");
         this.corps = new Scroller();
         this.listeProduit = new VerticalLayout();
+        this.corps.setContent(listeProduit);
+        this.add(titre,corps,ajouter);
 
-        //Acquisition des données
+        //Pré-remplissage
         this.titre.setValue("Liste des Produits");
         formater();
 
-        //Placement et paramétrage des éléments
-        this.corps.setContent(listeProduit);
-        this.corps.setSizeFull();
-        this.add(titre,corps,ajouter);
+        //Attribution des fonctions
+        this.ajouter.addClickListener(clickevent->{
+            ajouter();
+        });
         
         //Esthétique
-        
+        this.corps.setSizeFull();
     }
 
 

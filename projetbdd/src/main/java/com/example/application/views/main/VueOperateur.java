@@ -26,15 +26,12 @@ public class VueOperateur extends VerticalLayout{
         this.ajouter = new Button("Ajouter");
         this.corps = new Scroller();
         this.listeOperateur = new VerticalLayout();
+        this.add(titre,corps,ajouter);
 
-        //Acquisition des données
+        //Pré-remplissage
         this.titre.setValue("Liste des Opérateurs");
         formater();
-
-        //Placement et paramétrage des éléments
         this.corps.setContent(listeOperateur);
-        this.corps.setSizeFull();
-        this.add(titre,corps,ajouter);
 
         //Atribution des fonctions
         this.ajouter.addClickListener(clickevent->{
@@ -42,6 +39,7 @@ public class VueOperateur extends VerticalLayout{
         });
         
         //Esthétique
+        this.corps.setSizeFull();
 
     }
 

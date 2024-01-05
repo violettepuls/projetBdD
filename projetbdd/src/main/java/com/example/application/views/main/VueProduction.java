@@ -27,15 +27,12 @@ public class VueProduction extends VerticalLayout  {
         this.panier = new Button("Panier");
         this.corps = new Scroller();
         this.listeProduit = new VerticalLayout();
+        this.add(titre,corps,panier);
 
-        //Acquisition des données
+        //Pré-remplissage
         this.titre.setValue("Liste des Produits");
         formater();
-
-        //Placement et paramétrage des éléments
         this.corps.setContent(listeProduit);
-        this.corps.setSizeFull();
-        this.add(titre,corps,panier);
 
         //Attribution des fonctions
         this.panier.addClickListener(clickevent->{
@@ -49,7 +46,7 @@ public class VueProduction extends VerticalLayout  {
         });
         
         //Esthétique
-        
+        this.corps.setSizeFull();
     }
     
     public void formater() throws SQLException{

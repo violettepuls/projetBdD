@@ -61,8 +61,6 @@ public class ParametreProduit extends HorizontalLayout{
         this.champParametre=new VerticalLayout(this.nom,this.ref);
         this.champOperation= new VerticalLayout();
         this.champGamme=new VerticalLayout(this.gamme,this.champOperation,this.ajoutOperation);
-        
-        //Ajout de tout dans l'élément principal
         this.add(this.champParametre,this.champGamme,this.boutons);
 
         //Paramètres initiaux des champs

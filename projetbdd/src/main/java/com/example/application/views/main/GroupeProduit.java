@@ -33,8 +33,23 @@ public class GroupeProduit extends HorizontalLayout{
         this.supprimer=new Button("Supprimer");
         this.texte=new VerticalLayout();
         this.boutons=new VerticalLayout();
+        texte.add(this.nom,this.description);
+        boutons.add(this.modifier,this.supprimer);
+        this.add(texte,boutons);
 
-        //paramétrage de la structure des éléments
+        //Pré-remplissage
+        this.nom.setValue(this.prod.getNom());
+        this.description.setValue(decrire());
+
+        //Attribution des fonctions
+        this.supprimer.addClickListener(clickevent -> {
+            supprimer();
+        });
+        this.modifier.addClickListener(clickevent -> {
+            modifier();
+        });
+
+        //Esthétique
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
         this.setPadding(true);
         this.setWidth("auto");
@@ -45,28 +60,12 @@ public class GroupeProduit extends HorizontalLayout{
         this.description.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
-        texte.add(this.nom,this.description);
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
-        boutons.add(this.modifier,this.supprimer);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        //paramétrage des données des éléments
-        this.nom.setValue(this.prod.getNom());
-        this.description.setValue(decrire());
-        this.supprimer.addClickListener(clickevent -> {
-            supprimer();
-        });
-        this.modifier.addClickListener(clickevent -> {
-            modifier();
-        });
-
-        //ajout des éléments à la page
-        this.add(texte,boutons);
         this.setFlexGrow(1, texte);
-
     }
 
     public String decrire() throws SQLException{

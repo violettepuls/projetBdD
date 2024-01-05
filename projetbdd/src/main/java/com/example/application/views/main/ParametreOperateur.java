@@ -47,13 +47,9 @@ public class ParametreOperateur extends HorizontalLayout{
         this.champParametre=new VerticalLayout(this.nom,this.prenom);
         this.champOperation=new VerticalLayout(this.operation,this.creerOperation);
         this.champNouvelleOperation= new HorizontalLayout(this.nouvelleOperation,this.validerNouvelleOperation);
-        
-        //Ajout de tout dans l'élément principal
         this.add(this.champParametre,this.champOperation,this.boutons);
 
         //Paramètres initiaux des champs
-        this.nom.setReadOnly(true);
-        this.prenom.setReadOnly(true);
         this.nom.setValue(this.gpOperateur.getOperateur().getNom());
         this.prenom.setValue(this.gpOperateur.getOperateur().getPrenom());
         this.disponible.setText(this.gpOperateur.getOperateur().getEtat());
@@ -89,7 +85,8 @@ public class ParametreOperateur extends HorizontalLayout{
         });
 
         //Esthétique
-
+        this.nom.setReadOnly(true);
+        this.prenom.setReadOnly(true);
     }
 
     public void valider(){

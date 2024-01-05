@@ -38,9 +38,35 @@ public class GroupeMachine extends HorizontalLayout{
         this.etat=new TextField();
         this.panne=new Button("Signaler une panne");
         this.texte=new VerticalLayout();
-        this.boutons=new VerticalLayout();
+        HorizontalLayout boutonsModif = new HorizontalLayout(this.modifier,this.supprimer);
+        this.boutons=new VerticalLayout(this.panne,boutonsModif,new Spacer());
+        HorizontalLayout entete = new HorizontalLayout(this.nom,this.etat);
+        texte.add(entete,this.description,new Spacer());
+        this.add(texte,boutons);
 
-        //paramétrage de la structure des éléments
+        //Pré-remplissage
+        this.nom.setValue(this.mach.getNom());
+        this.etat.setValue(this.mach.getEtat());
+        this.description.setValue(decrire());
+        if(this.mach.getEtat().equals("Disponible")){
+            this.etat.getStyle().setColor("green");
+        }
+        else if (this.mach.getEtat().equals("En réparation")){
+            this.etat.getStyle().setColor("orange");
+        }
+        else{
+            this.etat.getStyle().setColor("red");
+        }
+
+        //Attribution des fonctions
+        this.supprimer.addClickListener(clickevent -> {
+            supprimer();
+        });
+        this.modifier.addClickListener(clickevent -> {
+            modifier();
+        });
+        
+        //Esthétique
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
         //this.setPadding(true);
         this.setWidth("auto");
@@ -54,47 +80,16 @@ public class GroupeMachine extends HorizontalLayout{
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
         this.panne.addThemeVariants(ButtonVariant.LUMO_TERTIARY,ButtonVariant.LUMO_ERROR);
-        HorizontalLayout entete = new HorizontalLayout();
-        entete.add(this.nom,this.etat);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        texte.add(entete,this.description,new Spacer());
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
         texte.getElement().getStyle().set("margin-bottom", "70px");
-        HorizontalLayout boutonsModif = new HorizontalLayout();
-        boutonsModif.add(this.modifier,this.supprimer);
-        boutons.add(this.panne,boutonsModif,new Spacer());
         boutonsModif.setAlignItems(FlexComponent.Alignment.CENTER);
         boutonsModif.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        //paramétrage des données des éléments
-        this.nom.setValue(this.mach.getNom());
-        this.etat.setValue(this.mach.getEtat());
-        this.description.setValue(decrire());
-        if(this.mach.getEtat().equals("Disponible")){
-            this.etat.getStyle().setColor("green");
-        }
-        else if (this.mach.getEtat().equals("En réparation")){
-            this.etat.getStyle().setColor("orange");
-        }
-        else{
-            this.etat.getStyle().setColor("red");
-        }
-        this.supprimer.addClickListener(clickevent -> {
-            supprimer();
-        });
-        this.modifier.addClickListener(clickevent -> {
-            modifier();
-        });
-        
-        
-        //ajout des éléments à la page
-        this.add(texte,boutons);
         this.setFlexGrow(1, texte);
-
     }
     public class Spacer extends Div {
         public Spacer() {

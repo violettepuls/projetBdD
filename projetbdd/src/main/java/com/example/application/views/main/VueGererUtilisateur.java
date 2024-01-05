@@ -51,14 +51,10 @@ public class VueGererUtilisateur extends VerticalLayout{
         tableau.addColumn(new NativeButtonRenderer<>("Supprimer",clickedItem->{
             supprimer(clickedItem);
         }));
-
-        //autrement (pour le bouton)
-        /*
-
-        */
-
         searchField.setPlaceholder("Rechercher");
         searchField.setValueChangeMode(ValueChangeMode.EAGER);
+
+        //Attribution des fonctions
         searchField.addValueChangeListener(e -> dataView.refreshAll());
         dataView.addFilter(user -> {
             String searchTerm = searchField.getValue().trim();
@@ -74,8 +70,6 @@ public class VueGererUtilisateur extends VerticalLayout{
 
             return matchesFullName || matchesRole || matchesOperateur;
         });
-
-        //Attribution des fonctions
         this.ajouterExistant.addClickListener(clickevent->{
             ajouterExistant();
         });

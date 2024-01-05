@@ -49,8 +49,6 @@ public class VueCreationOperateur extends HorizontalLayout{
         this.champParametre=new VerticalLayout(this.utilisateur,this.disponible);
         this.champOperation=new VerticalLayout(this.operation,this.creerOperation);
         this.champNouvelleOperation= new HorizontalLayout(this.nouvelleOperation,this.validerNouvelleOperation);
-        
-        //Ajout de tout dans l'élément principal
         this.add(this.champParametre,this.champOperation,this.boutons);
 
         //Paramètres initiaux des champs

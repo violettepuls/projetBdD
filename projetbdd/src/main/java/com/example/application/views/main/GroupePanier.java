@@ -39,7 +39,7 @@ public class GroupePanier extends HorizontalLayout{
         this.texte=new VerticalLayout(this.nom,this.description);
         this.add(qte,texte,supprimer);
 
-        //paramétrage des données des éléments
+        //Pré-remplissage
         this.nom.setValue(this.prod.getNom());
         this.description.setValue(decrire());
         this.qte.setValue(String.valueOf(nombre));

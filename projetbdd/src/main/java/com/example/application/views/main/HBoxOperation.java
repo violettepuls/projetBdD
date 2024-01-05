@@ -21,7 +21,7 @@ public class HBoxOperation extends HorizontalLayout{
     private Button delete;
 
     public HBoxOperation(OperationElementaire op,ParametreProduit pP, int id){
-        //Déclaration + lecture seule
+        //Déclaration
         this.index=id;
         this.operation = op;
         this.pp = pP;
@@ -31,10 +31,6 @@ public class HBoxOperation extends HorizontalLayout{
         this.up=new Button(new Icon(VaadinIcon.ARROW_UP));
         this.down = new Button(new Icon(VaadinIcon.ARROW_DOWN));
         this.delete = new Button(new Icon(VaadinIcon.TRASH));
-        this.delete.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
-        this.ordre.setReadOnly(true);
-        this.type.setReadOnly(true);
-        this.uniteOperation.setReadOnly(true);
         this.add(up,down,ordre,type,uniteOperation,delete);
 
         //Remplissage du texte
@@ -60,6 +56,10 @@ public class HBoxOperation extends HorizontalLayout{
         });
 
         //Esthétique
+        this.delete.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        this.ordre.setReadOnly(true);
+        this.type.setReadOnly(true);
+        this.uniteOperation.setReadOnly(true);
 
     }
 

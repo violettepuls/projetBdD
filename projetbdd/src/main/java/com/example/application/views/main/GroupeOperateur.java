@@ -34,10 +34,33 @@ public class GroupeOperateur extends HorizontalLayout{
         this.description=new TextArea();
         this.modifier=new Button("Modifier");
         this.supprimer=new Button("Supprimer");
-        this.texte=new VerticalLayout();
-        this.boutons=new VerticalLayout();
+        this.boutons=new VerticalLayout(this.modifier,this.supprimer);
+        HorizontalLayout entete = new HorizontalLayout(this.nom,this.etat);
+        this.texte=new VerticalLayout(entete,this.description);
+        this.add(texte,boutons);
 
-        //paramétrage de la structure des éléments
+        //Pré-remplissage
+        this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
+        if (this.oper.getEtat() != null){
+            this.etat.setValue(this.oper.getEtat());
+            if(this.oper.getEtat().equals("Disponible")){
+                this.etat.getStyle().setColor("green");
+            }
+            else{
+                this.etat.getStyle().setColor("red");
+            }
+        }
+        this.description.setValue(decrire());
+
+        //Attribution des fonctions
+        this.supprimer.addClickListener(clickevent -> {
+            supprimer();
+        });
+        this.modifier.addClickListener(clickevent ->{
+            modifier();
+        });
+
+        //Esthétique
         this.setAlignItems(FlexComponent.Alignment.STRETCH);
         this.setPadding(true);
         this.setWidth("auto");
@@ -50,40 +73,13 @@ public class GroupeOperateur extends HorizontalLayout{
         this.etat.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
-        HorizontalLayout entete = new HorizontalLayout();
-        entete.add(this.nom,this.etat);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        texte.add(entete,this.description);
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
-        boutons.add(this.modifier,this.supprimer);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        //paramétrage des données des éléments
-        this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
-        if (this.oper.getEtat() != null){
-            this.etat.setValue(this.oper.getEtat());
-            if(this.oper.getEtat().equals("Disponible")){
-                this.etat.getStyle().setColor("green");
-            }
-            else{
-                this.etat.getStyle().setColor("red");
-            }
-        }
-        this.description.setValue(decrire());
-        this.supprimer.addClickListener(clickevent -> {
-            supprimer();
-        });
-        this.modifier.addClickListener(clickevent ->{
-            modifier();
-        });
-
-        //ajout des éléments à la page
-        this.add(texte,boutons);
         this.setFlexGrow(1, texte);
-
     }
 
     public String decrire() throws SQLException{

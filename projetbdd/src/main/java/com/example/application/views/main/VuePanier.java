@@ -33,15 +33,12 @@ public class VuePanier extends VerticalLayout{
         this.corps = new Scroller();
         this.listeProduit = new VerticalLayout();
         this.boutons=new HorizontalLayout(lancer,retour);
+        this.add(titre,corps,boutons);
 
-        //Acquisition des données
+        //Pré-remplissage
         this.titre.setValue("Panier");
         formater();
-
-        //Placement et paramétrage des éléments
         this.corps.setContent(listeProduit);
-        this.corps.setSizeFull();
-        this.add(titre,corps,boutons);
 
         //Attribution des fonctions
         this.lancer.addClickListener(clickevent->{
@@ -65,7 +62,7 @@ public class VuePanier extends VerticalLayout{
         });
 
         //Esthétique
-        
+        this.corps.setSizeFull();
     }
     
     public void formater() throws SQLException{

@@ -1,7 +1,6 @@
 package com.example.application.views.main;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
@@ -35,7 +34,7 @@ public class VueCreationMachine extends HorizontalLayout {
 
     public VueCreationMachine(Gestionnaire g)throws SQLException{
 
-    //Déclaration des éléments
+        //Déclaration des éléments
         this.indicateur = 0;
         this.nom=new TextField("Nom de la machine");
         this.ref=new TextField("Référence");
@@ -48,9 +47,9 @@ public class VueCreationMachine extends HorizontalLayout {
         this.validerNouvelleOperation = new Button("Ajouter");
         this.boutons = new VerticalLayout(this.valider,this.annuler);
         this.champParametre=new VerticalLayout(this.nom,this.ref,this.puissance,this.Etat,this.vitesse);
-        
-        //Ajout de tout dans l'élément principal
         this.add(this.champParametre,this.boutons);
+
+        //Mise en fonction des boutons et actions
         //while (indicateur == 0){
             this.valider.addClickListener(clickevent -> {
             try {
@@ -67,24 +66,19 @@ public class VueCreationMachine extends HorizontalLayout {
             });
 
         //}
-        //Mise en fonction des boutons et actions
-        
-        
-        
 
         //Esthétique
 
-        }
+    }
 
-        public int getIndicateur(){
-            return this.indicateur;
-        }
+    public int getIndicateur(){
+        return this.indicateur;
+    }
+
     public void annuler(){
             this.removeAll();
             this.indicateur=1;
     }
-
-    
 }
 
 
