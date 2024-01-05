@@ -25,6 +25,7 @@ public class VueAuthentification extends VerticalLayout{
     private Button validerAuthentification;
     private Button creerAtelier;
     private Notification messageErreur;
+    private HorizontalLayout boxAtelier;
     
     public VueAuthentification() throws ClassNotFoundException,SQLException{
         this.gestionnaire=new Gestionnaire();
@@ -41,7 +42,7 @@ public class VueAuthentification extends VerticalLayout{
         this.creerAtelier.addClickListener(clickEvent -> {
 
         });
-        HorizontalLayout boxAtelier = new HorizontalLayout();
+        this.boxAtelier = new HorizontalLayout();
         boxAtelier.add(this.listeAtelier,this.creerAtelier);
         this.add(this.username,this.mdp,boxAtelier,this.validerAuthentification);
     }
@@ -61,7 +62,7 @@ public class VueAuthentification extends VerticalLayout{
                     if(gestionnaire.autorisationAtelier(Atelier.getIdAtelier(listeAtelier.getValue(),gestionnaire.getConnection()))){
                         System.out.println("Authentification réussie !");
                         //getUI().ifPresent(ui -> ui.navigate("accueil"));
-                        MainView mv = new MainView(gestionnaire);
+                        MainView mv = new MainView(gestionnaire,this);
                         this.removeAll();
                         this.add(mv);
                     }
@@ -76,5 +77,17 @@ public class VueAuthentification extends VerticalLayout{
             catch (SQLException e){
                 messageErreur.show("Une erreur est survenue : "+e);
             }
+    }
+
+    public void recharger(){
+        try{
+            this.gestionnaire=new Gestionnaire();
+            this.removeAll();
+            remplirListeAtelier();
+            this.add(this.username,this.mdp,boxAtelier,this.validerAuthentification);
+        }
+        catch(Exception e){
+            System.out.println("Erreur chargement VA : "+e);
+        }
     }
 }

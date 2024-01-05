@@ -116,6 +116,17 @@ public class Utilisateur {
         this.operateur=op;
         this.etat=etat;
     }
+
+    public Utilisateur(int id, String nom, String prenom, String usr, String role, String mdp, boolean op, String etat){
+        this.id=id;
+        this.nom=nom;
+        this.prenom=prenom;
+        this.nom_utilisateur=usr;
+        this.role=role;
+        this.mdp=mdp;
+        this.operateur=op;
+        this.etat=etat;
+    }
     
     /*
     public Utilisateur(String prenom, String nom, String nom_utilisateur, String role, String mdp, boolean operateur, String etat) {
@@ -138,10 +149,11 @@ public class Utilisateur {
                 String nom = resultat.getString("Nom");
                 String prenom = resultat.getString("Prenom");
                 String role = resultat.getString("Role");
+                String mdp = resultat.getString("MDP");
                 boolean op=resultat.getBoolean("Operateur");
                 String usr=resultat.getString("Nom_Utilisateur");
                 String etat = resultat.getString("Etat");
-                return new Utilisateur(ide,nom, prenom, usr, role,op,etat);
+                return new Utilisateur(ide,nom, prenom, usr, role,mdp,op,etat);
             }
             else{
                 System.out.println("Utilisateur inexistant");
@@ -160,7 +172,7 @@ public class Utilisateur {
             ps.setString(2,mdp);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                return new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getBoolean("Operateur"),rs.getString("Etat"));
+                return new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getString("MDP"),rs.getBoolean("Operateur"),rs.getString("Etat"));
             }
             else{
                 return null;

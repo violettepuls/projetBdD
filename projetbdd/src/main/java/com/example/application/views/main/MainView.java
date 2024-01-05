@@ -1,31 +1,20 @@
 package com.example.application.views.main;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import traitement.Gestionnaire;
 
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextField;
 
 @PageTitle("Main")
 @Route(value = "accueil")
@@ -40,41 +29,47 @@ public class MainView extends VerticalLayout {
     private final Tab operateurs;
     private final Tab machines;
     private final Tab atelier;
+    private final Tabs tabs;
 	private final VerticalLayout content;
     private Gestionnaire gestionnaire;
+    private HorizontalLayout entete;
+    private TextField connecte;
+    private TextField currentUser;
+    private Button parametre;
+    private Button deconnecter;
+    private VueAuthentification va;
     
 
-    public MainView(Gestionnaire g) throws SQLException{
+    public MainView(Gestionnaire g,VueAuthentification v) throws SQLException{
+        //Le gestionnaire
         this.gestionnaire=g;
-        //name = new TextField("Your name");
-        //sayHello = new Button("Say hello");
-        //sayHello.addClickListener(e -> {
-        //    Notification.show("Hello " + name.getValue());
-        //});
-        //sayHello.addClickShortcut(Key.ENTER);
+        this.va=v;
 
-        //setMargin(true);
-        //setHorizontalComponentAlignment(Alignment.CENTER, name, sayHello);
+        //L'entête
+        this.connecte=new TextField();
+        this.currentUser = new TextField();
+        this.parametre = new Button("Paramètres de compte");
+        this.deconnecter = new Button("se déconnecter");
+        this.entete=new HorizontalLayout(connecte,currentUser,parametre,deconnecter);
 
-        //add(name, sayHello);
-        //TEST VAADIN BOUTON+CALENDRIER
-        AppLayoutNavbarPlacement navBar=new AppLayoutNavbarPlacement();
+        this.connecte.setValue("Connecté(e) : ");
+        this.currentUser.setValue(this.gestionnaire.getCurUser().getNomComplet());
+        
+        this.parametre.addClickListener(clickevent->{
+            this.removeAll();
+            TextField titre = new TextField();
+            titre.setReadOnly(true);
+            titre.setValue("Paramètres de compte");
+            this.add(titre,new ParametreUtilisateur(this, gestionnaire.getCurUser()));
+        });
+        this.deconnecter.addClickListener(clickevent->{
+            this.va.recharger();
+        });
 
-       /*  private Tab createTab(VaadinIcon viewIcon, String viewName) {
-        Icon icon = viewIcon.create();
-        icon.getStyle().set("box-sizing", "border-box")
-                .set("margin-inline-end", "var(--lumo-space-m)")
-                .set("margin-inline-start", "var(--lumo-space-xs)")
-                .set("padding", "var(--lumo-space-xs)");
-            
-            RouterLink link = new RouterLink();
-            link.add(icon, new Span(viewName));
-            // Demo has no routes
-            // link.setRoute(viewClass.java);
-            link.setTabIndex(-1);
-            return new Tab(link)
-        } */
+        this.connecte.setReadOnly(true);
+        this.currentUser.setReadOnly(true);
 
+        //Les onglets
         production = new Tab("Production");
 		edt = new Tab("Emploi du temps");
         produits = new Tab("Produits");
@@ -82,7 +77,6 @@ public class MainView extends VerticalLayout {
         machines = new Tab ("Machines");
         atelier = new Tab ("Gestion d'atelier");
 
-        //Tab production = tabs.add("Help", () -> { ... });
         production.addComponentAsFirst(VaadinIcon.CART.create());
         edt.addComponentAsFirst(VaadinIcon.CALENDAR.create());
         produits.addComponentAsFirst(VaadinIcon.PACKAGE.create());
@@ -90,7 +84,7 @@ public class MainView extends VerticalLayout {
         machines.addComponentAsFirst(VaadinIcon.WRENCH.create());
         atelier.addComponentAsFirst(VaadinIcon.LIST.create());
 
-		Tabs tabs = new Tabs(production, edt, produits, operateurs, machines, atelier);
+		this.tabs = new Tabs(production, edt, produits, operateurs, machines, atelier);
 		tabs.addSelectedChangeListener(event ->
 			{
                 try {
@@ -107,22 +101,12 @@ public class MainView extends VerticalLayout {
 		content.setSpacing(false);
 		setContent(tabs.getSelectedTab());
 
-		//add(tabs, content);
-
-        DrawerToggle toggle = new DrawerToggle();
-
         H1 title = new H1("Atelier de fabrication");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
-                .set("margin", "0");
-
-        //Tabs tabs = getTabs();
-
-       // addToDrawer(tabs,content);
-    
+                .set("margin", "0");    
         
         setHorizontalComponentAlignment(Alignment.CENTER,tabs);
-       // setVerticalComponentAlignment(Alignment.START,tabs);
-        add(tabs,content);
+        add(entete,tabs,content);
 
     }
 
@@ -146,8 +130,15 @@ public class MainView extends VerticalLayout {
 
 	}
 
+    public Gestionnaire getGestionnaire(){
+        return this.gestionnaire;
+    }
 
-
-    
+    public void recharger()throws SQLException{
+        this.removeAll();
+        this.gestionnaire.setCurUser(gestionnaire.getCurUser().getId());
+        this.currentUser.setValue(this.gestionnaire.getCurUser().getNomComplet());
+        this.add(entete,tabs,content);
+    }
 }
 

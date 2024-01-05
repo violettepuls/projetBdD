@@ -43,6 +43,10 @@ public class Gestionnaire {
         this.cur_user=Utilisateur.getUtilisateur(id, this.con);
     }
 
+    public Utilisateur getCurUser(){
+        return this.cur_user;
+    }
+
     public Connection getConnection(){
         return this.con;
     }

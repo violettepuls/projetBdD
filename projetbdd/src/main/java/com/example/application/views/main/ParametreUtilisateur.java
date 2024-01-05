@@ -13,6 +13,7 @@ import traitement.Gestionnaire;
 
 public class ParametreUtilisateur extends HorizontalLayout{
     private VueGererUtilisateur vgu;
+    private MainView mv;
     private Gestionnaire gestionnaire;
     private Utilisateur utilisateur;
     private TextField nom;
@@ -59,9 +60,9 @@ public class ParametreUtilisateur extends HorizontalLayout{
         //Esthétique
     }
 
-    public ParametreUtilisateur(VueGererUtilisateur v,Utilisateur u){
+    public ParametreUtilisateur(MainView v,Utilisateur u){
         //Déclaration
-        this.vgu=v;
+        this.mv=v;
         this.gestionnaire=v.getGestionnaire();
         this.utilisateur=u;
         this.nom=new TextField("Nom");
@@ -95,7 +96,7 @@ public class ParametreUtilisateur extends HorizontalLayout{
             valider();
         });
         annuler.addClickListener(clickevent->{
-            annuler();
+            annuler2();
         });
         supprimer.addClickListener(clickevent->{
             supprimer();
@@ -131,7 +132,7 @@ public class ParametreUtilisateur extends HorizontalLayout{
                 role="Utilisateur";
             }
             Utilisateur.modifierUtilisateur(this.utilisateur.getId(),prenom.getValue(), nom.getValue(), username.getValue(), role, mdp.getValue(), operateur.getValue(), null, gestionnaire.getConnection());
-            this.vgu.recharger();
+            this.mv.recharger();
         }
         catch(SQLException e){
             System.out.println("Erreur creation utilisateur : "+e);
@@ -147,10 +148,19 @@ public class ParametreUtilisateur extends HorizontalLayout{
         }
     }
 
+    public void annuler2(){
+        try{
+            this.mv.recharger();
+        }
+        catch(SQLException e){
+            System.out.println("Erreur annulation : "+e);
+        }
+    }
+
     public void supprimer(){
         try{
             Utilisateur.supprimerUtilisateurGlobal(this.utilisateur.getId(), gestionnaire.getConnection());
-            this.vgu.recharger();
+            this.mv.recharger();
         }
         catch(SQLException e){
             System.out.println("Erreur annulation : "+e);
