@@ -63,17 +63,16 @@ public class GroupeOperateur extends HorizontalLayout{
 
         //paramétrage des données des éléments
         this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
-        this.etat.setValue(this.oper.getEtat());
+        if (this.oper.getEtat() != null){
+            this.etat.setValue(this.oper.getEtat());
+            if(this.oper.getEtat().equals("Disponible")){
+                this.etat.getStyle().setColor("green");
+            }
+            else{
+                this.etat.getStyle().setColor("red");
+            }
+        }
         this.description.setValue(decrire());
-        if(this.oper.getEtat().equals("Disponible")){
-            this.etat.getStyle().setColor("green");
-        }
-        else if (this.oper.getEtat().equals("En réparation")){
-            this.etat.getStyle().setColor("orange");
-        }
-        else{
-            this.etat.getStyle().setColor("red");
-        }
         this.supprimer.addClickListener(clickevent -> {
             supprimer();
         });
@@ -110,17 +109,16 @@ public class GroupeOperateur extends HorizontalLayout{
     public void recharger()throws SQLException{
         this.oper=Utilisateur.getUtilisateur(this.oper.getId(), this.gestionnaire.getConnection());
         this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
-        this.etat.setValue(this.oper.getEtat());
+        if(this.oper.getEtat() !=null){
+            this.etat.setValue(this.oper.getEtat());
+            if(this.oper.getEtat().equals("Disponible")){
+                this.etat.getStyle().setColor("green");
+            }
+            else{
+                this.etat.getStyle().setColor("red");
+            }
+        }
         this.description.setValue(decrire());
-        if(this.oper.getEtat().equals("Disponible")){
-            this.etat.getStyle().setColor("green");
-        }
-        else if (this.oper.getEtat().equals("En réparation")){
-            this.etat.getStyle().setColor("orange");
-        }
-        else{
-            this.etat.getStyle().setColor("red");
-        }
         this.add(this.texte,this.boutons);
     }
 

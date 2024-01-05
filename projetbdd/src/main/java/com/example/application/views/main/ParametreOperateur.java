@@ -36,7 +36,7 @@ public class ParametreOperateur extends HorizontalLayout{
         this.prenom=new TextField("Prénom");
         this.nouvelleOperation = new TextField();
         this.nouvelleOperation.setPlaceholder("Type d'opération");
-        this.operation = new MultiSelectComboBox<OperationElementaire>("Opérations réalisables");
+        this.operation = new MultiSelectComboBox<OperationElementaire>("Qualifications");
         this.valider = new Button("Valider");
         this.annuler = new Button("Annuler");
         this.creerOperation = new Button("Créer une opération");
