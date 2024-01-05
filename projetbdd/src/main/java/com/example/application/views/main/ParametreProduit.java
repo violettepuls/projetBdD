@@ -174,7 +174,7 @@ public class ParametreProduit extends HorizontalLayout{
     public void refreshOrdreOperation(){
         this.lastIndex=this.champOperation.getComponentCount()-1;
         for (int i=0;i<this.champOperation.getComponentCount();i++){
-            ((HBoxOperation)this.champOperation.getComponentAt(i)).setIndex(i,this.lastIndex);
+            ((HBoxOperation)this.champOperation.getComponentAt(i)).setIndex(i);
         }
     }
 

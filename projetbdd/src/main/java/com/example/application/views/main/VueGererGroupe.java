@@ -3,6 +3,7 @@ package com.example.application.views.main;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -19,6 +20,7 @@ public class VueGererGroupe extends VerticalLayout{
     private Select<String> categorie;
     private Scroller contenu;
     private VerticalLayout listeElement;
+    private HorizontalLayout entete;
 
     public VueGererGroupe(Gestionnaire g){
         //Déclaration
@@ -27,9 +29,11 @@ public class VueGererGroupe extends VerticalLayout{
         this.categorie=new Select<String>();
         this.listeElement = new VerticalLayout();
         this.contenu = new Scroller();
+        this.entete = new HorizontalLayout(this.chercherDans,this.categorie);
+        this.add(entete,contenu);
 
         //Pré-remplissage
-        this.chercherDans.setPlaceholder("Chercher dans : ");
+        this.chercherDans.setValue("Chercher dans : ");
         this.chercherDans.setReadOnly(true);
         this.categorie.setItems("Produit","Gamme","Opérations réalisables");
         this.categorie.setPlaceholder("Catégorie");
@@ -56,7 +60,8 @@ public class VueGererGroupe extends VerticalLayout{
             else if(this.categorie.getValue().equals("Gamme")){
                 ArrayList<Gamme> listeGamme = Gamme.listerGammeGlobal(this.gestionnaire.getConnection());
                 for (int i=0;i<listeGamme.size();i++){
-                    this.listeElement.add(new GroupeGamme(gestionnaire,listeGamme.get(i)));
+                    Gamme g = listeGamme.get(i);
+                    this.listeElement.add(new GroupeGamme(this.gestionnaire,g));
                 }
             }
             else if(this.categorie.getValue().equals("Opérations réalisables")){

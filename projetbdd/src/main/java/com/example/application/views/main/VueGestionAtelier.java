@@ -2,7 +2,6 @@ package com.example.application.views.main;
 
 import java.sql.SQLException;
 
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -40,7 +39,8 @@ public class VueGestionAtelier extends VerticalLayout{
         //Esthétique
 
     }
-    private void setContent(Tab tab) throws SQLException{
+
+    public void setContent(Tab tab) throws SQLException{
 		this.content.removeAll();
 		if (tab.equals(gererAtelier)) {
 			content.add(new VueGererAtelier(gestionnaire));

@@ -75,7 +75,7 @@ public class ParametreGamme extends HorizontalLayout{
         //Attribution des fonctions
         this.operationExistante.addValueChangeListener(event ->{
             this.lastIndex=lastIndex+1;
-            this.champOperation.add(new HBoxOperation(this.operationExistante.getValue(), this,this.lastIndex));
+            this.champOperation.add(new HBoxOperation2(this.operationExistante.getValue(), this,this.lastIndex));
             refreshOrdreOperation();
         });
         this.creerOperation.addClickListener(clickevent ->{
@@ -86,7 +86,7 @@ public class ParametreGamme extends HorizontalLayout{
             try{
                 this.lastIndex=lastIndex+1;
                 OperationElementaire.creerOperation(this.nouvelleOperationType.getValue(), Double.valueOf(this.nouvelleOperationUO.getValue()), this.gestionnaire.getConnection());
-                this.champOperation.add(new HBoxOperation(OperationElementaire.getOperation(OperationElementaire.getIdOperation(this.nouvelleOperationType.getValue(), Double.valueOf(this.nouvelleOperationUO.getValue()),this.gestionnaire.getConnection()), this.gestionnaire.getConnection()), this,this.lastIndex));
+                this.champOperation.add(new HBoxOperation2(OperationElementaire.getOperation(OperationElementaire.getIdOperation(this.nouvelleOperationType.getValue(), Double.valueOf(this.nouvelleOperationUO.getValue()),this.gestionnaire.getConnection()), this.gestionnaire.getConnection()), this,this.lastIndex));
                 refreshOrdreOperation();
                 this.operationExistante.setItems(OperationElementaire.listerOperation(this.gestionnaire.getConnection()));
             }
@@ -110,7 +110,7 @@ public class ParametreGamme extends HorizontalLayout{
             this.listeOperation=Gamme.getOperationGamme(this.gamme.getId(), this.gestionnaire.getConnection());
             this.lastIndex=listeOperation.size()-1;
             for (int i=0;i<listeOperation.size();i++){
-                this.champOperation.add(new HBoxOperation(listeOperation.get(i), this,i));
+                this.champOperation.add(new HBoxOperation2(listeOperation.get(i), this,i));
             }
         }
         catch(SQLException e){
@@ -155,7 +155,7 @@ public class ParametreGamme extends HorizontalLayout{
     public void refreshOrdreOperation(){
         this.lastIndex=this.champOperation.getComponentCount()-1;
         for (int i=0;i<this.champOperation.getComponentCount();i++){
-            ((HBoxOperation)this.champOperation.getComponentAt(i)).setIndex(i,this.lastIndex);
+            ((HBoxOperation2)this.champOperation.getComponentAt(i)).setIndex(i);
         }
     }
 
