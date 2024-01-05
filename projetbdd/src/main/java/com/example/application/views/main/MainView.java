@@ -124,7 +124,7 @@ public class MainView extends VerticalLayout {
 		} else if(tab.equals(produits)){
 			content.add(new VueProduit(gestionnaire));
 		} else if(tab.equals(operateurs)){
-            content.add(new Paragraph("opérateurs"));
+            content.add(new VueOperateur(gestionnaire));
         
         } else if(tab.equals(machines)){
             content.add(new VueMachine(gestionnaire));
