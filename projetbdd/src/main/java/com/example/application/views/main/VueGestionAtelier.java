@@ -33,7 +33,7 @@ public class VueGestionAtelier extends VerticalLayout{
                 setContent(tabs.getSelectedTab());
             }
             catch(SQLException e){
-                System.out.println("Erreur : " + e);
+                System.out.println("Erreur tabs : " + e);
             }
         });
 

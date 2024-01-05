@@ -329,7 +329,7 @@ public class Utilisateur {
 
     public static ArrayList<Utilisateur> listerUtilisateur(Atelier atelier, Connection con) throws SQLException{
         ArrayList<Utilisateur> liste = new ArrayList<Utilisateur>();
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur JOIN AtelierUtilisateur ON AtlierUtilisateur.IDUtilisateur = Utilisateur.ID WHERE IDAtelier = ?")){
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur JOIN AtelierUtilisateur on Utilisateur.ID = AtelierUtilisateur.IDUtilisateur WHERE IDAtelier = ?")){
             ps.setInt(1,atelier.getId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
@@ -341,11 +341,16 @@ public class Utilisateur {
     
     public static ArrayList<Utilisateur> listerUtilisateurHorsAtelier(Atelier atelier, Connection con)throws SQLException{
         ArrayList<Utilisateur> liste = new ArrayList<Utilisateur>();
-        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur JOIN AtelierUtilisateur ON AtlierUtilisateur.IDUtilisateur = Utilisateur.ID WHERE IDAtelier != ?")){
-            ps.setInt(1,atelier.getId());
+        ArrayList<Integer> listeExistant = new ArrayList<Integer>();
+        for (int i=0;i<listerUtilisateur(atelier, con).size();i++){
+            listeExistant.add(listerUtilisateur(atelier, con).get(i).getId());
+        }
+        try (PreparedStatement ps = con.prepareStatement("SELECT * FROM Utilisateur")){
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
-                liste.add(new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getBoolean("Operateur"),rs.getString("Etat")));
+                if(!listeExistant.contains(rs.getInt("ID"))){
+                    liste.add(new Utilisateur(rs.getInt("ID"), rs.getString("Nom"), rs.getString("Prenom"), rs.getString("Nom_Utilisateur"), rs.getString("Role"), rs.getBoolean("Operateur"),rs.getString("Etat")));
+                }
             }
         }
         return liste;
@@ -456,7 +461,7 @@ public class Utilisateur {
         catch(SQLException f){
             System.out.println("Erreur autoCommit : "+f);
         }
-        try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierUtilisateur (IDAtelier,IDUtilisateur) = (?,?)")){
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierUtilisateur (IDAtelier,IDUtilisateur) values (?,?)")){
             ps.setInt(1,atelier.getId());
             ps.setInt(2,id);
             ps.executeUpdate();

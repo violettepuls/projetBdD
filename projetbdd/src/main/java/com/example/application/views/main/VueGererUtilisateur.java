@@ -15,6 +15,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableBiConsumer;
 
 import classe_tables.Utilisateur;
@@ -36,10 +37,11 @@ public class VueGererUtilisateur extends VerticalLayout{
         this.creerNouveau = new Button("Créer un nouvel utilisateur");
         this.searchField = new TextField();
         this.boutons = new HorizontalLayout(ajouterExistant,creerNouveau);
-        this.tableau = new Grid<Utilisateur>();
+        this.tableau = new Grid<>(Utilisateur.class,false);
         this.add(searchField,tableau,boutons);
 
         //Pré-remplissage
+        dataView = tableau.setItems(Utilisateur.listerUtilisateur(gestionnaire.getCurAtelier(), gestionnaire.getConnection()));
         tableau.addColumn(creerVignetteUtilisateur()).setHeader("Utilisateur");
         tableau.addColumn(Utilisateur::getOperateur).setHeader("Opérateur");
         tableau.addColumn(createStatusComponentRenderer()).setHeader("Disponibilité");
@@ -55,8 +57,9 @@ public class VueGererUtilisateur extends VerticalLayout{
 
         */
 
-        dataView = tableau.setItems(Utilisateur.listerUtilisateur(gestionnaire.getCurAtelier(), gestionnaire.getConnection()));
         searchField.setPlaceholder("Rechercher");
+        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+        searchField.addValueChangeListener(e -> dataView.refreshAll());
         dataView.addFilter(user -> {
             String searchTerm = searchField.getValue().trim();
 
@@ -86,6 +89,22 @@ public class VueGererUtilisateur extends VerticalLayout{
 
     public void actualiser()throws SQLException{
         dataView = tableau.setItems(Utilisateur.listerUtilisateur(gestionnaire.getCurAtelier(), gestionnaire.getConnection()));
+        searchField.setValueChangeMode(ValueChangeMode.EAGER);
+        searchField.addValueChangeListener(e -> dataView.refreshAll());
+        dataView.addFilter(user -> {
+            String searchTerm = searchField.getValue().trim();
+
+            if (searchTerm.isEmpty())
+                return true;
+
+            boolean matchesFullName = matchesTerm(user.getNomComplet(),
+                    searchTerm);
+            boolean matchesRole = matchesTerm(user.getRole(), searchTerm);
+            boolean matchesOperateur = matchesTerm(user.getOperateur(),
+                    searchTerm);
+
+            return matchesFullName || matchesRole || matchesOperateur;
+        });
     }
 
     public void modifier(Utilisateur user){
@@ -122,14 +141,32 @@ public class VueGererUtilisateur extends VerticalLayout{
             listeUtilisateur.addColumn(creerVignetteUtilisateur()).setHeader("Utilisateur");
             listeUtilisateur.addColumn(Utilisateur::getOperateur).setHeader("Opérateur");
             listeUtilisateur.addColumn(createStatusComponentRenderer()).setHeader("Disponibilité");
-            tableau.addColumn(new NativeButtonRenderer<>("Ajouter à l'atelier",clickedItem->{
+            listeUtilisateur.addColumn(new NativeButtonRenderer<>("Ajouter à l'atelier",clickedItem->{
                 try {
                     Utilisateur.associerAtelierUtilisateur(clickedItem.getId(), gestionnaire.getCurAtelier().getId(), gestionnaire.getConnection());
+                    dataView = listeUtilisateur.setItems(Utilisateur.listerUtilisateurHorsAtelier(gestionnaire.getCurAtelier(), gestionnaire.getConnection()));
                 } catch (SQLException e) {
                     System.out.println("Erreur ajout : "+e);
                 }
             }));
             dataView = listeUtilisateur.setItems(Utilisateur.listerUtilisateurHorsAtelier(gestionnaire.getCurAtelier(), gestionnaire.getConnection()));
+            searchField.setValueChangeMode(ValueChangeMode.EAGER);
+            searchField.addValueChangeListener(e -> dataView.refreshAll());
+            dataView.addFilter(user -> {
+            String searchTerm = searchField.getValue().trim();
+
+            if (searchTerm.isEmpty())
+                return true;
+
+            boolean matchesFullName = matchesTerm(user.getNomComplet(),
+                    searchTerm);
+            boolean matchesRole = matchesTerm(user.getRole(), searchTerm);
+            boolean matchesOperateur = matchesTerm(user.getOperateur(),
+                    searchTerm);
+
+            return matchesFullName || matchesRole || matchesOperateur;
+            });
+            this.add(searchField,listeUtilisateur,terminer);
         }
         catch(SQLException e){
             System.out.println("Erreur ajout existant : "+e);
@@ -177,7 +214,8 @@ public class VueGererUtilisateur extends VerticalLayout{
     }
 
     public void recharger()throws SQLException{
-        this.add(tableau,boutons);
+        this.removeAll();
+        this.add(searchField,tableau,boutons);
         this.actualiser();
     }
 }
