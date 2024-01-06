@@ -45,6 +45,10 @@ public class VueMachine extends VerticalLayout{
         this.corps.setSizeFull();
         this.corps.getStyle().set("max-height", "100%");
         this.corps.getStyle().set("max-width", "100%");
+        this.corps.setWidth("75em");
+        this.corps.setHeight("100%");
+       // this.ajouter.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
+
     }
 
     public void ajouter(){

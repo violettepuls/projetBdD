@@ -47,6 +47,9 @@ public class VueProduction extends VerticalLayout  {
         
         //Esthétique
         this.corps.setSizeFull();
+        this.corps.setWidth("70em");
+        this.corps.setHeight("100%");
+      //  this.panier.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
     }
     
     public void formater() throws SQLException{

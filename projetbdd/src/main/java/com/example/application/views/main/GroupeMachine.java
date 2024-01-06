@@ -42,7 +42,7 @@ public class GroupeMachine extends HorizontalLayout{
         this.boutons=new VerticalLayout(this.panne,boutonsModif,new Spacer());
         HorizontalLayout entete = new HorizontalLayout(this.nom,this.etat);
         texte.add(entete,this.description,new Spacer());
-        this.add(texte,boutons);
+        this.add(texte,new Spacerw(), boutons);
 
         //Pré-remplissage
         this.nom.setValue(this.mach.getNom());
@@ -73,6 +73,8 @@ public class GroupeMachine extends HorizontalLayout{
         this.setHeight("100px");
         this.nom.setReadOnly(true);
         this.nom.getStyle().setBorder(null);
+        this.nom.getStyle().set("border", "none");
+        this.nom.getStyle().set("color", "black").set("background-color", "rgba(173, 216, 230, 0.2)");
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
         this.etat.setReadOnly(true);
@@ -89,6 +91,7 @@ public class GroupeMachine extends HorizontalLayout{
         boutonsModif.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
+        boutons.getStyle().set("margin-top", "5em"); 
         this.setFlexGrow(1, texte);
     }
     public class Spacer extends Div {
@@ -151,5 +154,10 @@ public class GroupeMachine extends HorizontalLayout{
 
     public Gestionnaire getGestionnaire(){
         return this.gestionnaire;
+    }
+    public class Spacerw extends Div {
+        public Spacerw() {
+            setWidth("27em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
     }
 }

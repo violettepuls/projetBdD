@@ -56,6 +56,10 @@ public class VueProduit extends VerticalLayout {
         
         //Esthétique
         this.corps.setSizeFull();
+        this.corps.setWidth("70em");
+        this.corps.setHeight("100%");
+        //this.ajouter.getStyle().set("position","fixed").set("bottom","8em").set("left","8em");
+        //this.ajouterExistant.getStyle().set("position","fixed").set("bottom","5em").set("left","8em");
     }
 
 

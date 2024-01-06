@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,7 +38,7 @@ public class GroupeProduit extends HorizontalLayout{
         this.boutons=new VerticalLayout();
         texte.add(this.nom,this.description);
         boutons.add(this.modifier,this.supprimer);
-        this.add(texte,boutons);
+        this.add(texte,new Spacerw(),boutons);
 
         //Pré-remplissage
         this.nom.setValue(this.prod.getNom());
@@ -57,7 +58,9 @@ public class GroupeProduit extends HorizontalLayout{
         this.setWidth("auto");
         this.setHeight("100px");
         this.nom.setReadOnly(true);
-        this.nom.getStyle().setBorder(null);
+        this.nom.getStyle().set("border", "none");
+        this.nom.getStyle().set("color", "black").set("background-color", "rgba(173, 216, 230, 0.2)");
+       // this.nom.getStyle().set("outline", "none");
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
@@ -67,6 +70,7 @@ public class GroupeProduit extends HorizontalLayout{
         texte.setSpacing(true);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
+        this.boutons.getStyle().set("margin-top", "4em");
         this.setFlexGrow(1, texte);
     }
 
@@ -116,5 +120,10 @@ public class GroupeProduit extends HorizontalLayout{
 
     public Gestionnaire getGestionnaire(){
         return this.gestionnaire;
+    }
+    public class Spacerw extends Div {
+        public Spacerw() {
+            setWidth("40em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
     }
 }

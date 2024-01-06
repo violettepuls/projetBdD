@@ -38,6 +38,9 @@ public class VueGestionAtelier extends VerticalLayout{
         });
 
         //Esthétique
+        setSizeFull();
+        this.content.setWidth("70em");
+        this.content.setHeight("100%");
 
     }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,7 +38,7 @@ public class GroupeOperateur extends HorizontalLayout{
         this.boutons=new VerticalLayout(this.modifier,this.supprimer);
         HorizontalLayout entete = new HorizontalLayout(this.nom,this.etat);
         this.texte=new VerticalLayout(entete,this.description);
-        this.add(texte,boutons);
+        this.add(texte,new Spacerw(),boutons);
 
         //Pré-remplissage
         this.nom.setValue(this.oper.getNom()+" "+this.oper.getPrenom());
@@ -67,6 +68,8 @@ public class GroupeOperateur extends HorizontalLayout{
         this.setHeight("100px");
         this.nom.setReadOnly(true);
         this.nom.getStyle().setBorder(null);
+        this.nom.getStyle().set("border", "none");
+        this.nom.getStyle().set("color", "black").set("background-color", "rgba(173, 216, 230, 0.2)");
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
         this.etat.setReadOnly(true);
@@ -79,6 +82,7 @@ public class GroupeOperateur extends HorizontalLayout{
         texte.setSpacing(true);
         boutons.setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
+        this.boutons.getStyle().set("margin-top", "5em");
         this.setFlexGrow(1, texte);
     }
 
@@ -135,5 +139,10 @@ public class GroupeOperateur extends HorizontalLayout{
 
     public Gestionnaire getGestionnaire(){
         return this.gestionnaire;
+    }
+    public class Spacerw extends Div {
+        public Spacerw() {
+            setWidth("40em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
     }
 }

@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -34,7 +35,7 @@ public class GroupeProduction extends HorizontalLayout{
         this.description=new TextArea();
         this.ajouter=new Button("Ajouter");
         this.texte=new VerticalLayout(this.nom,this.description);
-        this.add(texte,ajouter);
+        this.add(texte,new Spacerw(),ajouter);
 
         //paramétrage des données des éléments
         this.nom.setValue(this.prod.getNom());
@@ -56,9 +57,12 @@ public class GroupeProduction extends HorizontalLayout{
         this.setHeight("100px");
         this.nom.setReadOnly(true);
         this.nom.getStyle().setBorder(null);
+        this.nom.getStyle().set("border", "none");
+        this.nom.getStyle().set("color", "black").set("background-color", "rgba(173, 216, 230, 0.2)");
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
         this.ajouter.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
+        this.ajouter.getStyle().set("margin-top", "5em");
 
     }
 
@@ -73,5 +77,10 @@ public class GroupeProduction extends HorizontalLayout{
         this.gestionnaire.ajouterAuPanier(this.prod);
         Notification notification = Notification.show("Ajouté au panier. Total : "+Collections.frequency(this.gestionnaire.getPanier(),this.prod), 1000, Position.BOTTOM_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    }
+    public class Spacerw extends Div {
+        public Spacerw() {
+            setWidth("40em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
     }
 }
