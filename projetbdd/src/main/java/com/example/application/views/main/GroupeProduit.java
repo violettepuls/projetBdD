@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -64,7 +66,9 @@ public class GroupeProduit extends HorizontalLayout{
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
+        this.modifier.setIcon(new Icon(VaadinIcon.PENCIL));
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        this.supprimer.setIcon(new Icon(VaadinIcon.CLOSE));
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
         texte.setSpacing(true);
@@ -72,6 +76,7 @@ public class GroupeProduit extends HorizontalLayout{
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
         this.boutons.getStyle().set("margin-top", "4em");
         this.setFlexGrow(1, texte);
+        
     }
 
     public String decrire() throws SQLException{

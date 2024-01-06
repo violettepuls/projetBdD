@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,7 +39,7 @@ public class VueProduit extends VerticalLayout {
         this.listeProduit = new VerticalLayout();
         this.boutons=new HorizontalLayout(ajouter,ajouterExistant);
         this.corps.setContent(listeProduit);
-        this.add(titre,corps,boutons);
+      //  this.add(titre,corps,boutons);
 
         //Pré-remplissage
         this.titre.setValue("Liste des Produits");
@@ -57,9 +59,12 @@ public class VueProduit extends VerticalLayout {
         //Esthétique
         this.corps.setSizeFull();
         this.corps.setWidth("70em");
-        this.corps.setHeight("100%");
+        this.corps.setHeight("30em");
+        this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
         //this.ajouter.getStyle().set("position","fixed").set("bottom","8em").set("left","8em");
         //this.ajouterExistant.getStyle().set("position","fixed").set("bottom","5em").set("left","8em");
+
+         this.add(titre,corps,boutons);
     }
 
 

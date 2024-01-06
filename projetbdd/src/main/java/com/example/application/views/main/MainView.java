@@ -8,7 +8,9 @@ import com.vaadin.flow.router.Route;
 import traitement.Gestionnaire;
 
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -39,9 +41,12 @@ public class MainView extends VerticalLayout {
     private Button parametre;
     private Button deconnecter;
     private VueAuthentification va;
+    private Image logoatelier;
     
 
     public MainView(Gestionnaire g,VueAuthentification v) throws SQLException{
+        
+
         //Le gestionnaire
         this.gestionnaire=g;
         this.va=v;
@@ -50,7 +55,9 @@ public class MainView extends VerticalLayout {
         this.connecte=new TextField();
         this.currentUser = new TextField();
         this.parametre = new Button("Paramètres de compte");
+        this.parametre.setIcon(new Icon(VaadinIcon.COG));
         this.deconnecter = new Button("se déconnecter");
+        this.deconnecter.setIcon(new Icon(VaadinIcon.SIGN_OUT));
         this.entete=new HorizontalLayout(connecte,currentUser,parametre,deconnecter);
 
         this.connecte.setValue("Connecté(e) : ");
@@ -104,12 +111,26 @@ public class MainView extends VerticalLayout {
                 .set("margin", "0");
         setHorizontalComponentAlignment(Alignment.CENTER,tabs);
         this.corps=new HorizontalLayout(tabs,content);
-        add(entete,corps);
+
+        this.logoatelier = new Image("https://th.bing.com/th/id/OIP.X_wQMpV7GQLbXuETP7cNUwHaHa?rs=1&pid=ImgDetMain","");
+        logoatelier.setHeight("5em");
+        logoatelier.getStyle().set("position","fixed").set("bottom","3em").set("left","3em");
+        
+        add(entete,corps,logoatelier);
 
         //Esthétique
         this.tabs.setOrientation(Tabs.Orientation.VERTICAL);
 		content.setSpacing(false);
         setHorizontalComponentAlignment(Alignment.START,tabs);
+        getStyle().set("overflow", "hidden");
+        getElement().getStyle().set("overflow", "hidden");
+        getElement().getStyle().set("position", "fixed");
+        getElement().getStyle().set("top", "0");
+        getElement().getStyle().set("left", "0");
+        getElement().getStyle().set("width", "100%");
+        getElement().getStyle().set("height", "100%");
+        getElement().getStyle().set("overflow", "hidden");
+        
     }
 
     private void setContent(Tab tab) throws SQLException{

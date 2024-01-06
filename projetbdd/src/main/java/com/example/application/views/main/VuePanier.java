@@ -63,6 +63,12 @@ public class VuePanier extends VerticalLayout{
 
         //Esthétique
         this.corps.setSizeFull();
+        this.setSizeFull(); // Définir la hauteur de la vue à 100%
+        this.corps.setSizeFull();
+        this.corps.getStyle().set("max-height", "100%");
+        this.corps.getStyle().set("max-width", "100%");
+        this.corps.setWidth("75em");
+        this.corps.setHeight("30em");
     }
     
     public void formater() throws SQLException{

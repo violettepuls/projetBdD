@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -42,7 +44,7 @@ public class GroupeMachine extends HorizontalLayout{
         this.boutons=new VerticalLayout(this.panne,boutonsModif,new Spacer());
         HorizontalLayout entete = new HorizontalLayout(this.nom,this.etat);
         texte.add(entete,this.description,new Spacer());
-        this.add(texte,new Spacerw(), boutons);
+       // this.add(texte,new Spacerw(), boutons);
 
         //Pré-remplissage
         this.nom.setValue(this.mach.getNom());
@@ -80,8 +82,11 @@ public class GroupeMachine extends HorizontalLayout{
         this.etat.setReadOnly(true);
         this.etat.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
+        this.modifier.setIcon(new Icon(VaadinIcon.PENCIL));
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        this.supprimer.setIcon(new Icon(VaadinIcon.CLOSE));
         this.panne.addThemeVariants(ButtonVariant.LUMO_TERTIARY,ButtonVariant.LUMO_ERROR);
+        this.panne.setIcon(new Icon(VaadinIcon.WARNING));
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -93,6 +98,8 @@ public class GroupeMachine extends HorizontalLayout{
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
         boutons.getStyle().set("margin-top", "5em"); 
         this.setFlexGrow(1, texte);
+
+        this.add(texte,new Spacerw(), boutons);
     }
     public class Spacer extends Div {
         public Spacer() {

@@ -5,6 +5,8 @@ import java.util.Collections;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -37,7 +39,7 @@ public class GroupePanier extends HorizontalLayout{
         this.description=new TextArea();
         this.supprimer=new Button("Supprimer");
         this.texte=new VerticalLayout(this.nom,this.description);
-        this.add(qte,texte,supprimer);
+      //  this.add(qte,texte,supprimer);
 
         //Pré-remplissage
         this.nom.setValue(this.prod.getNom());
@@ -63,6 +65,9 @@ public class GroupePanier extends HorizontalLayout{
         this.description.setReadOnly(true);
         this.description.getStyle().setBorder(null);
         this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        this.supprimer.setIcon(new Icon(VaadinIcon.CLOSE));
+        this.supprimer.getStyle().set("margin-top", "5em"); 
+        this.add(qte,texte,supprimer);
 
     }
 
@@ -88,4 +93,5 @@ public class GroupePanier extends HorizontalLayout{
             this.qte.setValue(String.valueOf(nombre));
         }
     }
+    
 }

@@ -6,6 +6,8 @@ import java.util.Collections;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -35,7 +37,7 @@ public class GroupeProduction extends HorizontalLayout{
         this.description=new TextArea();
         this.ajouter=new Button("Ajouter");
         this.texte=new VerticalLayout(this.nom,this.description);
-        this.add(texte,new Spacerw(),ajouter);
+        //this.add(texte,new Spacerw(),ajouter);
 
         //paramétrage des données des éléments
         this.nom.setValue(this.prod.getNom());
@@ -63,7 +65,9 @@ public class GroupeProduction extends HorizontalLayout{
         this.description.getStyle().setBorder(null);
         this.ajouter.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
         this.ajouter.getStyle().set("margin-top", "5em");
+        this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
 
+        this.add(texte,new Spacerw(),ajouter);
     }
 
     public String decrire() throws SQLException{

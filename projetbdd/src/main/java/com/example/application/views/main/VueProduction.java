@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 
 public class VueProduction extends VerticalLayout  {
     private TextField titre;
@@ -48,7 +50,9 @@ public class VueProduction extends VerticalLayout  {
         //Esthétique
         this.corps.setSizeFull();
         this.corps.setWidth("70em");
-        this.corps.setHeight("100%");
+        this.corps.setHeight("30em");
+        this.panier.setIcon(new Icon(VaadinIcon.CART));
+
       //  this.panier.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
     }
     

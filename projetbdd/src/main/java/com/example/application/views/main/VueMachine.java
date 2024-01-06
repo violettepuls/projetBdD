@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -46,7 +48,8 @@ public class VueMachine extends VerticalLayout{
         this.corps.getStyle().set("max-height", "100%");
         this.corps.getStyle().set("max-width", "100%");
         this.corps.setWidth("75em");
-        this.corps.setHeight("100%");
+        this.corps.setHeight("30em");
+        this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
        // this.ajouter.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
 
     }

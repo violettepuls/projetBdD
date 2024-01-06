@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -75,7 +77,8 @@ public class GroupeOperateur extends HorizontalLayout{
         this.etat.setReadOnly(true);
         this.etat.getStyle().setBorder(null);
         this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_SUCCESS);
-        this.supprimer.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
+        this.modifier.setIcon(new Icon(VaadinIcon.PENCIL));
+        this.modifier.addThemeVariants(ButtonVariant.LUMO_PRIMARY,ButtonVariant.LUMO_ERROR);
         entete.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         texte.setFlexGrow(1, this.description);
         texte.setAlignItems(FlexComponent.Alignment.STRETCH);
@@ -84,6 +87,7 @@ public class GroupeOperateur extends HorizontalLayout{
         boutons.setAlignItems(FlexComponent.Alignment.CENTER);
         this.boutons.getStyle().set("margin-top", "5em");
         this.setFlexGrow(1, texte);
+        this.supprimer.setIcon(new Icon(VaadinIcon.CLOSE));
     }
 
     public String decrire() throws SQLException{
@@ -142,7 +146,7 @@ public class GroupeOperateur extends HorizontalLayout{
     }
     public class Spacerw extends Div {
         public Spacerw() {
-            setWidth("40em"); // Vous pouvez ajuster la hauteur selon vos besoins
+            setWidth("30em"); // Vous pouvez ajuster la hauteur selon vos besoins
         }
     }
 }

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -26,7 +28,7 @@ public class VueOperateur extends VerticalLayout{
         this.ajouter = new Button("Ajouter");
         this.corps = new Scroller();
         this.listeOperateur = new VerticalLayout();
-        this.add(titre,corps,ajouter);
+        //this.add(titre,corps,ajouter);
 
         //Pré-remplissage
         this.titre.setValue("Liste des Opérateurs");
@@ -45,10 +47,11 @@ public class VueOperateur extends VerticalLayout{
         this.corps.getStyle().set("max-width", "100%");
         this.listeOperateur.setWidth("100%");
         this.corps.setWidth("70em");
-        this.corps.setHeight("100%");
+        this.corps.setHeight("30em%");
         this.setSizeFull();
+        this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
       //  this.ajouter.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
-
+        this.add(titre,corps,ajouter);
 
     }
 
