@@ -71,7 +71,7 @@ public class MainView extends VerticalLayout {
             this.add(titre,new ParametreUtilisateur(this, gestionnaire.getCurUser()));
         });
         this.deconnecter.addClickListener(clickevent->{
-            this.va.recharger();
+            deconnexion();
         });
 
         this.connecte.setReadOnly(true);
@@ -162,6 +162,10 @@ public class MainView extends VerticalLayout {
         this.gestionnaire.setCurUser(gestionnaire.getCurUser().getId());
         this.currentUser.setValue(this.gestionnaire.getCurUser().getNomComplet());
         this.add(entete,corps);
+    }
+
+    public void deconnexion(){
+        this.va.recharger();
     }
 }
 

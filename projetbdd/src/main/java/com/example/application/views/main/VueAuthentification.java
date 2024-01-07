@@ -16,6 +16,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 import classe_tables.Atelier;
+import classe_tables.Utilisateur;
 import traitement.Gestionnaire;
 
 @Route(value = "")
@@ -31,8 +32,16 @@ public class VueAuthentification extends VerticalLayout{
     private Image logoinsa;
     private HorizontalLayout layout2;
     private VerticalLayout layout;
+    private Button inscription;
+    private Button validerInscription;
+    private TextField prenom;
+    private TextField nom;
+    private Button annuler;
+
     
     public VueAuthentification() throws ClassNotFoundException,SQLException{
+        this.prenom = new TextField("Prénom");
+        this.nom = new TextField("Nom");
         this.gestionnaire=new Gestionnaire();
         this.listeAtelier = new ComboBox<String>("Selectionner Atelier");
       //  this.listeAtelier.setPlaceholder("Atelier");
@@ -45,7 +54,26 @@ public class VueAuthentification extends VerticalLayout{
         });
         this.creerAtelier = new Button("Créer un atelier");
         this.creerAtelier.addClickListener(clickEvent -> {
-
+            creer();
+        });
+        this.annuler = new Button("Annuler");
+        this.annuler.addClickListener(clickevent->{
+            recharger();
+        });
+        this.inscription = new Button("S'inscrire");
+        this.inscription.addClickListener(clickevent->{
+            this.layout.removeAll();
+            this.layout.add(this.imagelogin,this.prenom,this.nom,this.username, this.mdp, this.validerInscription,this.annuler);
+        });
+        this.validerInscription = new Button("Valider");
+        this.validerInscription.addClickListener(clickevent->{
+            try{
+                Utilisateur.creerUtilisateurGlobal(prenom.getValue(), nom.getValue(), username.getValue(), "Utilisateur", mdp.getValue(), false, null, gestionnaire.getConnection());
+                this.recharger();
+            }
+            catch(SQLException e){
+                System.out.println("Erreur inscriprion : "+e);
+            }
         });
         this.boxAtelier = new HorizontalLayout();
         boxAtelier.add(this.listeAtelier,this.creerAtelier);
@@ -67,7 +95,7 @@ public class VueAuthentification extends VerticalLayout{
        // layout.setJustifyContentMode(JustifyContentMode.START);
         layout.setSizeFull();
 
-        layout.add(this.imagelogin,this.username, this.mdp,this.listeAtelier, this.validerAuthentification);
+        layout.add(this.imagelogin,this.username, this.mdp,this.listeAtelier, this.validerAuthentification,this.inscription);
 
         this.layout2 = new HorizontalLayout();
         layout2.setSizeFull();
@@ -119,10 +147,53 @@ public class VueAuthentification extends VerticalLayout{
             this.gestionnaire=new Gestionnaire();
             this.removeAll();
             remplirListeAtelier();
+            this.layout.removeAll();
+            this.layout.add(this.imagelogin,this.username, this.mdp,this.listeAtelier, this.validerAuthentification,this.inscription);
             this.add(layout2,this.logoinsa);
         }
         catch(Exception e){
             System.out.println("Erreur chargement VA : "+e);
         }
+    }
+
+    public void creer(){
+        this.removeAll();
+        TextField nouveauAtelierNom = new TextField();
+        TextField nouveauAtelierBdd = new TextField();
+        TextField nouveauAtelierNomUtilisateur = new TextField();
+        TextField nouveauAtelierMdpBdd = new TextField();
+
+        nouveauAtelierNom.setPlaceholder("Nom du nouvel atelier");
+        nouveauAtelierBdd.setPlaceholder("URL de la base de données");
+        nouveauAtelierNomUtilisateur.setPlaceholder("Nom d'utilisateur de la BDD");
+        nouveauAtelierMdpBdd.setPlaceholder("Mot de passe de la BDD");
+
+        nouveauAtelierBdd.setValue("//92.222.25.165:3306/m3_rmbola_tembo01");
+        nouveauAtelierNomUtilisateur.setValue("m3_rmbola_tembo01");
+        nouveauAtelierMdpBdd.setValue("976e74f9");
+
+        nouveauAtelierBdd.setReadOnly(true);
+        nouveauAtelierNomUtilisateur.setReadOnly(true);
+        nouveauAtelierMdpBdd.setReadOnly(true);
+
+        Button valider = new Button("Valider");
+        this.add(nouveauAtelierNom,nouveauAtelierBdd,nouveauAtelierNomUtilisateur,nouveauAtelierMdpBdd,valider);
+        valider.addClickListener(clickevent->{
+            try{
+                if(gestionnaire.authentification(this.username.getValue(), this.mdp.getValue())){
+                    this.gestionnaire.creerAtelier(nouveauAtelierNom.getValue(), nouveauAtelierBdd.getValue(), nouveauAtelierNomUtilisateur.getValue(), nouveauAtelierMdpBdd.getValue());
+                    MainView mv = new MainView(gestionnaire,this);
+                    this.removeAll();
+                    this.add(mv);
+                }
+                else{
+                    Notification.show("Votre nom d'utilisateur ou mot de passe est incorrect.");
+                    recharger();
+                }
+            }
+            catch(SQLException e){
+                System.out.println("Erreur creation : "+e);
+            }
+        });
     }
 }

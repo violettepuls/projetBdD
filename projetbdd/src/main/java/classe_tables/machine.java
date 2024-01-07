@@ -141,6 +141,14 @@ public class machine {
         }
     }
 
+    public static void supprimerMachineAtelier(int idatelier, Connection con) throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("DELETE FROM Machine WHERE IDAtelier = ?")){
+            OperationElementaire.dissocierMachineOperationGlobal(idatelier, con);
+            ps.setInt(1,idatelier);
+            ps.executeUpdate();
+        }
+    }
+
     public static ArrayList<machine> listerMachine(Atelier AtelierActuel, Connection con) throws SQLException{
         ArrayList<machine> listeMachine = new ArrayList<machine>();
 

@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
+import classe_tables.Atelier;
 import classe_tables.Utilisateur;
 import traitement.Gestionnaire;
 
@@ -160,7 +161,10 @@ public class ParametreUtilisateur extends HorizontalLayout{
     public void supprimer(){
         try{
             Utilisateur.supprimerUtilisateurGlobal(this.utilisateur.getId(), gestionnaire.getConnection());
-            this.mv.recharger();
+            if(Utilisateur.listerUtilisateur(this.gestionnaire.getCurAtelier(), gestionnaire.getConnection()).size()==0){
+                Atelier.supprimer(gestionnaire.getCurAtelier().getId(), gestionnaire.getConnection());
+            }
+            this.mv.deconnexion();
         }
         catch(SQLException e){
             System.out.println("Erreur annulation : "+e);

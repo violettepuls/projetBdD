@@ -90,6 +90,7 @@ public class Gestionnaire {
             Atelier at=new Atelier(nom, bdd, nom_utilisateur, mdp);
             at.enregistrer(this.con);
             Utilisateur.associerAtelierUtilisateur(this.cur_user.getId(),Atelier.getIdAtelier(nom,bdd,nom_utilisateur,mdp,this.con),this.con);
+            this.setCurAtelier(Atelier.getIdAtelier(nom,bdd,nom_utilisateur,mdp,this.con));
         }
         else{
             System.out.println("Cet atelier ne peut pas être crée");

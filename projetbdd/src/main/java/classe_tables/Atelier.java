@@ -171,6 +171,7 @@ public class Atelier {
             try (PreparedStatement ps = con.prepareStatement("DELETE FROM Atelier WHERE ID = ?")){
                 dissocierProduitAtelierGlobal(idatelier, con);
                 dissocierUtilisateurAtelierGlobal(idatelier, con);
+                machine.supprimerMachineAtelier(idatelier, con);
                 ps.setInt(1,idatelier);
                 ps.executeUpdate();
                 System.out.println("Atelier supprimé !");

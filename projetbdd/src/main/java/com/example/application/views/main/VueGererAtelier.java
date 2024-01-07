@@ -2,6 +2,7 @@ package com.example.application.views.main;
 
 import java.sql.SQLException;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -56,6 +57,7 @@ public class VueGererAtelier extends VerticalLayout{
 
     public void supprimer(){
         Atelier.supprimer(this.gestionnaire.getCurAtelier().getId(),this.gestionnaire.getConnection());
+        UI.getCurrent().close();
     }
 
     public void annuler(){
