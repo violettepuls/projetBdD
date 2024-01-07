@@ -61,7 +61,6 @@ public class VueOperateur extends VerticalLayout{
             this.removeAll();
             this.add(new VueCreationOperateur(this));
         } catch (Exception e) {
-            // TODO: handle exception
             System.out.println("Erreur ajout operateur : "+e);
         }
     }

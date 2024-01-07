@@ -84,7 +84,6 @@ public class GroupePanier extends HorizontalLayout{
             try {
                 this.vp.recharger();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
                 System.out.println("Erreur suppression : "+e);
             }
         }

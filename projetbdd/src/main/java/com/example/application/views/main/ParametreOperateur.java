@@ -163,7 +163,6 @@ public class ParametreOperateur extends HorizontalLayout{
                 }
             }
         } catch (Exception e) {
-            // TODO: handle exception
             System.out.println("Erreur matching operations : "+e);
         }
     }

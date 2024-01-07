@@ -81,10 +81,10 @@ public class VueCreationOperateur extends HorizontalLayout{
             Utilisateur.modifierStatutOperateur(utilisateur.getValue().getId(), true, gestionnaire.getConnection());
             Utilisateur.dissocierOperationUtilisateurGlobal(utilisateur.getValue().getId(), gestionnaire.getConnection());
             Utilisateur.associerListeOperationUtilisateur(new ArrayList<OperationElementaire>(this.operation.getSelectedItems()),utilisateur.getValue().getId(),gestionnaire.getConnection());
-            if(disponible.equals("Disponible")){
+            if(disponible.getValue().equals("Disponible")){
                 Utilisateur.disponible(utilisateur.getValue().getId(), true, gestionnaire.getConnection());
             }
-            else if(disponible.equals("Indisponible")){
+            else if(disponible.getValue().equals("Indisponible")){
                 Utilisateur.disponible(utilisateur.getValue().getId(), false, gestionnaire.getConnection());
             }
             this.vo.recharger();

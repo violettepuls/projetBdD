@@ -57,7 +57,6 @@ public class VueCreationMachine extends HorizontalLayout {
                 this.indicateur=1;
                 this.removeAll();
             } catch (NumberFormatException | SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             });

@@ -18,6 +18,9 @@ public class machine {
     private int IdAtelier;
     private double vitesse;
 
+    public int getIdAtelier(){
+        return this.IdAtelier;
+    }
     public int getId(){
         return this.id;
     }
