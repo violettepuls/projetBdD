@@ -14,13 +14,13 @@ import classe_tables.OperationElementaire;
 
 public class VueCreationMachine extends HorizontalLayout {
 
-    private GroupeMachine gpMachine;
+    private VueMachine vm;
     private TextField nom;
     private TextField ref;
     private TextField Etat;
     private TextField puissance;
     private TextField vitesse;
-    private MultiSelectComboBox<OperationElementaire> operation; //n'a pas encore été traitée
+    private MultiSelectComboBox<OperationElementaire> operation;
     private Button valider;
     private Button annuler;
     private VerticalLayout boutons;
@@ -32,9 +32,10 @@ public class VueCreationMachine extends HorizontalLayout {
     private HorizontalLayout champNouvelleOperation;
     private int indicateur;
 
-    public VueCreationMachine(Gestionnaire g)throws SQLException{
+    public VueCreationMachine(Gestionnaire g,VueMachine v)throws SQLException{
 
         //Déclaration des éléments
+        this.vm=v;
         this.indicateur = 0;
         this.nom=new TextField("Nom de la machine");
         this.ref=new TextField("Référence");
@@ -55,7 +56,7 @@ public class VueCreationMachine extends HorizontalLayout {
             try {
                 machine.creerMachine(this.nom.getValue(), this.ref.getValue(), this.Etat.getValue(),Double.valueOf(this.puissance.getValue()) , Double.valueOf(this.vitesse.getValue()), g.getCurAtelier(),g.getConnection());
                 this.indicateur=1;
-                this.removeAll();
+                this.vm.recharger();
             } catch (NumberFormatException | SQLException e) {
                 e.printStackTrace();
             }

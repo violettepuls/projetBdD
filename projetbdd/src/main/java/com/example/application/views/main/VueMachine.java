@@ -55,16 +55,10 @@ public class VueMachine extends VerticalLayout{
     }
 
     public void ajouter(){
-        //ouvre une VueCreationMachine qui revient sur VueMachine à la fermeture et créé une machine dans la BDD quand bouton Validé appuyé
-        //enleve le reste (this.removeAll()) de l'affichage
         try{
-            //changer ici la hauteur de this
-            
-            VueCreationMachine ajout = new VueCreationMachine(gestionnaire);
+            VueCreationMachine ajout = new VueCreationMachine(gestionnaire,this);
+            this.remove(corps,ajouter);
             this.add(ajout);
-            listeMachine.removeAll();
-            formater();
-           
         }
         catch(SQLException e){
             System.out.println("Erreur : "+e);
@@ -73,6 +67,7 @@ public class VueMachine extends VerticalLayout{
     }
     
     public void formater() throws SQLException{
+        listeMachine.removeAll();
         ArrayList<machine> liste = machine.listerMachine(this.gestionnaire.getCurAtelier(), this.gestionnaire.getConnection());
         for (int i=0;i<liste.size();i++){
             this.listeMachine.add(new GroupeMachine(gestionnaire, liste.get(i)));
@@ -85,5 +80,11 @@ public class VueMachine extends VerticalLayout{
         public Spacer() {
             setHeight("6em"); // Vous pouvez ajuster la hauteur selon vos besoins
         }
+    }
+
+    public void recharger()throws SQLException{
+        this.removeAll();
+        formater();
+        this.add(titre,corps,ajouter);
     }
 }
