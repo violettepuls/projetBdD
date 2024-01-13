@@ -12,11 +12,12 @@ import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 public class VueProduction extends VerticalLayout  {
-    private TextField titre;
+    private H1 titre;
     private Button panier;
     private Gestionnaire gestionnaire;
     private Scroller corps;
@@ -25,14 +26,14 @@ public class VueProduction extends VerticalLayout  {
     public VueProduction(Gestionnaire g) throws SQLException{
         //déclaration des éléments
         this.gestionnaire=g;
-        this.titre = new TextField();
+        this.titre = new H1("Liste des Produits");
         this.panier = new Button("Panier");
         this.corps = new Scroller();
         this.listeProduit = new VerticalLayout();
-        this.add(titre,corps,panier);
+       
 
         //Pré-remplissage
-        this.titre.setValue("Liste des Produits");
+      
         formater();
         this.corps.setContent(listeProduit);
 
@@ -52,7 +53,10 @@ public class VueProduction extends VerticalLayout  {
         this.corps.setWidth("70em");
         this.corps.setHeight("30em");
         this.panier.setIcon(new Icon(VaadinIcon.CART));
-
+        titre.getElement().getStyle().set("margin", "auto");
+        
+        
+        this.add(titre,corps,panier);
       //  this.panier.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
     }
     

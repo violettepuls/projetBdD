@@ -14,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.Html;
 
 import classe_tables.Atelier;
 import classe_tables.Utilisateur;
@@ -37,6 +38,7 @@ public class VueAuthentification extends VerticalLayout{
     private TextField prenom;
     private TextField nom;
     private Button annuler;
+    
 
     
     public VueAuthentification() throws ClassNotFoundException,SQLException{
@@ -86,8 +88,7 @@ public class VueAuthentification extends VerticalLayout{
         logoinsa.setHeight("5em");
         logoinsa.getStyle().set("position","fixed").set("bottom","3em").set("right","3em");
 
-
-     //   creerAtelier.getStyle().set("position","fixed").set("top","25em").set("right","15em");
+      
 
 
         this.layout = new VerticalLayout();
@@ -100,7 +101,7 @@ public class VueAuthentification extends VerticalLayout{
         this.layout2 = new HorizontalLayout();
         layout2.setSizeFull();
         layout2.add(layout,this.creerAtelier);
-
+ 
         add(layout2,this.logoinsa);
     
     }

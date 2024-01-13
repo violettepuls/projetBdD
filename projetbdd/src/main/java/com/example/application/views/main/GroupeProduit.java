@@ -112,6 +112,7 @@ public class GroupeProduit extends HorizontalLayout{
         try{
             this.removeAll();
             //changer ici la hauteur de this
+            this.setHeight("30em");
             this.add(new ParametreProduit(this));
         }
         catch(SQLException e){

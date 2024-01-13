@@ -12,6 +12,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.html.H1;
+
 
 import classe_tables.Produit;
 
@@ -21,7 +23,7 @@ import traitement.Gestionnaire;
 
 
 public class VueProduit extends VerticalLayout {
-    private TextField titre;
+    private H1 titre;
     private Button ajouter;
     private Gestionnaire gestionnaire;
     private Scroller corps;
@@ -32,7 +34,7 @@ public class VueProduit extends VerticalLayout {
     public VueProduit(Gestionnaire g) throws SQLException{
         //Déclaration des éléments
         this.gestionnaire=g;
-        this.titre = new TextField();
+        this.titre = new H1("Liste des Produits");
         this.ajouter = new Button("Ajouter");
         this.ajouterExistant=new ComboBox<Produit>();
         this.corps = new Scroller();
@@ -42,7 +44,7 @@ public class VueProduit extends VerticalLayout {
       //  this.add(titre,corps,boutons);
 
         //Pré-remplissage
-        this.titre.setValue("Liste des Produits");
+       // this.titre.setValue("Liste des Produits");
         this.ajouterExistant.setPlaceholder("Ajouter un produit existant");
         this.ajouterExistant.setItems(Produit.listerProduitHorsAtelier(gestionnaire.getCurAtelier(),gestionnaire.getConnection()));
         this.ajouterExistant.setItemLabelGenerator(Produit::getNom);
@@ -61,10 +63,12 @@ public class VueProduit extends VerticalLayout {
         this.corps.setWidth("70em");
         this.corps.setHeight("30em");
         this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
+        titre.getElement().getStyle().set("margin", "auto");
         //this.ajouter.getStyle().set("position","fixed").set("bottom","8em").set("left","8em");
         //this.ajouterExistant.getStyle().set("position","fixed").set("bottom","5em").set("left","8em");
 
          this.add(titre,corps,boutons);
+         
     }
 
 

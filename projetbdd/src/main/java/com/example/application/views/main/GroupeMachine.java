@@ -148,6 +148,7 @@ public class GroupeMachine extends HorizontalLayout{
         try{
             this.removeAll();
             //changer ici la hauteur de this
+            this.setHeight("30em");
             this.add(new ParametreMachine(this));
         }
         catch(SQLException e){
