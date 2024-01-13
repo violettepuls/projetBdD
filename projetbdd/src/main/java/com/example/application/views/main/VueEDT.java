@@ -47,6 +47,7 @@ public class VueEDT extends VerticalLayout{
                 //ligne qui remove tous les items affichés
                 filtreFin.setValue("Tous");
                 // A TESTER (car peut etre que forcer une valeur trigger le valueChangeListener) : ligne qui récupère tous les items du type considéré et les affiche
+            }
         });
         filtreFin.addValueChangeListener(event->{
             //ligne qui remove tous les items affichés
