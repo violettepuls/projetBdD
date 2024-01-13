@@ -1,0 +1,5 @@
+Tuto utiliser des addons sur Vaadin maven :
+https://vaadin.com/docs/v8/framework/addons/addons-maven
+
+Liste des composants Vaadin :
+https://vaadin.com/docs/latest/components
