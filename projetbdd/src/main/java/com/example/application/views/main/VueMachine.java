@@ -10,13 +10,13 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-
+import com.vaadin.flow.component.html.H1;
 import classe_tables.machine;
 import traitement.Gestionnaire;
 
 
 public class VueMachine extends VerticalLayout{
-    private TextField titre;
+    private H1 titre;
     private Button ajouter;
     private Gestionnaire gestionnaire;
     private Scroller corps;
@@ -25,14 +25,14 @@ public class VueMachine extends VerticalLayout{
     public VueMachine(Gestionnaire g) throws SQLException{
         //déclaration des éléments
         this.gestionnaire=g;
-        this.titre = new TextField();
+        this.titre = new H1("Liste des Machines");
         this.ajouter = new Button("Ajouter");
         this.corps = new Scroller();
         this.listeMachine = new VerticalLayout();
-        this.add(titre,corps,ajouter);
+        
 
         //Pré-remplissage
-        this.titre.setValue("Liste des Machines");
+        
         formater();
         this.corps.setContent(listeMachine);
 
@@ -50,8 +50,11 @@ public class VueMachine extends VerticalLayout{
         this.corps.setWidth("75em");
         this.corps.setHeight("30em");
         this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
+        titre.getElement().getStyle().set("margin", "auto");
        // this.ajouter.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
 
+
+       this.add(titre,corps,ajouter);
     }
 
     public void ajouter(){

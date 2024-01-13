@@ -9,13 +9,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-
+import com.vaadin.flow.component.html.H2;
 import classe_tables.Produit;
 import traitement.Gestionnaire;
 
 public class VuePanier extends VerticalLayout{
     private VueProduction vp;
-    private TextField titre;
+    private H2 titre;
     private Button lancer;
     private Button retour;
     private Gestionnaire gestionnaire;
@@ -27,16 +27,16 @@ public class VuePanier extends VerticalLayout{
         //déclaration des éléments
         this.vp=v;
         this.gestionnaire=v.getGestionnaire();
-        this.titre = new TextField();
+        this.titre = new H2("Panier");
         this.lancer = new Button("Lancer la production");
         this.retour = new Button("Retour");
         this.corps = new Scroller();
         this.listeProduit = new VerticalLayout();
         this.boutons=new HorizontalLayout(lancer,retour);
-        this.add(titre,corps,boutons);
+        
 
         //Pré-remplissage
-        this.titre.setValue("Panier");
+      
         formater();
         this.corps.setContent(listeProduit);
 
@@ -69,6 +69,9 @@ public class VuePanier extends VerticalLayout{
         this.corps.getStyle().set("max-width", "100%");
         this.corps.setWidth("75em");
         this.corps.setHeight("30em");
+        titre.getElement().getStyle().set("margin", "auto");
+
+        this.add(titre,corps,boutons);
     }
     
     public void formater() throws SQLException{

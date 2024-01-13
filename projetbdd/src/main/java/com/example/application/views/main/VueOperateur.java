@@ -10,12 +10,13 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.html.H1;
 
 import classe_tables.Utilisateur;
 import traitement.Gestionnaire;
 
 public class VueOperateur extends VerticalLayout{
-    private TextField titre;
+    private H1 titre;
     private Button ajouter;
     private Gestionnaire gestionnaire;
     private Scroller corps;
@@ -24,14 +25,14 @@ public class VueOperateur extends VerticalLayout{
     public VueOperateur(Gestionnaire g) throws SQLException{
         //déclaration des éléments
         this.gestionnaire=g;
-        this.titre = new TextField();
+        this.titre = new H1("Liste des Opérateurs");
         this.ajouter = new Button("Ajouter");
         this.corps = new Scroller();
         this.listeOperateur = new VerticalLayout();
         //this.add(titre,corps,ajouter);
 
         //Pré-remplissage
-        this.titre.setValue("Liste des Opérateurs");
+        
         formater();
         this.corps.setContent(listeOperateur);
 
@@ -50,6 +51,7 @@ public class VueOperateur extends VerticalLayout{
         this.corps.setHeight("30em%");
         this.setSizeFull();
         this.ajouter.setIcon(new Icon(VaadinIcon.PLUS));
+        titre.getElement().getStyle().set("margin", "auto");
       //  this.ajouter.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
         this.add(titre,corps,ajouter);
 

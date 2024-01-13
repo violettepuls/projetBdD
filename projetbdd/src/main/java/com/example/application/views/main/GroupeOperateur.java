@@ -130,6 +130,7 @@ public class GroupeOperateur extends HorizontalLayout{
         try{
             this.removeAll();
             //changer ici la hauteur de this
+            this.setHeight("30em");
             this.add(new ParametreOperateur(this));
         }
         catch(SQLException e){

@@ -42,6 +42,7 @@ public class MainView extends VerticalLayout {
     private Button deconnecter;
     private VueAuthentification va;
     private Image logoatelier;
+    private VerticalLayout bleu;
     
 
     public MainView(Gestionnaire g,VueAuthentification v) throws SQLException{
@@ -103,20 +104,26 @@ public class MainView extends VerticalLayout {
             }
 		);
 
+        this.logoatelier = new Image("https://th.bing.com/th/id/OIP.X_wQMpV7GQLbXuETP7cNUwHaHa?rs=1&pid=ImgDetMain","");
+        logoatelier.setHeight("5em");
+        logoatelier.getStyle().set("position","fixed").set("bottom","3em").set("left","3em");
+        
+
 		content = new VerticalLayout();
 		setContent(tabs.getSelectedTab());
 
         H1 title = new H1("Atelier de fabrication");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("margin", "0");
+        this.bleu=new VerticalLayout(tabs, logoatelier);
         setHorizontalComponentAlignment(Alignment.CENTER,tabs);
-        this.corps=new HorizontalLayout(tabs,content);
+        this.corps=new HorizontalLayout(bleu,content);
 
-        this.logoatelier = new Image("https://th.bing.com/th/id/OIP.X_wQMpV7GQLbXuETP7cNUwHaHa?rs=1&pid=ImgDetMain","");
-        logoatelier.setHeight("5em");
-        logoatelier.getStyle().set("position","fixed").set("bottom","3em").set("left","3em");
         
-        add(entete,corps,logoatelier);
+
+
+       
+        add(entete,corps);
 
         //Esthétique
         this.tabs.setOrientation(Tabs.Orientation.VERTICAL);
@@ -130,6 +137,8 @@ public class MainView extends VerticalLayout {
         getElement().getStyle().set("width", "100%");
         getElement().getStyle().set("height", "100%");
         getElement().getStyle().set("overflow", "hidden");
+        bleu.getStyle().set("background-color","rgba(173, 216, 230, 0.2)");
+        
         
     }
 
