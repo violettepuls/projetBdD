@@ -4,13 +4,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
-
+import com.example.application.views.main.GroupePanier;
 
 import classe_tables.Atelier;
 import classe_tables.Gamme;
 import classe_tables.OperationElementaire;
 import classe_tables.Produit;
+import classe_tables.SousPanier;
 import classe_tables.machine;
 import classe_tables.Utilisateur;
 
@@ -21,6 +23,10 @@ public class Gestionnaire {
     private Utilisateur cur_user;
     private Atelier cur_atelier;
     private ArrayList<Produit> cur_panier;
+    private ArrayList<SousPanier> panierArrange;
+    private double tempsDebut;
+    private double tempsFin;
+    private double energie; // en w.h
 
     public Gestionnaire() throws SQLException, ClassNotFoundException{
         this.listeAtelier=new ArrayList<Atelier>();
@@ -210,11 +216,66 @@ public class Gestionnaire {
             return false;
         }
     }
-    /*
-    public repartitionMachine(){ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/h] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
 
+    public void arrangerPanier(){
+        this.panierArrange =new ArrayList<SousPanier>();
+        ArrayList<Produit> liste = new ArrayList<Produit>();
+        for (int i=0;i<cur_panier.size();i++){
+            if (!liste.contains(cur_panier.get(i))){
+                liste.add(cur_panier.get(i));
+            }
+        }
+        for (int i=0;i<liste.size();i++){
+            panierArrange.add(new SousPanier(this,liste.get(i), Collections.frequency(cur_panier, liste.get(i))));
+        }
     }
-     */
+
+    public void repartitionMachine(){ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/h] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
+        this.energie=0;
+        this.tempsDebut = 0; //modifier pour l'heure locale
+        arrangerPanier();
+        int nombreMaxOperation = 0;
+        for (int i=0;i<panierArrange.size();i++){
+            if(nombreMaxOperation<panierArrange.get(i).getNombreOperation()){
+                nombreMaxOperation=panierArrange.get(i).getNombreOperation();
+            }
+        }
+        for(int i=0;i<nombreMaxOperation;i++){
+            for(int j=0;j<panierArrange.size();j++){
+                double dureeSousPanier = 0;
+                for (int k=j;k<panierArrange.size();k++){
+                    if(dureeSousPanier<panierArrange.get(k).getUo()){
+                        dureeSousPanier=panierArrange.get(k).getUo();
+                        SousPanier temp = panierArrange.get(k);
+                        panierArrange.remove(panierArrange.get(k));
+                        panierArrange.add(0,temp);
+                    }
+                }
+                if(dureeSousPanier!=0){
+
+                    panierArrange.get(0).etapeSuivante();
+                }
+            }
+        }
+    }
+
+    public machine choisirMachine(OperationElementaire operation)throws SQLException{
+        ArrayList<machine> listeMachine = OperationElementaire.listerMachineOperationElementaire(operation.getId(), this.cur_atelier.getId(), con);
+        machine machineChoisie = listeMachine.get(0);
+        double uo = operation.getUniteOperation();
+        double tempsMin = machine.quandDisponible(listeMachine.get(0).getId(), con)+uo/(listeMachine.get(0).getVitesse()/3600000); //on converti les uo/h en uo/ms
+        double temps = 0;
+        for(int i=0;i<listeMachine.size();i++){
+            double disponibilite = machine.quandDisponible(listeMachine.get(i).getId(), con);
+            temps = disponibilite+uo/(listeMachine.get(0).getVitesse()/3600000);
+            if((temps<tempsMin)&&(machine.estDisponibleAt(listeMachine.get(i).getId(), temps, con))){
+                tempsMin=temps;
+                machineChoisie=listeMachine.get(i);
+            }
+        }
+        this.energie = this.energie + machineChoisie.getPuissance()*uo/machineChoisie.getVitesse();
+        return machineChoisie;
+    }
 
     /*
     public calculDesTemps(){ // récupère la liste issue de repartition machine et calcule le temps écoulé entre le temps début minimum et le temps fin maximum

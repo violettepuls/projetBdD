@@ -1,5 +1,6 @@
 package classe_tables;
 
+import java.rmi.server.Operation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -188,5 +189,14 @@ public class Gamme {
             }
         }
         return listeOperation;
+    }
+
+    public static double getUo(int idgamme, Connection con)throws SQLException{
+        ArrayList<OperationElementaire> listeOperation = getOperationGamme(idgamme, con);
+        double uo=0;
+        for (int i=0;i< listeOperation.size();i++){
+            uo = uo+listeOperation.get(i).getUniteOperation();
+        }
+        return uo;
     }
 }

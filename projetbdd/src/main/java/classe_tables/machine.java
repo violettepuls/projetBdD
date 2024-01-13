@@ -268,6 +268,16 @@ public class machine {
         }
     }
 
+    public static boolean estDisponibleAt(int id, double time, Connection con) throws SQLException{
+        machine machine = getMachine(id, con);
+        if (machine.getEtat()=="Disponible"){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public static double quandDisponible(int id, Connection con){
         return 0;
     }

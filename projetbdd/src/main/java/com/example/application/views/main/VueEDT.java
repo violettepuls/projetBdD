@@ -1,6 +1,10 @@
 package com.example.application.views.main;
 
+import java.time.LocalDate;
+
+import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
+import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -22,7 +26,7 @@ public class VueEDT extends VerticalLayout{
         //Déclaration
         this.gestionnaire=g;
         this.titre = new TextField();
-        this.calendrier = new FullCalendar();
+        this.calendrier = FullCalendarBuilder.create().build();
         this.titreFiltre = new TextField();
         this.filtreLarge = new MultiSelectComboBox<String>();
         this.filtreFin = new MultiSelectComboBox<String>();
@@ -56,6 +60,9 @@ public class VueEDT extends VerticalLayout{
 
         //Esthétique
         filtreFin.setEnabled(false); // au début, le filtre large affiche tous, donc on ne doit pas être en mesure de forcer la sélection d'objets précis
+        this.setFlexGrow(1, calendrier);
+        calendrier.setHeight("500px");
+        calendrier.setWidthFull();
     }
 
     public void parametrerFiltreFin(){
