@@ -11,12 +11,17 @@ public class SousPanier {
     private int occurence;
     private double uo;
     private int nombreOperation;
+    private long stadeHoraire;
+    private long debutTemp;
 
     public SousPanier(Gestionnaire g, Produit p, int n){
+        this.gestionnaire=g;
         this.produit = p;
         this.occurence = n;
         this.uo=0;
         this.nombreOperation=0;
+        this.debutTemp = gestionnaire.getTempsDebut();
+        this.stadeHoraire = gestionnaire.getTempsDebut();
         try {
             this.gammeInitiale=Gamme.getOperationGamme(produit.getIdGamme(), gestionnaire.getConnection());
             calculerUoRestante();
@@ -42,6 +47,22 @@ public class SousPanier {
         return this.nombreOperation;
     }
 
+    public long getStadeHoraire(){
+        return this.stadeHoraire;
+    }
+
+    public void setStadeHoraire(long d){
+        this.stadeHoraire = d;
+    }
+
+    public long getDebutTemp(){
+        return this.debutTemp;
+    }
+
+    public void setDebutTemp(long d){
+        this.debutTemp = d;
+    }
+
     public double getUo(){
         calculerUoRestante();
         return this.uo;
@@ -54,11 +75,15 @@ public class SousPanier {
     public void calculerUoRestante(){
         uo=0;
         for (int i=0;i< gammeInitiale.size();i++){
-            uo = uo+gammeInitiale.get(i).getUniteOperation();
+            uo = uo+Double.valueOf(gammeInitiale.get(i).getUniteOperation()).longValue();
         }
     }
 
     public void etapeSuivante(){
         this.gammeInitiale.remove(0);
+    }
+
+    public String nommerStade(){
+        return gammeInitiale.get(0).getType()+" de "+occurence+" "+produit.getNom();
     }
 }

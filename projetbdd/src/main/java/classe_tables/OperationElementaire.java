@@ -60,6 +60,19 @@ public class OperationElementaire {
         return liste;
     }
 
+    public static ArrayList<machine> listerMachineOperationElementaire(String typeOperation,int idatelier, Connection con)throws SQLException{
+        ArrayList<machine> liste = new ArrayList<machine>();
+        try(PreparedStatement ps = con.prepareStatement("SELECT DISTINCT Machine.ID,Machine.Nom,Machine.Reference,Machine.Etat,Machine.Puissance,Machine.Vitesse,Machine.IDAtelier FROM Machine JOIN MachineOperation on MachineOperation.IDMachine = Machine.ID JOIN OperationElementaire on MachineOperation.IDOperation = OperationElementaire.ID WHERE (OperationElementaire.Type,Machine.IDAtelier)=(?,?)")){
+            ps.setString(1,typeOperation);
+            ps.setInt(2,idatelier);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                liste.add(new machine(rs.getInt("Machine.ID"), rs.getString("Machine.Nom"), rs.getString("Machine.Reference"), rs.getString("Machine.Etat"), rs.getDouble("Machine.Puissance"), rs.getDouble("Machine.Vitesse"), rs.getInt("Machine.IDAtelier")));
+            }
+        }
+        return liste;
+    }
+
     public static ArrayList<OperationElementaire> listerOperation(Connection con) throws SQLException{
         ArrayList<OperationElementaire> liste = new ArrayList<OperationElementaire>();
         try(Statement st = con.createStatement()){

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class machine {
@@ -268,17 +269,52 @@ public class machine {
         }
     }
 
-    public static boolean estDisponibleAt(int id, double time, Connection con) throws SQLException{
-        machine machine = getMachine(id, con);
-        if (machine.getEtat()=="Disponible"){
-            return true;
-        }
-        else{
-            return false;
+    public static boolean estDisponibleBetween(int id, long timeStart, long timeStop, Connection con) throws SQLException{
+        try(PreparedStatement ps =con.prepareStatement("SELECT * FROM CalendrierMachine WHERE ((DebutIndisponibilite >= ? AND DebutIndisponibilite < ?) OR (FinIndisponibilite > ? AND FinIndisponibilite <= ?)) AND IDMachine = ?")){
+            Timestamp ta = new Timestamp(timeStart);
+            Timestamp to = new Timestamp(timeStop);
+            ps.setTimestamp(1,ta);
+            ps.setTimestamp(2,to);
+            ps.setTimestamp(3, ta);
+            ps.setTimestamp(4, to);
+            ps.setInt(5,id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                return false;
+            }
+            else{
+                return true;
+            }
         }
     }
 
-    public static double quandDisponible(int id, Connection con){
-        return 0;
+    public static ArrayList<Long> quandDisponibleApres(int id, long timeMini, Connection con) throws SQLException{
+        ArrayList<Long> listeDisponibilite = new ArrayList<Long>();
+        try(PreparedStatement ps =con.prepareStatement("SELECT * FROM CalendrierMachine WHERE IDMachine = ? AND FinIndisponibilite >= ?")){
+            Timestamp tm = new Timestamp(timeMini);
+            ps.setInt(1,id);
+            ps.setTimestamp(2,tm);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                listeDisponibilite.add(rs.getLong("FinIndisponibilite"));
+            }
+        }
+        if (listeDisponibilite.isEmpty()){
+            listeDisponibilite.add(timeMini);
+        }
+        return listeDisponibilite;
+    }
+
+    public static void ajouterIndisponibilite(int id, String nom, long d, long f, Connection con)throws SQLException{
+        try(PreparedStatement ps = con.prepareStatement("INSERT INTO CalendrierMachine (IDMachine,NomIndisponibilite,DebutIndisponibilite,FinIndisponibilite) values (?,?,?,?)")){
+            Timestamp debut=new Timestamp(d);
+            Timestamp fin = new Timestamp(f);
+            //System.out.println(debut);
+            ps.setInt(1,id);
+            ps.setString(2,nom);
+            ps.setTimestamp(3,debut);
+            ps.setTimestamp(4,fin);
+            ps.executeUpdate();
+        }
     }
 }

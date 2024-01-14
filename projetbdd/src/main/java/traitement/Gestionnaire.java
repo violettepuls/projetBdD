@@ -3,6 +3,9 @@ package traitement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -24,8 +27,8 @@ public class Gestionnaire {
     private Atelier cur_atelier;
     private ArrayList<Produit> cur_panier;
     private ArrayList<SousPanier> panierArrange;
-    private double tempsDebut;
-    private double tempsFin;
+    private long tempsDebut;
+    private long tempsFin;
     private double energie; // en w.h
 
     public Gestionnaire() throws SQLException, ClassNotFoundException{
@@ -39,6 +42,10 @@ public class Gestionnaire {
 
     public ArrayList<Atelier> getListeAtelier(){
         return this.listeAtelier;
+    }
+
+    public long getTempsDebut(){
+        return this.tempsDebut;
     }
 
     public void setCurAtelier(int id){
@@ -219,6 +226,8 @@ public class Gestionnaire {
 
     public void arrangerPanier(){
         this.panierArrange =new ArrayList<SousPanier>();
+        this.tempsDebut = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli(); //modifier pour l'heure locale
+        System.out.println("Temps début : "+tempsDebut);
         ArrayList<Produit> liste = new ArrayList<Produit>();
         for (int i=0;i<cur_panier.size();i++){
             if (!liste.contains(cur_panier.get(i))){
@@ -230,49 +239,72 @@ public class Gestionnaire {
         }
     }
 
-    public void repartitionMachine(){ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/h] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
-        this.energie=0;
-        this.tempsDebut = 0; //modifier pour l'heure locale
-        arrangerPanier();
-        int nombreMaxOperation = 0;
-        for (int i=0;i<panierArrange.size();i++){
-            if(nombreMaxOperation<panierArrange.get(i).getNombreOperation()){
-                nombreMaxOperation=panierArrange.get(i).getNombreOperation();
+    public void repartitionMachine()throws SQLException{ // utilise le panier pour répartir les produits sur les différentes machines. Renvoie une liste de liste de double au format [id machine, id operation, temps début, temps fin]. Temps debut dépend de la disponibilité machine, temps fin = temps debut + temps opération, avec temps opération = (unité opération / vitesse machine). Vitesse machine est en [uo/h] et unité opération en [uo], une unité arbitraire donnée à chaque opération élémentaire (en réalité, le temps de fin dépend des conditions de coupe et du travail à effectuer).
+        con.setAutoCommit(false);
+        try{
+            this.energie=0;
+            arrangerPanier();
+            int nombreMaxOperation = 0;
+            for (int i=0;i<panierArrange.size();i++){
+                if(nombreMaxOperation<panierArrange.get(i).getNombreOperation()){
+                    nombreMaxOperation=panierArrange.get(i).getNombreOperation();
+                }
             }
-        }
-        for(int i=0;i<nombreMaxOperation;i++){
-            for(int j=0;j<panierArrange.size();j++){
-                double dureeSousPanier = 0;
-                for (int k=j;k<panierArrange.size();k++){
-                    if(dureeSousPanier<panierArrange.get(k).getUo()){
-                        dureeSousPanier=panierArrange.get(k).getUo();
-                        SousPanier temp = panierArrange.get(k);
-                        panierArrange.remove(panierArrange.get(k));
-                        panierArrange.add(0,temp);
+            for(int i=0;i<nombreMaxOperation;i++){
+                for(int j=0;j<panierArrange.size();j++){
+                    double dureeSousPanier = 0;
+                    for (int k=j;k<panierArrange.size();k++){
+                        if(dureeSousPanier<panierArrange.get(k).getUo()){
+                            dureeSousPanier=panierArrange.get(k).getUo();
+                            SousPanier temp = panierArrange.get(k);
+                            panierArrange.remove(panierArrange.get(k));
+                            panierArrange.add(j,temp);
+                        }
+                    }
+                    if(dureeSousPanier!=0){
+                        machine choixMachine = choisirMachine(panierArrange.get(j));
+                        System.out.println(choixMachine.getNom());
+                        System.out.println("Début retenu : "+panierArrange.get(j).getDebutTemp());
+                        System.out.println("Fin opération : "+panierArrange.get(j).getStadeHoraire());
+                        machine.ajouterIndisponibilite(choixMachine.getId(), choixMachine.getNom()+" : "+panierArrange.get(j).nommerStade(),panierArrange.get(j).getDebutTemp(), panierArrange.get(j).getStadeHoraire(), this.con);
+                        panierArrange.get(j).etapeSuivante();
                     }
                 }
-                if(dureeSousPanier!=0){
-
-                    panierArrange.get(0).etapeSuivante();
-                }
             }
+            System.out.println("Terminé !");
+        }
+        catch(SQLException e){
+            System.out.println("Erreur répartition : "+e);
+            con.rollback();
+        }
+        finally{
+            con.setAutoCommit(true);
         }
     }
 
-    public machine choisirMachine(OperationElementaire operation)throws SQLException{
-        ArrayList<machine> listeMachine = OperationElementaire.listerMachineOperationElementaire(operation.getId(), this.cur_atelier.getId(), con);
+    public machine choisirMachine(SousPanier ssPanier)throws SQLException{
+        OperationElementaire operation = ssPanier.getOperationRestante().get(0);
+        long debut = ssPanier.getStadeHoraire();
+        ArrayList<machine> listeMachine = OperationElementaire.listerMachineOperationElementaire(operation.getType(), this.cur_atelier.getId(), con);
         machine machineChoisie = listeMachine.get(0);
         double uo = operation.getUniteOperation();
-        double tempsMin = machine.quandDisponible(listeMachine.get(0).getId(), con)+uo/(listeMachine.get(0).getVitesse()/3600000); //on converti les uo/h en uo/ms
-        double temps = 0;
+        long tempsMin = machine.quandDisponibleApres(listeMachine.get(0).getId(), debut, con).get(0)+Double.valueOf(uo/(listeMachine.get(0).getVitesse()/3600000)).longValue(); //on converti les uo/h en uo/ms
+        long temps = 0;
+        long debutRetenu = machine.quandDisponibleApres(listeMachine.get(0).getId(), debut, con).get(0);
         for(int i=0;i<listeMachine.size();i++){
-            double disponibilite = machine.quandDisponible(listeMachine.get(i).getId(), con);
-            temps = disponibilite+uo/(listeMachine.get(0).getVitesse()/3600000);
-            if((temps<tempsMin)&&(machine.estDisponibleAt(listeMachine.get(i).getId(), temps, con))){
-                tempsMin=temps;
-                machineChoisie=listeMachine.get(i);
+            ArrayList<Long> disponibilites = machine.quandDisponibleApres(listeMachine.get(i).getId(), debut, con);
+            for(int j=0;j<disponibilites.size();j++){
+                long debutIntermediaire = disponibilites.get(j);
+                temps = debutIntermediaire+Double.valueOf(uo/(listeMachine.get(i).getVitesse()/3600000)).longValue();
+                if((temps<=tempsMin)&&(machine.estDisponibleBetween(listeMachine.get(i).getId(), debutIntermediaire, temps, con))){
+                    tempsMin=temps;
+                    machineChoisie=listeMachine.get(i);
+                    debutRetenu = debutIntermediaire;
+                }
             }
         }
+        ssPanier.setDebutTemp(debutRetenu);
+        ssPanier.setStadeHoraire(debutRetenu+Double.valueOf(uo/(machineChoisie.getVitesse()/3600000)).longValue());
         this.energie = this.energie + machineChoisie.getPuissance()*uo/machineChoisie.getVitesse();
         return machineChoisie;
     }
