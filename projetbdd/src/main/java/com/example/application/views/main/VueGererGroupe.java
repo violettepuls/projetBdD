@@ -30,7 +30,7 @@ public class VueGererGroupe extends VerticalLayout{
         this.listeElement = new VerticalLayout();
         this.contenu = new Scroller();
         this.entete = new HorizontalLayout(this.chercherDans,this.categorie);
-        this.add(entete,contenu);
+        
 
         //Pré-remplissage
         this.chercherDans.setValue("Chercher dans : ");
@@ -45,7 +45,11 @@ public class VueGererGroupe extends VerticalLayout{
         });
 
         //Esthétique
+        this.contenu.setHeight("27em");
+        this.contenu.setWidth("70em");
 
+
+        this.add(entete,contenu);
     }
 
     public void afficher(){

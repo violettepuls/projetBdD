@@ -43,6 +43,9 @@ public class VueEDT extends VerticalLayout{
         this.filtreFinMachine = new MultiSelectComboBox<machine>();
         this.filtreFinOperateur = new MultiSelectComboBox<Utilisateur>();
         this.filtre = new HorizontalLayout(titreFiltre, filtreLarge);
+        calendrier.setWidthFull();
+        calendrier.setWidth("70em");
+        calendrier.getElement().getStyle().set("width", "70em");
         this.add(titre,filtre,calendrier);
 
         //Pré-Remplissage
@@ -153,6 +156,6 @@ public class VueEDT extends VerticalLayout{
         this.setWidthFull();
         this.setFlexGrow(1, calendrier);
         calendrier.setHeight("400px");
-        calendrier.setWidthFull();
+        
     }
 }
