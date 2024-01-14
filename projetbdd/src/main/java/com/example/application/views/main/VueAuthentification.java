@@ -55,7 +55,18 @@ public class VueAuthentification extends VerticalLayout{
         });
         this.creerAtelier = new Button("Créer un atelier");
         this.creerAtelier.addClickListener(clickEvent -> {
-            creer();
+            try{
+                gestionnaire.authentification(this.username.getValue(), this.mdp.getValue());
+                if(gestionnaire.getCurUser().isAdmin()){
+                    creer();
+                }
+                else{
+                    Notification.show("Vous devez être administrateur");
+                }
+            }
+            catch(SQLException e){
+                System.out.println("Erreur creation atelier admin : "+e);
+            }
         });
         this.annuler = new Button("Annuler");
         this.annuler.addClickListener(clickevent->{

@@ -41,7 +41,14 @@ public class GroupeMachine extends HorizontalLayout{
         this.panne=new Button("Signaler une panne");
         this.texte=new VerticalLayout();
         HorizontalLayout boutonsModif = new HorizontalLayout(this.modifier,this.supprimer);
-        this.boutons=new VerticalLayout(this.panne,boutonsModif,new Spacer());
+
+        if(gestionnaire.getCurUser().isAdmin()){
+            this.boutons=new VerticalLayout(this.panne,boutonsModif,new Spacer());
+        }
+        else{
+            this.boutons=new VerticalLayout(this.panne,new Spacer());
+        }
+        
         HorizontalLayout entete = new HorizontalLayout(this.nom,this.etat);
         texte.add(entete,this.description,new Spacer());
        // this.add(texte,new Spacerw(), boutons);
@@ -66,6 +73,16 @@ public class GroupeMachine extends HorizontalLayout{
         });
         this.modifier.addClickListener(clickevent -> {
             modifier();
+        });
+        this.panne.addClickListener(clickevent->{
+            if(panne.getText().equals("Signaler une panne")){
+                enPanne();
+                panne.setText("Fin de la panne ?");
+            }
+            else{
+                finPanne();
+                panne.setText("Signaler une panne");
+            }
         });
         
         //Esthétique
@@ -166,6 +183,26 @@ public class GroupeMachine extends HorizontalLayout{
     public class Spacerw extends Div {
         public Spacerw() {
             setWidth("27em"); // Vous pouvez ajuster la hauteur selon vos besoins
+        }
+    }
+
+    public void enPanne(){
+        try{
+            machine.changerEtat(this.mach.getId(), "En panne", gestionnaire.getConnection());
+            recharger();
+        }
+        catch(SQLException e){
+            System.out.println("ERREUR : "+e);
+        }
+    }
+
+    public void finPanne(){
+        try{
+            machine.changerEtat(this.mach.getId(), "Disponible", gestionnaire.getConnection());
+            recharger();
+        }
+        catch(SQLException e){
+            System.out.println("ERREUR : "+e);
         }
     }
 }

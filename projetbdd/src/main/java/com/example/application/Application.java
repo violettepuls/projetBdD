@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @Theme(value = "mytodo")
-@PageTitle("COUCOU VIO")
+@PageTitle("PLATFORM Manager")
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {

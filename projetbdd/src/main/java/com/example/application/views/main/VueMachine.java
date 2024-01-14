@@ -53,7 +53,12 @@ public class VueMachine extends VerticalLayout{
        // this.ajouter.getStyle().set("position","fixed").set("bottom","6em").set("left","8em");
 
 
-       this.add(titre,corps,ajouter);
+        if(gestionnaire.getCurUser().isAdmin()){
+            this.add(titre,corps,ajouter);
+        }
+        else {
+            this.add(titre,corps);
+        }
     }
 
     public void ajouter(){

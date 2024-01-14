@@ -327,4 +327,14 @@ public class machine {
         }
         con.setAutoCommit(true);
     }
+
+    public static void changerEtat(int id, String etat, Connection con) throws SQLException{
+        con.setAutoCommit(false);
+        try(PreparedStatement ps = con.prepareStatement("UPDATE Machine SET Etat = ? WHERE ID = ?")){
+            ps.setString(1,etat);
+            ps.setInt(2,id);
+            ps.executeUpdate();
+        }
+        con.setAutoCommit(true);
+    }
 }

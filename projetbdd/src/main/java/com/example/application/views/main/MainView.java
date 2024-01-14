@@ -17,7 +17,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 
-@PageTitle("Main")
+@PageTitle("PLATFORM Manager")
 @Route(value = "accueil")
 
 public class MainView extends VerticalLayout {
@@ -92,7 +92,12 @@ public class MainView extends VerticalLayout {
         machines.addComponentAsFirst(VaadinIcon.WRENCH.create());
         atelier.addComponentAsFirst(VaadinIcon.LIST.create());
 
-		this.tabs = new Tabs(production, edt, produits, operateurs, machines, atelier);
+		if (gestionnaire.getCurUser().isAdmin()){
+            this.tabs = new Tabs(production, edt, produits, operateurs, machines, atelier);
+        }
+        else {
+            this.tabs = new Tabs(production, edt, machines);
+        }
 		tabs.addSelectedChangeListener(event ->
 			{
                 try {
