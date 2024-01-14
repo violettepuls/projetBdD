@@ -115,6 +115,7 @@ public class Gamme {
 
     public static void creerGamme(String reference, ArrayList<OperationElementaire> operation, Connection con) throws SQLException{
         int id = -1;
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO Gamme (Reference) values (?)", PreparedStatement.RETURN_GENERATED_KEYS)){
             ps.setString(1,reference);
             ps.executeUpdate();
@@ -123,13 +124,16 @@ public class Gamme {
                 id=rs.getInt(1);
             }
         }
+        con.setAutoCommit(true);
         for(int i = 0;i<operation.size();i++){
+            con.setAutoCommit(false);
             try(PreparedStatement ps = con.prepareStatement("INSERT INTO OperationGamme (IDOperation,IDGamme,Ordre) values (?,?,?)")){
                 ps.setInt(1,operation.get(i).getId());
                 ps.setInt(2,id);
                 ps.setInt(3,i);
                 ps.executeUpdate();
             }
+            con.setAutoCommit(true);
         }
     }
 
@@ -152,30 +156,38 @@ public class Gamme {
 
     public static void supprimerGammeGlobal(int idgamme, Connection con)throws SQLException{
         if(listerProduitGamme(idgamme, con).isEmpty()){
+            con.setAutoCommit(false);
             try(PreparedStatement ps2 = con.prepareStatement("DELETE FROM OperationGamme WHERE IDGamme = ?")){
                 ps2.setInt(1,idgamme);
                 ps2.executeUpdate();
+                con.setAutoCommit(false);
                 try(PreparedStatement ps3 = con.prepareStatement("DELETE FROM Gamme WHERE ID = ?")){
                     ps3.setInt(1,idgamme);
                     ps3.executeUpdate();
                 }
+                con.setAutoCommit(true);
             }
+            con.setAutoCommit(true);
         }
     }
 
     public static void modifierGamme(int idgamme, ArrayList<OperationElementaire> operation, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM OperationGamme WHERE IDGamme = ?")){
             ps.setInt(1,idgamme);
             ps.executeUpdate();
             for(int i = 0;i<operation.size();i++){
+                con.setAutoCommit(false);
                 try(PreparedStatement ps2 = con.prepareStatement("INSERT INTO OperationGamme (IDOperation,IDGamme,Ordre) values (?,?,?)")){
                     ps2.setInt(1,operation.get(i).getId());
                     ps2.setInt(2,idgamme);
                     ps2.setInt(3,i);
                     ps2.executeUpdate();
                 }
+                con.setAutoCommit(true);
             }
         }
+        con.setAutoCommit(true);
     }
 
     public static ArrayList<OperationElementaire> getOperationGamme(int idgamme, Connection con)throws SQLException{

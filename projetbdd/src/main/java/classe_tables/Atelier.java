@@ -237,16 +237,20 @@ public class Atelier {
     }
 
     public static void dissocierProduitAtelierGlobal(int idatelier, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierProduit WHERE IDAtelier = ?")){
             ps.setInt(1,idatelier);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierUtilisateurAtelierGlobal(int idatelier, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierUtilisateur WHERE (IDAtelier) = (?)")){
             ps.setInt(1,idatelier);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 }

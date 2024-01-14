@@ -85,18 +85,22 @@ public class OperationElementaire {
     }
 
     public static void creerOperationElementaire(String type, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO OperationElementaire (Type) values (?)")){
             ps.setString(1,type);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void creerOperation(String type, double uniteOperation, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO OperationElementaire (Type,Unite_Operation) values (?,?)")){
             ps.setString(1,type);
             ps.setDouble(2,uniteOperation);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static OperationElementaire getOperation(int id, Connection con) throws SQLException{
@@ -119,26 +123,32 @@ public class OperationElementaire {
     }
 
     public static void associerMachineOperation(OperationElementaire operation, int idmachine, Connection con)throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO MachineOperation (IDMachine,IDOperation) values (?,?)")){
             ps.setInt(1,idmachine);
             ps.setInt(2,operation.getId());
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierMachineOperationGlobal(int idmachine, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM MachineOperation WHERE IDMachine = ?")){
             ps.setInt(1,idmachine);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierMachineOperation(int idoperation, int idmachine, Connection con)throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM MachineOperation WHERE (IDMachine,IDOperation) = (?,?)")){
             ps.setInt(1,idmachine);
             ps.setInt(2,idoperation);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     @Override

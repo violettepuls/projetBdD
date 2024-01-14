@@ -107,6 +107,7 @@ public class machine {
     }
 
     public static void creerMachine(String nom, String ref, String Etat, double P, double vitesse, Atelier Atelier, Connection con) throws SQLException { // cas où une machine ne peut appartenir qu'à 1 seul atelier
+        con.setAutoCommit(false);
         try(PreparedStatement pst = con.prepareStatement(
             """
             insert into Machine (Nom,Reference,Etat,Puissance,Vitesse,IDAtelier)
@@ -120,9 +121,11 @@ public class machine {
             pst.setInt(6, Atelier.getId());
             pst.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void modifierMachine(int idmachine,String nom, String ref, double P, double vitesse, Connection con) throws SQLException { // cas où une machine ne peut appartenir qu'à 1 seul atelier
+        con.setAutoCommit(false);
         try(PreparedStatement pst = con.prepareStatement(
             """
             UPDATE Machine SET Nom=?,Reference=?,Puissance=?,Vitesse
@@ -135,27 +138,32 @@ public class machine {
             pst.setInt(5,idmachine);
             pst.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void supprimerMachine(int id, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Machine WHERE ID = ?")){
             OperationElementaire.dissocierMachineOperationGlobal(id, con);
             ps.setInt(1,id);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void supprimerMachineAtelier(int idatelier, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Machine WHERE IDAtelier = ?")){
             OperationElementaire.dissocierMachineOperationGlobal(idatelier, con);
             ps.setInt(1,idatelier);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static ArrayList<machine> listerMachine(Atelier AtelierActuel, Connection con) throws SQLException{
         ArrayList<machine> listeMachine = new ArrayList<machine>();
-
+        
         try ( PreparedStatement st = con.prepareStatement(
                 "select * from Machine WHERE IDAtelier = ?")) {
             st.setInt(1,AtelierActuel.getId());
@@ -306,6 +314,7 @@ public class machine {
     }
 
     public static void ajouterIndisponibilite(int id, String nom, long d, long f, Connection con)throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO CalendrierMachine (IDMachine,NomIndisponibilite,DebutIndisponibilite,FinIndisponibilite) values (?,?,?,?)")){
             Timestamp debut=new Timestamp(d);
             Timestamp fin = new Timestamp(f);
@@ -316,5 +325,6 @@ public class machine {
             ps.setTimestamp(4,fin);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 }

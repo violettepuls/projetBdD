@@ -105,30 +105,37 @@ public class Produit {
     }
 
     public static void associerAtelierProduit(int idatelier, int idproduit, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierProduit (IDAtelier,IDProduit) values (?,?)")){
             ps.setInt(1,idatelier);
             ps.setInt(2,idproduit);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierAtelierProduit(int idproduit, int idatelier, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierProduit WHERE (IDProduit,IDAtelier) = (?,?)")){
             ps.setInt(1,idproduit);
             ps.setInt(2,idatelier);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierAtelierProduitGlobal(int idproduit, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierProduit WHERE IDProduit = ?")){
             ps.setInt(1,idproduit);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void creerProduit(String nom, String ref, Gamme gamme, Atelier atelier, Connection con) throws SQLException {
         int id=-1;
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO Produit (Nom,Reference,IDGamme) values (?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS)){
             ps.setString(1,nom);
             ps.setString(2,ref);
@@ -139,14 +146,18 @@ public class Produit {
                 id = resultat.getInt(1);
             }
         }
+        con.setAutoCommit(true);
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierProduit (IDAtelier,IDProduit) values (?,?)")){
             ps.setInt(1,atelier.getId());
             ps.setInt(2,id);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void modifierProduit(int idproduit,String nom, String ref, Gamme gamme, Connection con) throws SQLException {
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("UPDATE Produit SET Nom = ?,Reference = ?,IDGamme = ? WHERE ID = ?")){
             ps.setString(1,nom);
             ps.setString(2,ref);
@@ -154,6 +165,7 @@ public class Produit {
             ps.setInt(4,idproduit);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void supprimerProduit(int id, int idatelier, Connection con) throws SQLException{
@@ -161,10 +173,12 @@ public class Produit {
     }
 
     public static void supprimerProduitGlobal(int id, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Produit WHERE ID = ?")){
             dissocierAtelierProduitGlobal(id, con);
             ps.setInt(1,id);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 }

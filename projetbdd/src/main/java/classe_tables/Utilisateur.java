@@ -193,26 +193,32 @@ public class Utilisateur {
     }
 
     public static void associerAtelierUtilisateur(int IDUtilisateur,int idAtelier, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps= con.prepareStatement("INSERT INTO AtelierUtilisateur (IDAtelier,IDUtilisateur) values (?,?)")){
             ps.setInt(1,idAtelier);
             ps.setInt(2,IDUtilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierAtelierUtilisateur(int IDUtilisateur, int idAtelier, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierUtilisateur WHERE (IDAtelier,IDUtilisateur) = (?,?)")){
             ps.setInt(1,idAtelier);
             ps.setInt(2,IDUtilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierAtelierUtilisateurGlobal(int IDUtilisateur, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM AtelierUtilisateur WHERE (IDUtilisateur) = (?)")){
             ps.setInt(1,IDUtilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     @Override
@@ -373,11 +379,13 @@ public class Utilisateur {
         catch(SQLException f){
             System.out.println("Erreur autoCommit : "+f);
         }
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO AtelierUtilisateur (IDAtelier,IDUtilisateur) values (?,?)")){
             ps.setInt(1,atelier.getId());
             ps.setInt(2,id);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void associerListeOperationUtilisateur(ArrayList<OperationElementaire> listeOperation, int IDUtilisateur, Connection con) throws SQLException{
@@ -387,26 +395,32 @@ public class Utilisateur {
     }
 
     public static void associerOperationUtilisateur(OperationElementaire operation, int idutilisateur, Connection con)throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("INSERT INTO Qualification (IDOperateur,IDOperationElementaire) values (?,?)")){
             ps.setInt(1,idutilisateur);
             ps.setInt(2,operation.getId());
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierOperationUtilisateurGlobal(int IDUtilisateur, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Qualification WHERE (IDOperateur) = (?)")){
             ps.setInt(1,IDUtilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void dissocierOperationUtilisateur(int idoperation, int idutilisateur, Connection con)throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Qualification WHERE (IDOperateur,IDOperationElementaire) = (?,?)")){
             ps.setInt(1,idutilisateur);
             ps.setInt(2,idoperation);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static ArrayList<OperationElementaire> listerOperationUtilisateur(int idutilisateur,Connection con)throws SQLException{
@@ -441,14 +455,17 @@ public class Utilisateur {
     }
 
     public static void modifierStatutOperateur(int idutilisateur, boolean operateur, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("UPDATE Utilisateur SET Operateur = ? WHERE ID = ?")){
             ps.setBoolean(1,operateur);
             ps.setInt(2,idutilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void modifierStatutAdmin(int idutilisateur, boolean admin, Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("UPDATE Utilisateur SET Role = ? WHERE ID = ?")){
             String role ="";
             if(admin){
@@ -461,6 +478,7 @@ public class Utilisateur {
             ps.setInt(2,idutilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void supprimerOperateur(int idutilisateur,Connection con) throws SQLException{
@@ -475,15 +493,18 @@ public class Utilisateur {
     }
 
     public static void supprimerUtilisateurGlobal(int idutilisateur,Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("DELETE FROM Utilisateur WHERE ID = ?")){
             dissocierAtelierUtilisateurGlobal(idutilisateur, con);
             dissocierOperationUtilisateurGlobal(idutilisateur, con);
             ps.setInt(1,idutilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     public static void disponible(int idutilisateur,boolean dispo, Connection con)throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("UPDATE Utilisateur SET Etat = ? WHERE ID = ?")){
             if(dispo == true){
                 ps.setString(1,"Disponible");
@@ -494,5 +515,6 @@ public class Utilisateur {
             ps.setInt(2,idutilisateur);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 }
