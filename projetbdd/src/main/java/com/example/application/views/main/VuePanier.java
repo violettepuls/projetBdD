@@ -4,11 +4,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
+
 import classe_tables.Produit;
 import traitement.Gestionnaire;
 
@@ -21,6 +24,8 @@ public class VuePanier extends VerticalLayout{
     private Scroller corps;
     private VerticalLayout listeProduit;
     private HorizontalLayout boutons;
+    private Dialog popup;
+    private VerticalLayout affichagepopup;
 
     public VuePanier(VueProduction v) throws SQLException{
         //déclaration des éléments
@@ -42,14 +47,34 @@ public class VuePanier extends VerticalLayout{
         //Attribution des fonctions
         this.lancer.addClickListener(clickevent->{
             try{
-                this.vp.recharger();
+             //   this.vp.recharger();
                 System.out.println(gestionnaire.getPanier());
                 gestionnaire.repartitionMachine();
-                this.gestionnaire.reinitialiserPanier();
-            }
-            catch(SQLException e){
-                System.out.println("Erreur afficher panier : "+e);
-            }
+             //   this.gestionnaire.reinitialiserPanier();
+
+                  // Création de la fenêtre pop-up
+                this.popup = new Dialog();
+                popup.setCloseOnEsc(true);
+                popup.setCloseOnOutsideClick(true);
+
+            // Contenu de la fenêtre pop-up
+                this.affichagepopup = new VerticalLayout();
+                this.affichagepopup.add(new Paragraph("testpopup"));
+                
+
+            // Bouton de fermeture
+                Button closeButton = new Button("Fermer", event1 -> popup.close());
+                this.affichagepopup.add(closeButton);
+
+            // Ajouter le contenu à la fenêtre pop-up
+                popup.add(affichagepopup);
+
+            // Ouvrir la fenêtre pop-up
+                popup.open();
+                }
+                catch(SQLException e){
+                    System.out.println("Erreur afficher panier : "+e);
+                }
         });
         this.retour.addClickListener(clickevent->{
             try{
