@@ -1,6 +1,7 @@
 package com.example.application.views.main;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
@@ -47,10 +48,8 @@ public class VuePanier extends VerticalLayout{
         //Attribution des fonctions
         this.lancer.addClickListener(clickevent->{
             try{
-             //   this.vp.recharger();
                 System.out.println(gestionnaire.getPanier());
                 gestionnaire.repartitionMachine();
-             //   this.gestionnaire.reinitialiserPanier();
 
                   // Création de la fenêtre pop-up
                 this.popup = new Dialog();
@@ -59,11 +58,20 @@ public class VuePanier extends VerticalLayout{
 
             // Contenu de la fenêtre pop-up
                 this.affichagepopup = new VerticalLayout();
-                this.affichagepopup.add(new Paragraph("testpopup"));
+                this.affichagepopup.add(new Paragraph("Fin de fabrication prévue pour le : "+new Timestamp(gestionnaire.getTempsFin())+"\nEnergie nécessaire : "+gestionnaire.getEnergie()+" Wh"));
                 
 
             // Bouton de fermeture
-                Button closeButton = new Button("Fermer", event1 -> popup.close());
+                Button closeButton = new Button("Fermer", event1 -> {
+                    try{
+                        this.vp.recharger();
+                        this.gestionnaire.reinitialiserPanier();
+                        popup.close();
+                    }
+                    catch(SQLException e){
+                        System.out.println("Erreur chargement Vue Produit : "+e);
+                    }
+                });
                 this.affichagepopup.add(closeButton);
 
             // Ajouter le contenu à la fenêtre pop-up

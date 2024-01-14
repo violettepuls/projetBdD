@@ -270,7 +270,7 @@ public class machine {
     }
 
     public static boolean estDisponibleBetween(int id, long timeStart, long timeStop, Connection con) throws SQLException{
-        try(PreparedStatement ps =con.prepareStatement("SELECT * FROM CalendrierMachine WHERE ((DebutIndisponibilite >= ? AND DebutIndisponibilite < ?) OR (FinIndisponibilite > ? AND FinIndisponibilite <= ?)) AND IDMachine = ?")){
+        try(PreparedStatement ps =con.prepareStatement("SELECT * FROM CalendrierMachine WHERE ((DebutIndisponibilite >= ? AND DebutIndisponibilite <= ?) OR (FinIndisponibilite >= ? AND FinIndisponibilite <= ?)) AND IDMachine = ?")){
             Timestamp ta = new Timestamp(timeStart);
             Timestamp to = new Timestamp(timeStop);
             ps.setTimestamp(1,ta);
@@ -296,7 +296,7 @@ public class machine {
             ps.setTimestamp(2,tm);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                listeDisponibilite.add(rs.getLong("FinIndisponibilite"));
+                listeDisponibilite.add(rs.getTimestamp("FinIndisponibilite").getTime());
             }
         }
         if (listeDisponibilite.isEmpty()){

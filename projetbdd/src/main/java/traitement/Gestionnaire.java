@@ -47,6 +47,14 @@ public class Gestionnaire {
         return this.tempsDebut;
     }
 
+    public long getTempsFin(){
+        return this.tempsFin;
+    }
+
+    public double getEnergie(){
+        return this.energie;
+    }
+
     public void setCurAtelier(int id){
         this.cur_atelier=Atelier.getAtelier(id, this.con);
     }
@@ -243,6 +251,7 @@ public class Gestionnaire {
         try{
             this.energie=0;
             arrangerPanier();
+            long finFabrication = 0;
             int nombreMaxOperation = 0;
             for (int i=0;i<panierArrange.size();i++){
                 if(nombreMaxOperation<panierArrange.get(i).getNombreOperation()){
@@ -262,9 +271,12 @@ public class Gestionnaire {
                     }
                     if(dureeSousPanier!=0){
                         machine choixMachine = choisirMachine(panierArrange.get(j));
-                        System.out.println(choixMachine.getNom());
-                        System.out.println("Début retenu : "+panierArrange.get(j).getDebutTemp());
-                        System.out.println("Fin opération : "+panierArrange.get(j).getStadeHoraire());
+                        //System.out.println(choixMachine.getNom());
+                        //System.out.println("Début retenu : "+panierArrange.get(j).getDebutTemp());
+                        //System.out.println("Fin opération : "+panierArrange.get(j).getStadeHoraire());
+                        if(finFabrication<=panierArrange.get(j).getStadeHoraire()){
+                            this.tempsFin=panierArrange.get(j).getStadeHoraire();
+                        }
                         machine.ajouterIndisponibilite(choixMachine.getId(), choixMachine.getNom()+" : "+panierArrange.get(j).nommerStade(),panierArrange.get(j).getDebutTemp(), panierArrange.get(j).getStadeHoraire(), this.con);
                         panierArrange.get(j).etapeSuivante();
                     }
@@ -286,7 +298,7 @@ public class Gestionnaire {
         long debut = ssPanier.getStadeHoraire();
         ArrayList<machine> listeMachine = OperationElementaire.listerMachineOperationElementaire(operation.getType(), this.cur_atelier.getId(), con);
         machine machineChoisie = listeMachine.get(0);
-        double uo = operation.getUniteOperation();
+        double uo = operation.getUniteOperation()*ssPanier.getOccurrence();
         long tempsMin = machine.quandDisponibleApres(listeMachine.get(0).getId(), debut, con).get(0)+Double.valueOf(uo/(listeMachine.get(0).getVitesse()/3600000)).longValue(); //on converti les uo/h en uo/ms
         long temps = 0;
         long debutRetenu = machine.quandDisponibleApres(listeMachine.get(0).getId(), debut, con).get(0);
