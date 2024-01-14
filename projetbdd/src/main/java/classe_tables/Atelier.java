@@ -189,6 +189,7 @@ public class Atelier {
     }
 
     public static void modifierAtelier(int idAtelier, String nom, String bdd, String usr, String mdp,Connection con) throws SQLException{
+        con.setAutoCommit(false);
         try(PreparedStatement ps = con.prepareStatement("UPDATE Atelier SET Nom = ?, BDD = ?, Nom_Utilisateur_BDD = ?, MDP_BDD = ? WHERE ID = ?")){
             ps.setString(1,nom);
             ps.setString(2,bdd);
@@ -197,6 +198,7 @@ public class Atelier {
             ps.setInt(5,idAtelier);
             ps.executeUpdate();
         }
+        con.setAutoCommit(true);
     }
 
     @Override
