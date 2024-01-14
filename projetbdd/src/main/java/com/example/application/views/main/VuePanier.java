@@ -45,6 +45,7 @@ public class VuePanier extends VerticalLayout{
             try{
                 this.vp.recharger();
                 System.out.println(gestionnaire.getPanier());
+                gestionnaire.repartitionMachine();
                 this.gestionnaire.reinitialiserPanier();
             }
             catch(SQLException e){
