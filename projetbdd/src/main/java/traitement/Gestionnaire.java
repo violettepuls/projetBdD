@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.example.application.views.main.GroupePanier;
 
 import classe_tables.Atelier;
 import classe_tables.Gamme;

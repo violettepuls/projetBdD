@@ -49,6 +49,7 @@ public class VueEDT extends VerticalLayout{
         toutMachine = new machine(-1, "Tout", "", "", 0);
         toutOperateur = new Utilisateur(-1, "Tout", "", "", "", true, "");
         titre.setValue("Emploi du temps");
+        titreFiltre.setValue("Filtrer la liste par : ");
         filtreLarge.setItems("Tous","Operateur","Machine");
         filtreLarge.setValue("Tous");
         listeEntries = EDT.listerIndisponibilite(gestionnaire.getConnection());
@@ -61,10 +62,13 @@ public class VueEDT extends VerticalLayout{
         listeOperateur.add(toutOperateur);
         filtreFinOperateur.setItems(listeOperateur);
         filtreFinOperateur.setItemLabelGenerator(Utilisateur::getNomComplet);
+        filtreFinMachine.setPlaceholder("Choisir les machines à afficher");
+        filtreFinOperateur.setPlaceholder("Choisir les opérateurs à afficher");
 
         //Mise en fonction
         filtreLarge.addValueChangeListener(event->{
-            calendrier.getEntryProvider().asInMemory().removeEntries(listeEntries);
+            calendrier.getEntryProvider().asInMemory().removeAllEntries();
+            calendrier.getEntryProvider().refreshAll();
             if(filtreLarge.getValue().equals("Tous")){
                 try{
                     listeEntries = EDT.listerIndisponibilite(gestionnaire.getConnection());
@@ -77,7 +81,6 @@ public class VueEDT extends VerticalLayout{
             else if(filtreLarge.getValue().equals("Machine")){
                 this.filtre.add(filtreFinMachine);
                 this.filtre.remove(filtreFinOperateur);
-                filtreFinMachine.setValue(toutMachine);
                 try{
                     listeEntries = EDT.listerIndisponibiliteMachineAll(gestionnaire.getConnection());
                     calendrier.getEntryProvider().asInMemory().addEntries(listeEntries);
@@ -89,7 +92,6 @@ public class VueEDT extends VerticalLayout{
             else if(filtreLarge.getValue().equals("Operateur")){
                 this.filtre.add(filtreFinOperateur);
                 this.filtre.remove(filtreFinMachine);
-                filtreFinOperateur.setValue(toutOperateur);
                 try{
                     listeEntries = EDT.listerIndisponibiliteOperateurAll(gestionnaire.getConnection());
                     calendrier.getEntryProvider().asInMemory().addEntries(listeEntries);
@@ -102,6 +104,7 @@ public class VueEDT extends VerticalLayout{
         filtreFinMachine.addValueChangeListener(event->{
             try{
                 calendrier.getEntryProvider().asInMemory().removeAllEntries();
+                calendrier.getEntryProvider().refreshAll();
                 if(filtreFinMachine.getValue().contains(toutMachine)){
                     listeEntries = EDT.listerIndisponibiliteMachineAll(gestionnaire.getConnection());
                     calendrier.getEntryProvider().asInMemory().addEntries(listeEntries);
@@ -123,7 +126,8 @@ public class VueEDT extends VerticalLayout{
         });
         filtreFinOperateur.addValueChangeListener(event->{
             try{
-                calendrier.getEntryProvider().asInMemory().removeEntries(listeEntries);
+                calendrier.getEntryProvider().asInMemory().removeAllEntries();
+                calendrier.getEntryProvider().refreshAll();
                 if(filtreFinOperateur.getValue().contains(toutOperateur)){
                     listeEntries = EDT.listerIndisponibiliteOperateurAll(gestionnaire.getConnection());
                     calendrier.getEntryProvider().asInMemory().addEntries(listeEntries);
@@ -144,6 +148,7 @@ public class VueEDT extends VerticalLayout{
         });
 
         //Esthétique
+        calendrier.setEditable(false);
         this.setHeightFull();
         this.setWidthFull();
         this.setFlexGrow(1, calendrier);

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.vaadin.stefan.fullcalendar.Entry;
@@ -20,6 +19,7 @@ public class EDT {
                 entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                 entree.setTitle(rs.getString("NomIndisponibilite"));
                 entree.setColor("#ff3333");
+                entree.setEditable(false);
                 liste.add(entree);
             }
         }
@@ -38,6 +38,7 @@ public class EDT {
                     entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                     entree.setTitle(rs.getString("NomIndisponibilite"));
                     entree.setColor("#ff3333");
+                    entree.setEditable(false);
                     liste.add(entree);
                 }
             }
@@ -56,6 +57,7 @@ public class EDT {
                 entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                 entree.setTitle(rs.getString("NomIndisponibilite"));
                 entree.setColor("#ff3333");
+                entree.setEditable(false);
                 liste.add(entree);
             }
         }
@@ -72,6 +74,7 @@ public class EDT {
                 entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                 entree.setTitle(rs.getString("NomIndisponibilite"));
                 entree.setColor("#ff3333");
+                entree.setEditable(false);
                 liste.add(entree);
             }
         }
@@ -83,6 +86,7 @@ public class EDT {
                 entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                 entree.setTitle(rs.getString("NomIndisponibilite"));
                 entree.setColor("#ff3333");
+                entree.setEditable(false);
                 liste.add(entree);
             }
         }
@@ -99,6 +103,7 @@ public class EDT {
                 entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                 entree.setTitle(rs.getString("NomIndisponibilite"));
                 entree.setColor("#ff3333");
+                entree.setEditable(false);
                 liste.add(entree);
             }
         }
@@ -117,6 +122,7 @@ public class EDT {
                     entree.setEnd(rs.getTimestamp("FinIndisponibilite").toLocalDateTime());
                     entree.setTitle(rs.getString("NomIndisponibilite"));
                     entree.setColor("#ff3333");
+                    entree.setEditable(false);
                     liste.add(entree);
                 }
             }

@@ -5,7 +5,6 @@ import traitement.Gestionnaire;
 
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
