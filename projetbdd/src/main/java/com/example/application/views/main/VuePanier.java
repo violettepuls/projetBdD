@@ -2,6 +2,7 @@ package com.example.application.views.main;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.vaadin.flow.component.button.Button;
@@ -58,7 +59,7 @@ public class VuePanier extends VerticalLayout{
 
             // Contenu de la fenêtre pop-up
                 this.affichagepopup = new VerticalLayout();
-                this.affichagepopup.add(new Paragraph("Fin de fabrication prévue pour le : "+new Timestamp(gestionnaire.getTempsFin())+"\nEnergie nécessaire : "+gestionnaire.getEnergie()+" Wh"));
+                this.affichagepopup.add(new Paragraph("Fin de fabrication prévue pour le : "+new Timestamp(gestionnaire.getTempsFin())+"\nEnergie nécessaire : "+new DecimalFormat("#.##").format(gestionnaire.getEnergie())+" Wh"));
                 
 
             // Bouton de fermeture
